@@ -1,13 +1,60 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { signup } from '../../services/authService';
 
 const Signup = () => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await signup({ name, email, password });
+      localStorage.setItem('token', response.token); // Salva il token in localStorage
+      navigate('/home'); // Redirige alla homepage dopo la registrazione
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div>
       <h1>Signup</h1>
-      {/* Aggiungi i campi per il signup, per ora solo un link alla homepage */}
-      <p>Hai già un account? <Link to="/login">Accedi</Link></p>
-      <p>Registrato? <Link to="/home">Vai alla Homepage</Link></p>
+      <form onSubmit={handleSignup}>
+        <div>
+          <label>Nome</label>
+          <input 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+          />
+        </div>
+        <div>
+          <label>Email</label>
+          <input 
+            type="email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            required 
+          />
+        </div>
+        <div>
+          <label>Password</label>
+          <input 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+        </div>
+        <button type="submit">Registrati</button>
+      </form>
+      {error && <p>{error}</p>}
+      <p>Hai già un account? <a href="/login">Accedi</a></p>
     </div>
   );
 };

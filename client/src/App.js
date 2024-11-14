@@ -6,7 +6,7 @@ import HomePage from './components/homepage/Homepage';
 import Calendar from './components/calendar/Calendar';
 import Pomodoro from './components/pomodoro/Pomodoro';
 import Notes from './components/notes/Notes';
-
+import ProtectedRoute from './components/loginsignup/ProtectedRoute';
 
 const App = () => {
   return (
@@ -14,10 +14,10 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/calendar" element={<Calendar />} />
-        <Route path="/pomodoro" element={<Pomodoro />} />
-        <Route path="/notes" element={<Notes />} />
+        <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
+        <Route path="/pomodoro" element={<ProtectedRoute><Pomodoro /></ProtectedRoute>} />
+        <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
         <Route path="/" element={<Login />} />
       </Routes>
     </Router>
