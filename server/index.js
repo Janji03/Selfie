@@ -1,21 +1,18 @@
-const express = require('express');
-const app = express();
-const port = 5000;
+import express from "express";
+import cors from "cors";
+import connectDB from "./config/db.js";
+import config from "./config/config.js";
 
-// Middleware per consentire il CORS tra frontend e backend
-const cors = require('cors');
+const app = express();
+
+connectDB();
+
+// Middlewares
+app.use(express.json());
 app.use(cors());
 
-// Configura la route per la richiesta /test
-app.get('/test', (req, res) => {
-  res.json({ message: 'Test request received successfully!' });
-});
 
-// Configura la route principale
-app.get('/', (req, res) => {
-  res.send('Hello from Express!');
-});
-
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+const PORT = config.port;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
