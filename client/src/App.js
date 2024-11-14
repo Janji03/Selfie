@@ -1,25 +1,27 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './components/loginsignup/Login';
+import Signup from './components/loginsignup/Signup';
+import HomePage from './components/homepage/Homepage';
+import Calendar from './components/calendar/Calendar';
+import Pomodoro from './components/pomodoro/Pomodoro';
+import Notes from './components/notes/Notes';
 
-function App() {
-  const [message, setMessage] = useState('');
 
-  // Funzione per inviare la richiesta al backend
-  const sendRequest = () => {
-    fetch('/test') // Questo è l'endpoint che il server Express gestirà
-      .then(response => response.text())
-      .then(data => setMessage(data))
-      .catch(error => {
-        console.error('Errore nella richiesta:', error);
-        setMessage('Si è verificato un errore');
-      });
-  };
-
+const App = () => {
   return (
-    <div className="App">
-      <h1>{message}</h1>
-      <button onClick={sendRequest}>Invia richiesta al backend</button>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/calendar" element={<Calendar />} />
+        <Route path="/pomodoro" element={<Pomodoro />} />
+        <Route path="/notes" element={<Notes />} />
+        <Route path="/" element={<Login />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
