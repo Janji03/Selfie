@@ -1,19 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Calendarpreview from '../preview/Calendarpreview';
+import Pomodoropreview from '../preview/Pomodoropreview';
+import Notespreview from '../preview/Notespreview';
 
-const HomePage = () => {
+const Homepage = () => {
   return (
     <div>
       <h1>Homepage</h1>
-      <nav>
-        <ul>
-          <li><Link to="/calendar">Calendario</Link></li>
-          <li><Link to="/pomodoro">Pomodoro</Link></li>
-          <li><Link to="/notes">Note</Link></li>
-        </ul>
-      </nav>
+      <div>
+        <Calendarpreview />
+        <Pomodoropreview />
+        <Notespreview />
+      </div>
     </div>
   );
 };
 
-export default HomePage;
+export default Homepage;
