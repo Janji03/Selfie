@@ -10,13 +10,15 @@ const AuthProvider = ({ children }) => {
     setIsAuthenticated(!!token);
   }, []);
 
-  const login = (token) => {
+  const login = (token, userID) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('userID', userID);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userID');
     setIsAuthenticated(false);
   };
 

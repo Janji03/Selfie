@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Calendariopreview = () => {
+const CalendarPreview = () => {
   return (
     <div>
       <h3>Calendario</h3>
@@ -11,4 +11,4 @@ const Calendariopreview = () => {
   );
 };
 
-export default Calendariopreview;
+export default CalendarPreview;

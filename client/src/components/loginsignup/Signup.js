@@ -13,7 +13,8 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await signup({ name, email, password });
-      localStorage.setItem('token', response.token); 
+      // localStorage.setItem('token', response.token); 
+      // localStorage.setItem('userID', response.userID);
       navigate('/home'); 
     } catch (err) {
       setError(err.message);

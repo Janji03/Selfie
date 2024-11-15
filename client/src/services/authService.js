@@ -1,12 +1,9 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/auth'; 
-
+import axiosInstance from './axiosInstance';
 
 // Funzione per il signup
 export const signup = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, userData);
+    const response = await axiosInstance.post('auth/signup', userData);
     return response.data; 
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Errore durante la registrazione');
@@ -16,11 +13,11 @@ export const signup = async (userData) => {
 // Funzione per il login
 export const login = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, userData);
+    const response = await axiosInstance.post('auth/login', userData);
     return response.data; 
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Errore durante il login');
   }
 };
 
-/* entrambe le funzioni restituiscono anche il token (response.data)   */
+/* entrambe le funzioni restituiscono il token e lo userID (response.data)   */

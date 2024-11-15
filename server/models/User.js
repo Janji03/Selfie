@@ -16,7 +16,28 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    
+  },
+  profilePicture: { 
+    type: String, 
+    default: '' 
+  },
+  bio: {
+    type: String,
+    default: '', 
+  },
+  birthday: {
+    type: Date, 
+    default: null,
+  },
+  pronouns: {
+    type: String,
+    enum: ['he/him', 'she/her', 'they/them', 'other', 'prefer not to say'],
+    default: 'prefer not to say', 
+  },
+  sex: {
+    type: String,
+    enum: ['male', 'female', 'other', 'prefer not to say'],
+    default: 'prefer not to say', 
   },
 }, { timestamps: true });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Pomodoropreview = () => {
+const PomodoroPreview = () => {
   return (
     <div>
       <h3>Pomodoro</h3>
@@ -11,4 +11,4 @@ const Pomodoropreview = () => {
   );
 };
 
-export default Pomodoropreview;
+export default PomodoroPreview;

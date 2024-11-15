@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Login from './components/loginsignup/Login';
 import Signup from './components/loginsignup/Signup';
 import HomePage from './components/homepage/Homepage';
+import Profile from './components/profile/Profile'
 import Calendar from './components/calendar/Calendar';
 import Pomodoro from './components/pomodoro/Pomodoro';
 import Notes from './components/notes/Notes';
@@ -17,6 +18,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
           <Route path="/pomodoro" element={<ProtectedRoute><Pomodoro /></ProtectedRoute>} />
           <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />

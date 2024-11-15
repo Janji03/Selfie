@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Notespreview = () => {
+const NotesPreview = () => {
   return (
     <div>
       <h3>Note</h3>
@@ -11,4 +11,4 @@ const Notespreview = () => {
   );
 };
 
-export default Notespreview;
+export default NotesPreview;

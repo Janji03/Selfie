@@ -1,16 +1,18 @@
 import React from 'react';
-import Calendarpreview from '../preview/Calendarpreview';
-import Pomodoropreview from '../preview/Pomodoropreview';
-import Notespreview from '../preview/Notespreview';
+import ProfilePreview from '../preview/ProfilePreview';
+import CalendarPreview from '../preview/CalendarPreview';
+import PomodoroPreview from '../preview/PomodoroPreview';
+import NotesPreview from '../preview/NotesPreview';
 
 const Homepage = () => {
   return (
     <div>
       <h1>Homepage</h1>
       <div>
-        <Calendarpreview />
-        <Pomodoropreview />
-        <Notespreview />
+        <ProfilePreview />
+        <CalendarPreview />
+        <PomodoroPreview />
+        <NotesPreview />
       </div>
     </div>
   );
