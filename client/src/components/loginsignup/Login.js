@@ -13,7 +13,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await login({ email, password }); 
+      const response = await login({ email, password });
       authenticate(response.token, response.userID);
       navigate('/home');
     } catch (err) {
@@ -47,6 +47,7 @@ const Login = () => {
       </form>
       {error && <p>{error}</p>}
       <p>Non hai un account? <a href="/signup">Registrati</a></p>
+      <p><a href="/forgot-password">Hai dimenticato la password?</a></p>
     </div>
   );
 };

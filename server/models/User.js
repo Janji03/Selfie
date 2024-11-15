@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+
 // Creazione del modello utente
 const userSchema = new mongoose.Schema({
   name: {
@@ -38,6 +39,14 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['male', 'female', 'other', 'prefer not to say'],
     default: 'prefer not to say', 
+  },
+  resetToken: {
+    type: String,
+    default: '',
+  },
+  resetTokenExpiration: {
+    type: Date,
+    default: null,
   },
 }, { timestamps: true });
 
