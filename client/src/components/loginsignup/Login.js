@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
+import { AuthContext } from '../../context/AuthContext';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login: authenticate } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await login({ email, password });
-      localStorage.setItem('token', response.token); // Salva il token in localStorage
-      navigate('/home'); // Redirige alla homepage dopo il login
+      const response = await login({ name, password }); 
+      authenticate(response.token);
+      navigate('/home');
     } catch (err) {
       setError(err.message);
     }
@@ -24,11 +26,11 @@ const Login = () => {
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
         <div>
-          <label>Email</label>
+          <label>Nome</label>
           <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
+            type="text" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
             required 
           />
         </div>

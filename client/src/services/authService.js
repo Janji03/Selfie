@@ -1,13 +1,13 @@
-// authService.js
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api/auth'; // URL del backend
+const API_URL = 'http://localhost:5000/api/auth'; 
+
 
 // Funzione per il signup
 export const signup = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/signup`, userData);
-    return response.data; // Restituisce i dati, incluso il token
+    return response.data; 
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Errore durante la registrazione');
   }
@@ -17,8 +17,10 @@ export const signup = async (userData) => {
 export const login = async (userData) => {
   try {
     const response = await axios.post(`${API_URL}/login`, userData);
-    return response.data; // Restituisce i dati, incluso il token
+    return response.data; 
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Errore durante il login');
   }
 };
+
+/* entrambe le funzioni restituiscono anche il token (response.data)   */

@@ -13,8 +13,8 @@ const Signup = () => {
     e.preventDefault();
     try {
       const response = await signup({ name, email, password });
-      localStorage.setItem('token', response.token); // Salva il token in localStorage
-      navigate('/home'); // Redirige alla homepage dopo la registrazione
+      localStorage.setItem('token', response.token); 
+      navigate('/home'); 
     } catch (err) {
       setError(err.message);
     }

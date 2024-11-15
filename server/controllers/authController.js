@@ -32,19 +32,19 @@ export const signup = async (req, res) => {
 
 // Funzione per il login dell'utente
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { name, password } = req.body; // Cambiato da email a name
 
   try {
-    // Trova l'utente con l'email
-    const user = await User.findOne({ email });
+    // Trova l'utente con il nome
+    const user = await User.findOne({ name }); // Cambiato da email a name
     if (!user) {
-      return res.status(400).json({ message: 'Email o password errati.' });
+      return res.status(400).json({ message: 'Nome o password errati.' });
     }
 
     // Confronta la password
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Email o password errati.' });
+      return res.status(400).json({ message: 'Nome o password errati.' });
     }
 
     // Genera un token JWT
