@@ -1,10 +1,8 @@
 import axiosInstance from "./axiosInstance";
 
-export const getUser = async (id, token) => {
+export const getUser = async (id) => {
   try {
-    const response = await axiosInstance.get(`users/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.get(`users/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(
@@ -13,11 +11,9 @@ export const getUser = async (id, token) => {
   }
 };
 
-export const updateUser = async (id, userData, token) => {
+export const updateUser = async (id, userData) => {
   try {
-    const response = await axiosInstance.put(`users/${id}`, userData, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.put(`users/${id}`, userData);
     return response.data;
   } catch (error) {
     throw new Error(
@@ -26,17 +22,17 @@ export const updateUser = async (id, userData, token) => {
   }
 };
 
-export const updateUserPfp = async (id, file, token) => {
+export const updateUserProfilePicture = async (id, file) => {
   try {
     const formData = new FormData();
     formData.append('profilePicture', file);
 
     const response = await axiosInstance.put(`users/${id}/pfp`, formData, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data', 
       },
     });
+    console.log("response.data", response.data);
     return response.data;
   } catch (error) {
     throw new Error(
@@ -46,11 +42,9 @@ export const updateUserPfp = async (id, file, token) => {
   }
 };
 
-export const deleteUser = async (id, token) => {
+export const deleteUser = async (id) => {
   try {
-    const response = await axiosInstance.delete(`users/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await axiosInstance.delete(`users/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(

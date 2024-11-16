@@ -1,7 +1,8 @@
 import User from '../models/User.js';
+import path from 'path';
 
 // Funzione per prendere un utente tramite l'ID
-export const getUserById = async (req, res) => {
+export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password"); 
     if (!user) {
@@ -15,9 +16,10 @@ export const getUserById = async (req, res) => {
 };
 
 // Funzione per aggiornare un utente tramite l'ID
-export const updateUserById = async (req, res) => {
+export const updateUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -48,20 +50,20 @@ export const updateUserById = async (req, res) => {
 
 
 // Funzione per aggiornare la foto profilo di un utente
-export const updateUserPfpByID = async (req, res) => {
+export const updateUserProfilePicture = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
     
     if (req.file) {
-      const uploadedFilePath = path.join('/uploads/', req.file.filename);
+      const uploadedFilePath = `uploads/profilePictures/${req.file.filename}`;
       user.profilePicture = uploadedFilePath;
     }
       
     const updatedUser = await user.save();
-    
+
     res.status(200).json({
         message: "Profile picture updated successfully",
         profilePicture: updatedUser.profilePicture,
@@ -73,7 +75,7 @@ export const updateUserPfpByID = async (req, res) => {
 
 
 // Funzione per cancellare un utente tramite l'ID
-export const deleteUserById = async (req, res) => {
+export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
     if (!user) {

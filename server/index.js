@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet'; // Importa Helmet
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'; 
 import userRoutes from './routes/userRoutes.js';
@@ -14,6 +13,7 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
+app.use('/uploads', express.static('./uploads'));
 
 // Registrazione delle rotte
 app.use('/api/auth', authRoutes);
