@@ -4,14 +4,11 @@ import config from '../config/config.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
-
-
 // Funzione per registrare un nuovo utente
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
 
   try {
-    // Verifica se l'utente esiste già
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'Utente già registrato con questa email.' });
@@ -66,6 +63,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Funzione per il chiedere il reset della password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
@@ -81,15 +79,15 @@ export const forgotPassword = async (req, res) => {
       .createHash('sha256')
       .update(resetToken)
       .digest('hex');
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minuti
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; 
     await user.save();
 
     const transporter = nodemailer.createTransport({
-      host: 'sandbox.smtp.mailtrap.io', // Host fornito
-      port: 2525, // Porta consigliata
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 2525, 
       auth: {
-        user: config.mailtrapUser, // Username dal file di configurazione
-        pass: config.mailtrapPass, // Password dal file di configurazione
+        user: config.mailtrapUser,
+        pass: config.mailtrapPass, 
       },
     });
 

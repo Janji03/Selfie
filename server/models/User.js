@@ -11,8 +11,8 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true, // L'email deve essere unica
-    match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, // Verifica la validità dell'email
+    unique: true, 
+    match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 
   },
   password: {
     type: String,
@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema({
 
 // Pre-save hook per criptare la password prima di salvarla nel database
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next(); // Se la password non è stata modificata, non fare nulla
+  if (!this.isModified('password')) return next();
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
@@ -58,7 +58,6 @@ userSchema.methods.matchPassword = async function(password) {
   return await bcrypt.compare(password, this.password);
 };
 
-// Creazione del modello
 const User = mongoose.model('User', userSchema);
 
 export default User;

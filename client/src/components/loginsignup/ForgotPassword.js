@@ -12,7 +12,7 @@ const ForgotPassword = () => {
     setError('');
     try {
       const response = await forgotPassword(email);
-      setMessage(response.message); // Messaggio di successo dal backend
+      setMessage(response.message); 
     } catch (err) {
       setError(err.message);
     }

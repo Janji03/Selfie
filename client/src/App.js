@@ -9,8 +9,8 @@ import Calendar from './components/calendar/Calendar';
 import Pomodoro from './components/pomodoro/Pomodoro';
 import Notes from './components/notes/Notes';
 import ProtectedRoute from './components/loginsignup/ProtectedRoute';
-import ForgotPassword from './components/loginsignup/ForgotPassword'; // Import nuovo componente
-import ResetPassword from './components/loginsignup/ResetPassword'; // Import nuovo componente
+import ForgotPassword from './components/loginsignup/ForgotPassword'; 
+import ResetPassword from './components/loginsignup/ResetPassword'; 
 
 const App = () => {
   return (
@@ -24,8 +24,8 @@ const App = () => {
           <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
           <Route path="/pomodoro" element={<ProtectedRoute><Pomodoro /></ProtectedRoute>} />
           <Route path="/notes" element={<ProtectedRoute><Notes /></ProtectedRoute>} />
-          <Route path="/forgot-password" element={<ForgotPassword />} /> {/* Nuova route */}
-          <Route path="/reset-password/:token" element={<ResetPassword />} /> {/* Nuova route */}
+          <Route path="/forgot-password" element={<ForgotPassword />} /> 
+          <Route path="/reset-password/:token" element={<ResetPassword />} /> 
           <Route path="/" element={<Login />} />
         </Routes>
       </Router>

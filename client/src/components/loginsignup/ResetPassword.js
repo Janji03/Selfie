@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { resetPassword } from '../../services/authService';
 
 const ResetPassword = () => {
-  const { token } = useParams(); // Recupera il token dalla URL
+  const { token } = useParams(); 
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -15,8 +15,8 @@ const ResetPassword = () => {
     setError('');
     try {
       const response = await resetPassword(token, password);
-      setMessage(response.message); // Messaggio di successo dal backend
-      setTimeout(() => navigate('/login'), 3000); // Redireziona al login dopo 3 secondi
+      setMessage(response.message); 
+      setTimeout(() => navigate('/login'), 3000); 
     } catch (err) {
       setError(err.message);
     }
