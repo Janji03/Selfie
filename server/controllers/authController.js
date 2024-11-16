@@ -94,7 +94,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-    const resetLink = `http://localhost:5000/api/auth/reset-password/${resetToken}`;
+    const resetLink = `http://localhost:3000/reset-password`;
 
     await transporter.sendMail({
       to: email,

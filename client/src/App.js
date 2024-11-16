@@ -20,7 +20,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetPassword />} />
+          <Route path="/reset-password/" element={<ResetPassword />} />
           <Route path="/home" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
