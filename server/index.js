@@ -13,6 +13,8 @@ connectDB();
 app.use(express.json());
 app.use(cors());
 
+app.use('/uploads', express.static('./uploads'));
+
 // Registrazione delle rotte
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);

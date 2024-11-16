@@ -56,6 +56,9 @@ Implementato una interfaccia che permette all'utente di:
   - Permette all'utente di eseguire il logout.
   - Permette all'utente di cancellare il proprio account.
 
+- **`src/components/profile/EditProfileForm.js`**
+  - Componente per modificare le informazioni personali dell'utente
+
 - **`src/services/authService.js`**
     - `signup`: registra un nuovo utente.
     - `login`: autentica un utente e restituisce un token JWT.
@@ -63,7 +66,7 @@ Implementato una interfaccia che permette all'utente di:
 - **`src/services/userService.js`**
     - `getUser`: ritorna le informazioni personali di un utente.
     - `updateUser`: aggiorna le informazioni personali di un utente.
-    - `updateUserPfp`: aggiorna l'immagine profilo di un utente.
+    - `updateUserProfilePicture`: aggiorna l'immagine profilo di un utente.
     - `deleteUser`: cancella l'account di un utente.
 
 - **`src/App.js`**

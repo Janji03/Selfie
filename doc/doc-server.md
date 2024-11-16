@@ -33,13 +33,10 @@ Implementato la gestione del profilo utente.
 
 - **`controllers/userController.js`**
     Contiene le funzioni per gestire le operazioni relative alle informazioni degli utenti.
-    1. `getUserById`: ottiene dal database i dati di un utente tramite il suo ID.
-    2. `updateUserById`: aggiorna le informazioni dell'utente sul database tramite il suo ID.
-    3. `updateUserPfpByID`: aggiorna la foto del profilo dell'utente sul database tramite il suo ID.
-    4. `deleteUserById`: cancella un utente dal database tramite il suo ID.
-
-- **`middleware/authMiddleware.js`**
-    Middleware utilizzato per garantire l'accesso alle route protette solo ai corrispettivi utenti.
+    1. `getUser`: ottiene dal database i dati di un utente tramite il suo ID.
+    2. `updateUser`: aggiorna le informazioni dell'utente sul database tramite il suo ID.
+    3. `updateUserProfilePicture`: aggiorna la foto del profilo dell'utente sul database tramite il suo ID.
+    4. `deleteUser`: cancella un utente dal database tramite il suo ID.
 
 - **`models/User.js`**
     Definisce lo schema MongoDB per il modello User, che rappresenta un utente nel database.

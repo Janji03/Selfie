@@ -1,14 +1,12 @@
 import express from 'express';
-import { getUserById, updateUserById, updateUserPfpByID, deleteUserById } from '../controllers/userController.js';
-import { protect } from '../middleware/authMiddleware.js';
-import multer from 'multer';
+import { getUser, updateUser, updateUserProfilePicture, deleteUser } from '../controllers/userController.js';
+import upload from '../utils/uploadUtils.js';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
 
-router.get('/:id', protect, getUserById);
-router.put('/:id', protect, updateUserById);
-router.put('/:id/pfp', protect, upload.single('profilePicture'), updateUserPfpByID);
-router.delete('/:id', protect, deleteUserById);
+router.get('/:id', getUser);
+router.put('/:id', updateUser);
+router.put('/:id/pfp', upload.single('profilePicture'), updateUserProfilePicture);
+router.delete('/:id', deleteUser);
 
 export default router;
