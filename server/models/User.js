@@ -40,14 +40,9 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female', 'other', 'prefer not to say'],
     default: 'prefer not to say', 
   },
-  resetToken: {
-    type: String,
-    default: '',
-  },
-  resetTokenExpiration: {
-    type: Date,
-    default: null,
-  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+ 
 }, { timestamps: true });
 
 // Pre-save hook per criptare la password prima di salvarla nel database

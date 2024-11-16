@@ -6,36 +6,33 @@ const ForgotPassword = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const handleForgotPassword = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("prova1")
+    setMessage('');
+    setError('');
     try {
-      await forgotPassword({ email });
-      setMessage('Controlla la tua email per il link di reset della password.');
-      setError('');
+      const response = await forgotPassword(email);
+      setMessage(response.message); // Messaggio di successo dal backend
     } catch (err) {
       setError(err.message);
-      setMessage('');
     }
   };
 
   return (
     <div>
-      <h1>Forgot Password</h1>
-      <form onSubmit={handleForgotPassword}>
-        <div>
-          <label>Email</label>
-          <input 
-            type="email" 
-            value={email} 
-            onChange={(e) => setEmail(e.target.value)} 
-            required 
-          />
-        </div>
-        <button type="submit">Invia</button>
+      <h2>Recupera Password</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="email"
+          placeholder="Inserisci la tua email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <button type="submit">Invia Email</button>
       </form>
-      {message && <p>{message}</p>}
-      {error && <p>{error}</p>}
+      {message && <p style={{ color: 'green' }}>{message}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

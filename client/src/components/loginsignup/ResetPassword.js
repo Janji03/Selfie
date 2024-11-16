@@ -1,36 +1,42 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import { useParams, useNavigate } from 'react-router-dom';
+import { resetPassword } from '../../services/authService';
 
 const ResetPassword = () => {
-  const { token } = useParams();
+  const { token } = useParams(); // Recupera il token dalla URL
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage('');
+    setError('');
     try {
-      const response = await axios.post(`http://localhost:5000/api/auth/reset-password/${token}`, { password });
-      setMessage(response.data.message);
-    } catch (error) {
-      setMessage(error.response.data.message || 'Errore durante il reset della password.');
+      const response = await resetPassword(token, password);
+      setMessage(response.message); // Messaggio di successo dal backend
+      setTimeout(() => navigate('/login'), 3000); // Redireziona al login dopo 3 secondi
+    } catch (err) {
+      setError(err.message);
     }
   };
 
   return (
     <div>
-      <h1>Reset Password</h1>
+      <h2>Resetta Password</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="password"
-          placeholder="Nuova password"
+          placeholder="Inserisci la nuova password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button type="submit">Resetta password</button>
+        <button type="submit">Aggiorna Password</button>
       </form>
-      {message && <p>{message}</p>}
+      {message && <p style={{ color: 'green' }}>{message}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   );
 };

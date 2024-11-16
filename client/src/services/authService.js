@@ -20,23 +20,23 @@ export const login = async (userData) => {
   }
 };
 
-/* entrambe le funzioni restituiscono il token e lo userID (response.data)   */
-
-// Funzione per la richiesta di reset password
-export const forgotPassword = async (userData) => {
+// Funzione per richiedere il reset della password
+export const forgotPassword = async (email) => {
   try {
-    const response = await axiosInstance.post('auth/forgot-password', userData);
-    return response.data;
+    const response = await axiosInstance.post('auth/forgot-password', { email });
+    return response.data; // Risultato del backend
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Errore durante la richiesta di reset');
+    throw new Error(error.response?.data?.message || 'Errore durante il recupero della password');
   }
 };
 
-// Funzione per il reset della password
-export const resetPassword = async (data) => {
+// Funzione per resettare la password
+export const resetPassword = async (token, newPassword) => {
   try {
-    const response = await axiosInstance.post('auth/reset-password', data);
-    return response.data;
+    const response = await axiosInstance.post(`auth/reset-password/${token}`, {
+      password: newPassword,
+    });
+    return response.data; // Risultato del backend
   } catch (error) {
     throw new Error(error.response?.data?.message || 'Errore durante il reset della password');
   }

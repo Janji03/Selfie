@@ -4,6 +4,8 @@ import config from '../config/config.js';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 
+
+
 // Funzione per registrare un nuovo utente
 export const signup = async (req, res) => {
   const { name, email, password } = req.body;
@@ -64,68 +66,78 @@ export const login = async (req, res) => {
   }
 };
 
-// Funzione per il recupero della password
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Email non trovata.' });
+      return res.status(404).json({ message: 'Utente non trovato.' });
     }
 
-    // Crea un token di reset e la scadenza
-    const resetToken = crypto.randomBytes(32).toString('hex');
-    const resetTokenExpiration = Date.now() + 3600000; // Scadenza in 1 ora
-
-    user.resetToken = resetToken;
-    user.resetTokenExpiration = resetTokenExpiration;
+    // Genera un token per il reset della password
+    const resetToken = crypto.randomBytes(20).toString('hex');
+    user.resetPasswordToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minuti
     await user.save();
 
-    // Configura Mailtrap per l'invio delle email
- // Configura il trasportatore Nodemailer con Mailtrap
-const transporter = nodemailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io", // Host fornito da Mailtrap
-  port: 25, // Usa una delle porte supportate (ad es. 2525)
-  auth: {
-    user: "3a22d62bd93905", // Inserisci il tuo username Mailtrap
-    pass: "41587241b310cb", // Inserisci la tua password Mailtrap
-  },
-});
-
-
-    const resetLink = `http://localhost:3000/reset-password`;
-
-    await transporter.sendMail({
-      to: email,
-      subject: 'Reset della tua password',
-      html: `<p>Clicca sul link per resettere la tua password: <a href="${resetLink}">Reset Password</a></p>`,
+    const transporter = nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io', // Host fornito
+      port: 2525, // Porta consigliata
+      auth: {
+        user: config.mailtrapUser, // Username dal file di configurazione
+        pass: config.mailtrapPass, // Password dal file di configurazione
+      },
     });
 
-    res.status(200).json({ message: 'Email inviata con successo.' });
+    const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+
+    // Invia l'email con HTML
+    await transporter.sendMail({
+      to: user.email,
+      subject: 'Password Reset Request',
+      html: `
+        <p>Hai richiesto di resettare la tua password.</p>
+        <p>Clicca sul link sottostante per resettare la tua password:</p>
+        <a href="${resetURL}" style="color: blue; text-decoration: underline;">Resetta la password</a>
+        <p>Se non hai richiesto questa operazione, ignora questa email.</p>
+      `,
+    });
+
+    res.status(200).json({ message: 'Email inviata con successo!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Errore del server.' });
   }
 };
 
-// Funzione per il reset della password
+
+// Funzione per resettare la password
 export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
   try {
-    const user = await User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } });
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
     if (!user) {
       return res.status(400).json({ message: 'Token non valido o scaduto.' });
     }
 
     user.password = password;
-    user.resetToken = undefined;
-    user.resetTokenExpiration = undefined;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).json({ message: 'Password aggiornata con successo.' });
+    res.status(200).json({ message: 'Password aggiornata con successo!' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Errore del server.' });

@@ -3,10 +3,9 @@ import { signup, login, forgotPassword, resetPassword } from '../controllers/aut
 
 const router = express.Router();
 
-// Rotte per la registrazione, login e recupero della password
 router.post('/signup', signup);
 router.post('/login', login);
-router.post('/forgot-password', forgotPassword);  // Nuova rotta per recupero password
-router.post('/reset-password/:token', resetPassword);  // Nuova rotta per reset password
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:token', resetPassword);
 
 export default router;
