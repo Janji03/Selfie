@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { AuthContext } from '../../context/AuthContext';
+import '../../styles/Auth.css'; 
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,10 +23,10 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
-        <div>
+        <div className="data">
           <label>Email</label>
           <input 
             type="text" 
@@ -34,7 +35,7 @@ const Login = () => {
             required 
           />
         </div>
-        <div>
+        <div className="data">
           <label>Password</label>
           <input 
             type="password" 
@@ -43,11 +44,14 @@ const Login = () => {
             required 
           />
         </div>
-        <button type="submit">Accedi</button>
+        <div className="btn">
+          <div className="inner"></div>
+          <button type="submit">Accedi</button>
+        </div>
       </form>
       {error && <p>{error}</p>}
-      <p>Non hai un account? <a href="/signup">Registrati</a></p>
-      <p>Dimenticata Password ? <a href="/forgot-password">Clicca qui</a></p>
+      <p className="signup-link">Non hai un account? <a href="/signup">Registrati</a></p>
+      <p className="forgot-pass"><a href="/forgot-password">Dimenticata Password ?</a></p>
     </div>
   );
 };
