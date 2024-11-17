@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/authService';
+import { AuthContext } from '../../context/AuthContext';
 
 const Signup = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login: authenticate } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
@@ -15,6 +17,7 @@ const Signup = () => {
       const response = await signup({ name, email, password });
       localStorage.setItem('token', response.token); 
       localStorage.setItem('userID', response.userID);
+      authenticate(response.token, response.userID);
       navigate('/home'); 
     } catch (err) {
       setError(err.message);
