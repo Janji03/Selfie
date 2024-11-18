@@ -1,18 +1,18 @@
 import React from 'react';
-import ProfilePreview from '../preview/ProfilePreview';
+/* import ProfilePreview from '../preview/ProfilePreview';
 import CalendarPreview from '../preview/CalendarPreview';
 import PomodoroPreview from '../preview/PomodoroPreview';
-import NotesPreview from '../preview/NotesPreview';
+import NotesPreview from '../preview/NotesPreview'; */
 
 const Homepage = () => {
   return (
     <div>
       <h1>Homepage</h1>
       <div>
-        <ProfilePreview />
+{/*         <ProfilePreview />
         <CalendarPreview />
         <PomodoroPreview />
-        <NotesPreview />
+        <NotesPreview /> */}
       </div>
     </div>
   );
