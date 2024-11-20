@@ -1,16 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { updateNote } from "../../services/noteService";
 
 const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editMode, setEditMode] = useState(false);
-  const [editedContent, setEditedContent] = useState(note?.content || ""); // Usa un valore iniziale sicuro
+  const [editedContent, setEditedContent] = useState(note?.content || "");
+  const [editedTitle, setEditedTitle] = useState(note?.title || "");
+  const [editedCategories, setEditedCategories] = useState(note?.categories.join(", ") || "");
+
+  // Sync the note data when it changes
+  useEffect(() => {
+    if (note) {
+      setEditedTitle(note.title);
+      setEditedContent(note.content);
+      setEditedCategories(note.categories.join(", "));
+    }
+  }, [note]);
 
   const handleSave = () => {
     if (!note) return;
-    updateNote(note._id, { ...note, content: editedContent })
+    updateNote(note._id, {
+      title: editedTitle,
+      content: editedContent,
+      categories: editedCategories.split(",").map((cat) => cat.trim()),
+    })
       .then(() => {
         refreshNotes();
         setEditMode(false);
+        onClose(); // Chiude automaticamente dopo il salvataggio
       })
       .catch(console.error);
   };
@@ -19,20 +35,35 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
 
   return (
     <div>
-      <h2>{note.title}</h2>
       {editMode ? (
-        <textarea
-          value={editedContent}
-          onChange={(e) => setEditedContent(e.target.value)}
-        />
+        <div>
+          <input
+            type="text"
+            value={editedTitle}
+            onChange={(e) => setEditedTitle(e.target.value)}
+            placeholder="Modifica Titolo"
+          />
+          <textarea
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+            placeholder="Modifica Contenuto"
+          />
+          <input
+            type="text"
+            value={editedCategories}
+            onChange={(e) => setEditedCategories(e.target.value)}
+            placeholder="Modifica Categorie (separate da virgola)"
+          />
+          <button onClick={handleSave}>Salva e Chiudi</button>
+        </div>
       ) : (
-        <p>{note.content}</p>
+        <div>
+          <h2>{note.title}</h2>
+          <p>{note.content}</p>
+          <p><strong>Categorie:</strong> {note.categories.join(", ")}</p>
+        </div>
       )}
-      <button onClick={() => setEditMode(!editMode)}>
-        {editMode ? "Annulla" : "Modifica"}
-      </button>
-      {editMode && <button onClick={handleSave}>Salva</button>}
-      <button onClick={onClose}>Chiudi</button>
+      <button onClick={() => setEditMode(!editMode)}>{editMode ? "Annulla" : "Modifica"}</button>
     </div>
   );
 };

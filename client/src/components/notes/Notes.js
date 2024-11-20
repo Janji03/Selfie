@@ -28,18 +28,23 @@ const Notes = () => {
 
   const handleCreateNote = (e) => {
     e.preventDefault();
-    console.log('Chiamata a getNotes con userID:', userID);
-
+  
+    if (!newNote.title || !newNote.categories.length) {
+      setError("Titolo e categorie sono obbligatori");
+      return;
+    }
+  
     createNote({ ...newNote, userID })
       .then((createdNote) => {
         setNotes((prev) => [...prev, createdNote]);
         setNewNote({ title: "", content: "", categories: [] }); // Reset form
+        setError(null); // Reset error
       })
       .catch((err) => setError(err.message));
   };
+  
 
   if (!isAuthenticated) return <p>Effettua il login per gestire le tue note.</p>;
-  if (error) return <p>Errore: {error}</p>;
 
   return (
     <div>
@@ -52,12 +57,14 @@ const Notes = () => {
           onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
           required
         />
+        {error && !newNote.title && <span className="error">Obbligatorio!</span>}
+        
         <textarea
           placeholder="Contenuto"
           value={newNote.content}
           onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-          required
         />
+        
         <input
           type="text"
           placeholder="Categorie (separate da virgola)"
@@ -65,9 +72,13 @@ const Notes = () => {
           onChange={(e) =>
             setNewNote({ ...newNote, categories: e.target.value.split(",") })
           }
+          required
         />
+        {error && !newNote.categories.length && <span className="error">Obbligatorio!</span>}
+        
         <button type="submit">Crea Nota</button>
       </form>
+      
       <NotesDetail
         note={selectedNote}
         onClose={() => setSelectedNote(null)}

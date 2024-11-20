@@ -1,8 +1,12 @@
 import Note from '../models/Note.js';
 
-// Crea una nuova nota
+// Crea una nuova nota con validazioni per title e categories
 export const createNote = async (req, res) => {
   const { title, content, categories, userID } = req.body;
+
+  if (!title || !categories || categories.length === 0) {
+    return res.status(400).json({ error: 'Titolo e categorie sono obbligatori' });
+  }
 
   try {
     const newNote = new Note({
@@ -19,6 +23,7 @@ export const createNote = async (req, res) => {
   }
 };
 
+
 // Ottieni tutte le note
 export const getNotes = async (req, res) => {
   const { userID } = req.query; // userID fornito dal frontend tramite query params
@@ -31,10 +36,14 @@ export const getNotes = async (req, res) => {
   }
 };
 
-// Aggiorna una nota
+// Aggiorna una nota esistente, includendo titolo, contenuto e categorie
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content, categories } = req.body;
+
+  if (!title || !categories || categories.length === 0) {
+    return res.status(400).json({ error: 'Titolo e categorie sono obbligatori' });
+  }
 
   try {
     const updatedNote = await Note.findByIdAndUpdate(
@@ -52,6 +61,7 @@ export const updateNote = async (req, res) => {
     res.status(500).json({ error: 'Errore nell\'aggiornamento della nota' });
   }
 };
+
 
 // Cancella una nota
 export const deleteNote = async (req, res) => {
