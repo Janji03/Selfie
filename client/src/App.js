@@ -8,6 +8,7 @@ import Profile from './components/profile/Profile';
 import Calendar from './components/calendar/Calendar';
 import Pomodoro from './components/pomodoro/Pomodoro';
 import Notes from './components/notes/Notes';
+
 import ProtectedRoute from './components/loginsignup/ProtectedRoute';
 import ForgotPassword from './components/loginsignup/ForgotPassword'; 
 import ResetPassword from './components/loginsignup/ResetPassword'; 
