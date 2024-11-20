@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { createPomodoro } from '../../services/pomodoroService';
+import { createPomodoro, getPreviousPomodoro } from '../../services/pomodoroService';
 
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
@@ -7,9 +7,10 @@ const Pomodoro = () => {
   const [cycles, setCycles] = useState(0);
   const [resetCycles, setResetCycles] = useState(5);
   const [totalMinutes, setTotalMinutes] = useState(0);
-  const [isRunning, setIsRunning] = useState(false)
-  const [timeLeft, setTimeLeft] = useState(0)
-  const [onBreak, setOnBreak] = useState(false)
+  const [isRunning, setIsRunning] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [onBreak, setOnBreak] = useState(false); 
+  const [nPomodoro, setNPomodoro] = useState(0);
 
 
   const handleSubmit = async (e) => {
@@ -31,9 +32,19 @@ const Pomodoro = () => {
       await createPomodoro(pomodoroData);
       console.log('Pomodoro salvato correttamente');
     } catch (error) {
-      console.error('Errore: ', error);
+      console.error('Errore creazione pomodoro: ', error);
     }
   };
+
+  const handleGet = async () => {
+     try{
+      const listaPomodoro = await getPreviousPomodoro(nPomodoro);
+      console.log('Get okay')
+      console.log(listaPomodoro)
+     } catch(error) {
+      console.error('Get non okay: ', error)
+     }
+  }
 
 
 
@@ -95,7 +106,7 @@ const Pomodoro = () => {
       {totalMinutes > 0 ? (
         <>
           {calculateProposals().map((proposal, index) => ( //setta i valori scelti dalle proposte
-            <button type='button' onClick={() => {setStudyTime(proposal.study); 
+            <button key={index} type='button' onClick={() => {setStudyTime(proposal.study); 
                                                   setBreakTime(proposal.break); 
                                                   setCycles(proposal.cycles)}}>
 
@@ -120,6 +131,12 @@ const Pomodoro = () => {
 
 
       <h1>Timer:{convertTime()}</h1>
+
+      <input type='number' onChange={(e) => setNPomodoro(e.target.value)}></input>
+      <button onClick={handleGet}></button>
+
+      <h2>{nPomodoro}</h2>
+
   </div>
 );
 };
