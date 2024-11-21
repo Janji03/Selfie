@@ -126,4 +126,53 @@ POST /reset-password/:token: Per resettare la password.
 - **`config/config.js`**
 Configurazione delle credenziali per il servizio di invio email (Mailtrap).
 
+## Sprint 3: Note
 
+## Descrizione
+
+In questo sprint è stato implementato il modulo per la gestione delle note degli utenti.
+Le note possono essere create, lette, aggiornate, eliminate e duplicate.
+Ogni nota è associata a un utente specifico tramite il suo ID.
+
+## Funzionalità Implementate
+
+Creazione di Note:
+Gli utenti possono creare una nuova nota fornendo un titolo, contenuto e categorie associate.
+
+Recupero delle Note
+Possibilità di ottenere tutte le note di un utente specifico tramite il suo ID
+
+Aggiornamento delle Note
+Gli utenti possono modificare il titolo, contenuto e categorie di una nota esistente.
+
+Eliminazione delle Note
+Gli utenti possono eliminare una nota specifica.
+
+Duplicazione delle Note
+Gli utenti possono creare una copia di una nota esistente. La nuova nota avrà il prefisso "Copia di" nel titolo.
+
+## File Implementati
+
+- **`models/Note.js`**
+Definisce lo schema MongoDB per il modello Note, che rappresenta una nota nel database:
+title: Titolo della nota (obbligatorio).
+content: Contenuto della nota (obbligatorio).
+categories: Categorie associate alla nota (array di stringhe).
+userID: Riferimento all'ID dell'utente (obbligatorio).
+createdAt: Data di creazione della nota.
+
+- **`controllers/notesController.js`**
+Contiene le funzioni per la gestione delle operazioni CRUD relative alle note:
+createNote: Crea una nuova nota nel database.
+getNotes: Recupera tutte le note associate a un utente.
+updateNote: Aggiorna il titolo, contenuto e categorie di una nota esistente.
+deleteNote: Cancella una nota specifica dal database.
+duplicateNote: Duplica una nota esistente creando una copia.
+
+- **`routes/noteRoutes.js`**
+Definisce le rotte per la gestione delle note:
+POST /: Crea una nuova nota.
+GET /: Recupera tutte le note di un utente.
+PUT /:id: Aggiorna una nota esistente.
+DELETE /:id: Elimina una nota specifica.
+POST /:id/duplicate: Duplica una nota esistente.

@@ -34,6 +34,11 @@ const Notes = () => {
       return;
     }
   
+    if (!newNote.content.trim()) {
+      setError("Il contenuto non può essere vuoto");
+      return;
+    }
+  
     createNote({ ...newNote, userID })
       .then((createdNote) => {
         setNotes((prev) => [...prev, createdNote]);
@@ -44,11 +49,9 @@ const Notes = () => {
   };
   
 
-  if (!isAuthenticated) return <p>Effettua il login per gestire le tue note.</p>;
-
   return (
     <div>
-      <h1>Gestione Note</h1>
+      <h1>Note</h1>
       <form onSubmit={handleCreateNote}>
         <input
           type="text"
@@ -63,7 +66,9 @@ const Notes = () => {
           placeholder="Contenuto"
           value={newNote.content}
           onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+          required
         />
+         {error && !newNote.title && <span className="error">Obbligatorio!</span>}
         
         <input
           type="text"

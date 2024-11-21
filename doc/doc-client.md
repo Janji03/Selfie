@@ -162,3 +162,56 @@ Se l'utente è autenticato, viene consentito l'accesso al contenuto della rotta 
 
 - **`src/App.js`**
 aggiunte le rotte di forgot e reset password
+
+## Sprint 3: Note 
+
+## Descrizione
+In questo sprint è stato sviluppato il modulo Note, che permette agli utenti autenticati di:
+Creare, Visualizzare, Ordinare ,Modificare, duplicare o eliminare una nota.
+Visualizzare i dettagli di una nota selezionata.
+
+## Funzionalità Implementate
+
+Creazione delle note:
+Gli utenti possono creare nuove note specificando un titolo, contenuto e categorie.
+Viene mostrato un messaggio di errore se il titolo, contenuto o le categorie non vengono forniti.
+
+Visualizzazione e gestione delle note:
+Elenco di tutte le note dell'utente. Dettaglio di una nota, con possibilità di modifica e salvataggio.
+
+Duplicazione di una nota esistente.
+
+Eliminazione di una nota selezionata.
+
+Ordinamento:
+Ordinamento alfabetico per titolo.
+Ordinamento per data di creazione.
+Ordinamento in base alla lunghezza del contenuto.
+Ordinamento alfabetico in base alla categoria.
+
+## File Implementati
+
+- **`src/components/notes/Notes.js`**
+Componente principale per la gestione delle note.
+Include:
+Il form per creare nuove note.
+La visualizzazione del dettaglio delle note.
+Il modulo di ordinamento.
+L'elenco delle note.
+
+- **`src/components/notes/NotesDetail.js`**
+Gestisce la visualizzazione e modifica dei dettagli di una singola nota.
+
+- **`src/components/notes/NotesView.js`**
+Mostra l'elenco delle note disponibili, con opzioni per aprire, duplicare ed eliminare ogni nota.
+
+- **`src/components/notes/SortNotes.js`**
+Fornisce i controlli per ordinare le note in base a diversi criteri.
+
+- **`src/services/noteService.js`**
+Contiene le funzioni per interagire con il backend:
+getNotes: Ottiene tutte le note associate a un utente.
+createNote: Crea una nuova nota.
+updateNote: Aggiorna una nota esistente.
+deleteNote: Elimina una nota.
+duplicateNote: Duplica una nota.
