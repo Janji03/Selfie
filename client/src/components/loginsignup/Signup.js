@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../../services/authService';
 import { AuthContext } from '../../context/AuthContext';
+import '../../styles/Auth.css'; 
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -25,10 +26,10 @@ const Signup = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Signup</h1>
       <form onSubmit={handleSignup}>
-        <div>
+        <div className="data">
           <label>Nome</label>
           <input 
             type="text" 
@@ -37,7 +38,7 @@ const Signup = () => {
             required 
           />
         </div>
-        <div>
+        <div className="data">
           <label>Email</label>
           <input 
             type="email" 
@@ -46,7 +47,7 @@ const Signup = () => {
             required 
           />
         </div>
-        <div>
+        <div className="data">
           <label>Password</label>
           <input 
             type="password" 
@@ -55,10 +56,13 @@ const Signup = () => {
             required 
           />
         </div>
-        <button type="submit">Registrati</button>
+        <div className="btn">
+          <div className="inner"></div>
+          <button type="submit">Registrati</button>
+        </div>
       </form>
       {error && <p>{error}</p>}
-      <p>Hai già un account? <a href="/login">Accedi</a></p>
+      <p className="signup-link">Hai già un account? <a href="/login">Accedi</a></p>
     </div>
   );
 };

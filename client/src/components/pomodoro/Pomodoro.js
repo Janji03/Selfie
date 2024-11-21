@@ -140,4 +140,5 @@ const Pomodoro = () => {
   </div>
 );
 };
+
 export default Pomodoro;

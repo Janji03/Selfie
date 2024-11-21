@@ -3,6 +3,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'; 
 import userRoutes from './routes/userRoutes.js';
+import notesRoutes from './routes/notesRoutes.js';
 import pomodoroRoutes from './routes/pomodoroRoutes.js'
 import config from './config/config.js';
 
@@ -19,6 +20,7 @@ app.use('/uploads', express.static('./uploads'));
 // Registrazione delle rotte
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notes', notesRoutes);
 app.use('/api/pomodoro', pomodoroRoutes);
 
 
