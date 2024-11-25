@@ -4,8 +4,8 @@ import { createPomodoro, getPreviousPomodoro } from '../../services/pomodoroServ
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
-  const [cycles, setCycles] = useState(0);
-  const [resetCycles, setResetCycles] = useState(5);
+  const [remainingcycles, setRemainingCycles] = useState(0);
+  const [initialCycles, setInitialCycles] = useState(0);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -13,11 +13,10 @@ const Pomodoro = () => {
   const [nPomodoro, setNPomodoro] = useState(0);
 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     alert('inizio ciclo di studio')
     setTimeLeft(studyTime * 60)
-    setResetCycles(cycles)
+    setRemainingCycles(initialCycles)
     setIsRunning(true)
     setOnBreak(false)
 
@@ -25,7 +24,7 @@ const Pomodoro = () => {
     const pomodoroData = {
       studyTime,
       breakTime,
-      cycles,
+      cycles: initialCycles,
     };
 
     try {
@@ -76,19 +75,22 @@ const Pomodoro = () => {
     
           return () => clearInterval(interval);
         } else if (timeLeft === 0) {
-          if (cycles > 0) {
-            setOnBreak(!onBreak); //se falsa sta per iniziare studytime, se vera sta per iniziare break 
+          if (remainingcycles > 0) {
+            //arriva da studio quindi onBreak falso allora setta pausa, arriva da pausa quindi onBreak vero allora setta studio
             if(!onBreak){ 
-              setCycles((prevCycles) => prevCycles - 1); //riduci cicli
+              alert('inizio pausa')
+              setRemainingCycles((prevCycles) => prevCycles - 1); //riduci cicli
               setTimeLeft(breakTime * 60); //pausa
             } else {
+              alert('inizio studio')
               setTimeLeft(studyTime * 60);
             }
-            
+            setOnBreak(!onBreak);
+
           } else { //se finiti cicli e tempo = 0
             alert('Fine ciclo di studio');
             setIsRunning(false);
-            setCycles(resetCycles)
+            setRemainingCycles(initialCycles)
           }
         }
       }
@@ -108,7 +110,8 @@ const Pomodoro = () => {
           {calculateProposals().map((proposal, index) => ( //setta i valori scelti dalle proposte
             <button key={index} type='button' onClick={() => {setStudyTime(proposal.study); 
                                                   setBreakTime(proposal.break); 
-                                                  setCycles(proposal.cycles)}}>
+                                                  setInitialCycles(proposal.cycles);
+                                                  setRemainingCycles(proposal.cycles)}}>
 
             Studio: {proposal.study} minuti - Pausa: {proposal.break} minuti - Cicli: {proposal.cycles}</button> 
           ))} 
@@ -124,7 +127,8 @@ const Pomodoro = () => {
       <input type="number" id="break-time" value={breakTime} required onChange={(e) => setBreakTime(Number(e.target.value))} /> <br/>
 
       <label htmlFor="cycles">Cicli:</label>
-      <input type="number" id="cycles" value={cycles} required  onChange={(e) => setCycles(Number(e.target.value))}/> <br/>
+      <input type="number" id="cycles" value={initialCycles} required  onChange={(e) => {setRemainingCycles(Number(e.target.value)); 
+                                                                                         setInitialCycles(Number(e.target.value));}}/> <br/>
 
       <button type="submit" onClick={handleSubmit}>Inizia Sessione</button>
     </form>
@@ -133,9 +137,34 @@ const Pomodoro = () => {
       <h1>Timer:{convertTime()}</h1>
 
       <input type='number' onChange={(e) => setNPomodoro(e.target.value)}></input>
-      <button onClick={handleGet}></button>
+      <button onClick={handleGet}>prova backend</button>
 
-      <h2>{nPomodoro}</h2>
+      <h2>{nPomodoro}</h2> <h2>{remainingcycles}</h2>
+
+
+
+     <button onClick={() => {
+      setTimeLeft(1)}
+      }>Vai al prossimo</button>
+
+
+      <button onClick={() => {
+        if(onBreak){
+          setTimeLeft(breakTime * 60)
+        } else setTimeLeft(studyTime * 60)
+        alert('ricomincia questo ciclo')
+      }}>Ricomincia questo</button>
+
+
+    <button onClick={() => {
+            handleSubmit();
+          }}>Ricomincia tutto</button>
+
+
+      <button onClick={() => {
+          setIsRunning(false);
+          alert('ciclo terminato forzato')
+      }}>Fine tutto</button>
 
   </div>
 );
