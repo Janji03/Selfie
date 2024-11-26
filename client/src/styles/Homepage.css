@@ -38,6 +38,17 @@
         font-size: 7vw;
         margin-right: 15px;
         margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .homepage-header i:hover{
+        transition: all 0.2s;
+        transform: scale(1.4);
+    }
+
+    .homepage-header i:not(:hover){
+        transition: all 0.2s;
+        transform: scale(1);
     }
     
 
@@ -98,11 +109,11 @@
     }
 
     .home-grid {
-        display: grid; /* Imposta il contenitore come griglia */
-        grid-template-columns: repeat(2, 1fr); /* 2 colonne uguali */
-        grid-template-rows: 2fr 2fr; /* Prima riga più bassa, le altre due uguali */
-        gap: 15px; /* Spaziatura tra gli elementi */
-        width: 90%; /* Dimensione della griglia */
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-rows: 2fr 2fr; 
+        gap: 15px; 
+        width: 90%; 
         height: 90%;
         padding: 5%;
     }
@@ -133,16 +144,28 @@
     }
     
     .elem-grid {
-        display: flex; /* Per centrare il contenuto del div */
+        display: flex; 
         justify-content: center;
         align-items: center;
-        color: #001789; /* Colore del testo */
-        font-size: 1.5rem; /* Dimensione del testo */
+        color: #001789; 
         border-radius: 20px;
         border: #ffffff solid 1px;
         background-color: #fff;
         font-family: 'Figtree';
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    }
+
+    .elem-grid:hover{
+        transition: all 0.2s;
+        transform: scale(1.05);
+        color: #fff;
+        background-color: #001789;
+        cursor: pointer;
+    }
+
+    .elem-grid:not(:hover){
+        transition: all 0.2s;
+        transform: scale(1);
     }
     
     /* Specifica per la seconda riga (elemento al 100%) */
@@ -174,6 +197,25 @@
         margin: 0;
     }
 
+    .half-width .bi-box-arrow-up-right{
+        position: absolute;
+        font-size: 3.5vw;
+        right: 5%;
+        top: 5%;
+        color: #ccd1ec;
+    }
+
+    .full-width .bi-box-arrow-up-right{
+        position: absolute;
+        font-size: 3.5vw;
+        left: 93%;
+        top: 5%;
+        color: #ccd1ec;
+    }
+
+    .full-width .bi-box-arrow-up-right:hover, .half-width .bi-box-arrow-up-right:hover{
+        color: #ffffff;
+    }
 
     
 
