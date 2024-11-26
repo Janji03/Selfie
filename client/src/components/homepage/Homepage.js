@@ -21,10 +21,6 @@ const Homepage = () => {
             <strong>Ottimizza</strong> il tempo, <br />
             <strong>Raggiungi</strong> i tuoi obiettivi.
           </p>
-          {/* <span className='homepage-top-buttons'>
-            <button className='login'> Log In</button>
-            <button className='signup'> Sign Up</button>
-          </span> */}
           
         </div>     
           
@@ -37,16 +33,19 @@ const Homepage = () => {
             <div className='subsection-calendar'>
               <h2>Calendario</h2>
               <p>Aggiungi eventi per non dimenticare</p>
+              <i className="bi bi-box-arrow-up-right"></i>
             </div>
             
           </div>
           <div className='elem-grid half-width'>
             <i className="bi bi-clock-history"></i>
             <h2>Pomodoro</h2>
+            <i className="bi bi-box-arrow-up-right"></i>
           </div>
           <div className='elem-grid half-width'>
             <i className="bi bi-journal-plus"></i>
             <h2>Note</h2>
+            <i className="bi bi-box-arrow-up-right"></i>
           </div>
         </div>   
       </div>

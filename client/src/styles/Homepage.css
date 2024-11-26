@@ -38,6 +38,17 @@
         font-size: 7vw;
         margin-right: 15px;
         margin-top: 10px;
+        cursor: pointer;
+    }
+
+    .homepage-header i:hover{
+        transition: all 0.2s;
+        transform: scale(1.4);
+    }
+
+    .homepage-header i:not(:hover){
+        transition: all 0.2s;
+        transform: scale(1);
     }
     
 
@@ -103,6 +114,11 @@
         grid-template-rows: 2fr 2fr; 
         gap: 15px; 
         width: 90%; 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        grid-template-rows: 2fr 2fr; 
+        gap: 15px; 
+        width: 90%; 
         height: 90%;
         padding: 5%;
     }
@@ -145,6 +161,7 @@
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
     
+    /* Specifica per la seconda riga (elemento al 100%) */
     .elem-grid.full-width {
         grid-column: 1 / -1; 
         display: flex;
@@ -172,6 +189,25 @@
         margin: 0;
     }
 
+    .half-width .bi-box-arrow-up-right{
+        position: absolute;
+        font-size: 3.5vw;
+        right: 5%;
+        top: 5%;
+        color: #ccd1ec;
+    }
+
+    .full-width .bi-box-arrow-up-right{
+        position: absolute;
+        font-size: 3.5vw;
+        left: 93%;
+        top: 5%;
+        color: #ccd1ec;
+    }
+
+    .full-width .bi-box-arrow-up-right:hover, .half-width .bi-box-arrow-up-right:hover{
+        color: #ffffff;
+    }
 
     
 
