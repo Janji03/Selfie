@@ -1,9 +1,5 @@
 import React from 'react';
 import HomepageStyle from '../../styles/Homepage.css'
-import ProfilePreview from '../preview/ProfilePreview'
-import CalendarPreview from '../preview/CalendarPreview'
-import PomodoroPreview from '../preview/PomodoroPreview'
-import NotesPreview from '../preview/NotesPreview'
 
 
 const Homepage = () => {
@@ -15,7 +11,7 @@ const Homepage = () => {
 
         <div className='homepage-header'>
         <h1>Selfie</h1>
-          <i class="bi bi-person-fill"></i>
+          <i className="bi bi-person-fill"></i>
         
         </div> 
         <div className='homepage-subheader'> 
@@ -24,35 +20,31 @@ const Homepage = () => {
             <strong>Ottimizza</strong> il tempo, <br />
             <strong>Raggiungi</strong> i tuoi obiettivi.
           </p>
-          {/* <span className='homepage-top-buttons'>
-            <button className='login'> Log In</button>
-            <button className='signup'> Sign Up</button>
-          </span> */}
           
         </div>     
           
       </div>
       <div className='homepage-bottom'>
         <div className='home-grid'>
-          <ProfilePreview/>
+          
           <div className='elem-grid full-width'>
-            <i class="bi bi-calendar-event"></i> 
+            <i className="bi bi-calendar-event"></i> 
             <div className='subsection-calendar'>
               <h2>Calendario</h2>
               <p>Aggiungi eventi per non dimenticare</p>
-              <CalendarPreview />
+              <i className="bi bi-box-arrow-up-right"></i>
             </div>
             
           </div>
           <div className='elem-grid half-width'>
-            <i class="bi bi-clock-history"></i>
+            <i className="bi bi-clock-history"></i>
             <h2>Pomodoro</h2>
-            <PomodoroPreview />
+            <i className="bi bi-box-arrow-up-right"></i>
           </div>
           <div className='elem-grid half-width'>
-            <i class="bi bi-journal-plus"></i>
+            <i className="bi bi-journal-plus"></i>
             <h2>Note</h2>
-            <NotesPreview />
+            <i className="bi bi-box-arrow-up-right"></i>
           </div>
         </div>   
       </div>

@@ -1,11 +1,11 @@
 // routes/pomodoroRoutes.js
 import express from 'express';
-import { createPomodoro } from '../controllers/pomodoroController.js';
+import { createPomodoro, getPreviousPomodoros } from '../controllers/pomodoroController.js';
 
 const router = express.Router();
 
-// Rotta per creare un nuovo Pomodoro
 router.post('/', createPomodoro);
 
+router.get('/', getPreviousPomodoros);
 
 export default router;
