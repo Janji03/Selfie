@@ -160,8 +160,21 @@
         font-family: 'Figtree';
         box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
     }
+
+    .elem-grid:hover{
+        transition: all 0.2s;
+        transform: scale(1.05);
+        color: #fff;
+        background-color: #001789;
+        cursor: pointer;
+    }
+
+    .elem-grid:not(:hover){
+        transition: all 0.2s;
+        transform: scale(1);
+    }
     
-    /* Specifica per la seconda riga (elemento al 100%) */
+
     .elem-grid.full-width {
         grid-column: 1 / -1; 
         display: flex;
@@ -171,7 +184,7 @@
     }
     
     .elem-grid.half-width {
-        grid-column: span 1; 
+        grid-column: span 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
