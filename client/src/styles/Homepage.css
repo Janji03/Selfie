@@ -106,6 +106,10 @@
         width: 100%;
         height: 61vh;
         border-radius: 30px 30px 0 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
     }
 
     .home-grid {
@@ -220,6 +224,35 @@
 
     .full-width .bi-box-arrow-up-right:hover, .half-width .bi-box-arrow-up-right:hover{
         color: #ffffff;
+    }
+
+    .home-preview{
+        height: 90%;
+        width: 90%;
+        color: #001789; 
+        border-radius: 20px;
+        border: #ffffff solid 1px;
+        background-color: #fff;
+        font-family: 'Figtree';
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        margin: auto;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .home-preview i{
+        position: absolute;
+        right: 10%;
+        top: 9%;
+        color: #ccd1ec;
+        cursor: pointer;
+    }
+
+    .home-preview i:hover{
+        color: #8085a4;
     }
 
     
