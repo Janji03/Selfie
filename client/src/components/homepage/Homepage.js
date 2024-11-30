@@ -9,11 +9,6 @@ const Homepage = () => {
     <div>
       <div className='homepage-top'>
 
-        <div className='homepage-header'>
-        <h1>Selfie</h1>
-          <i className="bi bi-person-fill"></i>
-        
-        </div> 
         <div className='homepage-subheader'> 
         <p>
             <strong>Organizza</strong> il tuo studio, <br />
