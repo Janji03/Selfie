@@ -23,9 +23,10 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
+    <div className="auth-container">
+    <div className="auth-card">
       <h1>Login</h1>
-      <form onSubmit={handleLogin}>
+      <form className="auth-form" onSubmit={handleLogin}>
         <div className="data">
           <label>Email</label>
           <input 
@@ -44,15 +45,16 @@ const Login = () => {
             required 
           />
         </div>
-        <div className="btn">
-          <div className="inner"></div>
+        <div className="auth-btn">
           <button type="submit">Accedi</button>
         </div>
       </form>
-      {error && <p>{error}</p>}
-      <p className="signup-link">Non hai un account? <a href="/signup">Registrati</a></p>
-      <p className="forgot-pass"><a href="/forgot-password">Dimenticata Password ?</a></p>
+      {error && <p className="auth-error">{error}</p>}
+      <p className="auth-link">Non hai un account? <a href="/signup">Registrati</a></p>
+      <p className="auth-link"><a href="/forgot-password">Dimenticata Password ?</a></p>
     </div>
+  </div>
+  
   );
 };
 
