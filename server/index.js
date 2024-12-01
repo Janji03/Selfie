@@ -4,6 +4,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js'; 
 import userRoutes from './routes/userRoutes.js';
 import notesRoutes from './routes/notesRoutes.js';
+import pomodoroRoutes from './routes/pomodoroRoutes.js'
 import config from './config/config.js';
 
 const app = express();
@@ -20,6 +21,8 @@ app.use('/uploads', express.static('./uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/pomodoro', pomodoroRoutes);
+
 
 const PORT = config.port;
 app.listen(PORT, () => {

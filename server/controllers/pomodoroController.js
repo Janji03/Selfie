@@ -12,3 +12,20 @@ export const createPomodoro = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+ export const getPreviousPomodoros = async (req, res) => {
+  try {
+    //traduce limit in intero
+    const limit = parseInt(req.query.limit, 10);
+
+    //pomdodoros contiene i risultati dellaa query
+    const pomodoros = limit       //.find query su Pomodoro, .sort({ date: -1 }) filtra in base a date in ordine decresecente
+      ? await Pomodoro.find().sort({ date: -1 }).limit(limit) // n pomodori
+      : await Pomodoro.find().sort({ date: -1 }); // tutti i pomodori
+
+    res.status(200).json(pomodoros);
+  } catch (error) {
+    res.status(500).json({ message: 'Errore nel recupero dei pomodori', error: error.message });
+  }
+};
