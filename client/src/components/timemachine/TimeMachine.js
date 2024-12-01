@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTimeMachine } from '../../context/TimeMachineContext';
 
 const formatDateTime = (date) => {
@@ -19,49 +19,36 @@ const formatDateTimeForInput = (date) => {
 };
 
 const TimeMachine = () => {
-    const { time, setTime } = useTimeMachine();
-    const [currentTime, setCurrentTime] = useState(time);
+    const { time, setTime } = useTimeMachine(); 
     const [inputTime, setInputTime] = useState(formatDateTimeForInput(time)); 
-
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime((prevTime) => new Date(prevTime.getTime() + 1000));
-        }, 1000);
-
-        return () => clearInterval(timer);
-    }, []);
 
     const handleInputChange = (event) => {
         const value = event.target.value;
         const date = new Date(value);
-    
+
         if (!isNaN(date.getTime())) {
             setInputTime(value);
         } else {
-            const correctedDate = new Date(currentTime);
-            correctedDate.setDate(1); 
-            setInputTime(formatDateTimeForInput(correctedDate));
+            setInputTime(formatDateTimeForInput(time));
         }
     };
 
     const handleUpdateTime = () => {
         const newTime = new Date(inputTime); 
         setTime(newTime); 
-        setCurrentTime(newTime); 
     };
 
     const resetToLocalTime = () => {
         const localTime = new Date();
         setTime(localTime);
-        setCurrentTime(localTime);
         setInputTime(formatDateTimeForInput(localTime)); 
     };
 
-    const isInputDifferent = formatDateTimeForInput(currentTime) !== inputTime;
+    const isInputDifferent = formatDateTimeForInput(time) !== inputTime;
 
     return (
         <div>
-            <p>Current Time: {formatDateTime(currentTime)}</p>
+            <p>Current Time: {formatDateTime(time)}</p> 
             <input
                 type="datetime-local"
                 onChange={handleInputChange}
@@ -69,7 +56,7 @@ const TimeMachine = () => {
             />
             {isInputDifferent && (
                 <button onClick={handleUpdateTime}>Update Time</button>
-            )} 
+            )}
             <button onClick={resetToLocalTime}>Reset to Local Time</button>
         </div>
     );

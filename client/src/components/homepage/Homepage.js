@@ -1,7 +1,6 @@
 import React from 'react';
 import HomepageStyle from '../../styles/Homepage.css'
 
-
 import TimeMachinePreview from '../preview/TimeMachinePreview';
 
 const Homepage = () => {
