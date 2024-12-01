@@ -29,7 +29,6 @@ export const updateUser = async (req, res) => {
     user.email = req.body.email || user.email;
     user.bio = req.body.bio || user.bio;
     user.birthday = req.body.birthday || user.birthday;
-    user.pronouns = req.body.pronouns || user.pronouns;
     user.sex = req.body.sex || user.sex;
 
     const updatedUser = await user.save();
@@ -40,7 +39,6 @@ export const updateUser = async (req, res) => {
       email: updatedUser.email,
       bio: updatedUser.bio,
       birthday: updatedUser.birthday,
-      pronouns: updatedUser.pronouns,
       sex: updatedUser.sex,
     });
   } catch (error) {

@@ -106,8 +106,6 @@ const Profile = () => {
           <p>Bio: {user.bio}</p>
           <p>Birthday: {user.birthday}</p>
           <p>Sex: {user.sex}</p>
-          <p>Pronouns: {user.pronouns}</p>
-
 
         </div>
       ) : (

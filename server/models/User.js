@@ -30,14 +30,9 @@ const userSchema = new mongoose.Schema({
     type: Date, 
     default: null,
   },
-  pronouns: {
-    type: String,
-    enum: ['he/him', 'she/her', 'they/them', 'other', 'prefer not to say'],
-    default: 'prefer not to say', 
-  },
   sex: {
     type: String,
-    enum: ['male', 'female', 'other', 'prefer not to say'],
+    enum: ['male', 'female', 'prefer not to say'],
     default: 'prefer not to say', 
   },
   resetPasswordToken: String,

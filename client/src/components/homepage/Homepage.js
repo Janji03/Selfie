@@ -3,6 +3,7 @@ import ProfilePreview from '../preview/ProfilePreview';
 import CalendarPreview from '../preview/CalendarPreview';
 import PomodoroPreview from '../preview/PomodoroPreview';
 import NotesPreview from '../preview/NotesPreview';
+import TimeMachinePreview from '../preview/TimeMachinePreview';
 
 const Homepage = () => {
   return (
@@ -13,6 +14,7 @@ const Homepage = () => {
         <CalendarPreview />
         <PomodoroPreview />
         <NotesPreview />
+        <TimeMachinePreview />
       </div>
     </div>
   );

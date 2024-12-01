@@ -51,7 +51,7 @@ const Login = () => {
       </form>
       {error && <p>{error}</p>}
       <p className="signup-link">Non hai un account? <a href="/signup">Registrati</a></p>
-      <p className="forgot-pass"><a href="/forgot-password">Dimenticata Password ?</a></p>
+      <p className="forgot-pass"><a href="/forgot-password">Hai dimenticato la password?</a></p>
     </div>
   );
 };
