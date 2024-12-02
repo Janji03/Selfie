@@ -7,7 +7,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editedTitle, setEditedTitle] = useState(note?.title || "");
   const [editedCategories, setEditedCategories] = useState(note?.categories.join(", ") || "");
 
-  // Sync the note data when it changes
   useEffect(() => {
     if (note) {
       setEditedTitle(note.title);
@@ -26,44 +25,64 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       .then(() => {
         refreshNotes();
         setEditMode(false);
-        onClose(); // Chiude automaticamente dopo il salvataggio
+        onClose();
       })
       .catch(console.error);
   };
 
-  if (!note) return null; // Se non c'è una nota, non mostriamo nulla
+  if (!note) return null; // Non mostrare nulla se non c'è una nota selezionata
 
   return (
-    <div>
+    <div className="note-detail-container">
       {editMode ? (
-        <div>
+        <div className="edit-note-card">
+          <h2>Modifica Nota</h2>
           <input
             type="text"
             value={editedTitle}
             onChange={(e) => setEditedTitle(e.target.value)}
             placeholder="Modifica Titolo"
+            required
           />
           <textarea
             value={editedContent}
             onChange={(e) => setEditedContent(e.target.value)}
             placeholder="Modifica Contenuto"
+            required
           />
           <input
             type="text"
             value={editedCategories}
             onChange={(e) => setEditedCategories(e.target.value)}
             placeholder="Modifica Categorie (separate da virgola)"
+            required
           />
-          <button onClick={handleSave}>Salva e Chiudi</button>
+          <div className="note-actions">
+            <button className="save-note-button" onClick={handleSave}>
+              Salva e Chiudi
+            </button>
+            <button className="note-button" onClick={() => setEditMode(false)}>
+              Annulla
+            </button>
+          </div>
         </div>
       ) : (
-        <div>
+        <div className="note-view-card">
           <h2>{note.title}</h2>
           <p>{note.content}</p>
-          <p><strong>Categorie:</strong> {note.categories.join(", ")}</p>
+          <p>
+            <strong>Categorie:</strong> {note.categories.join(", ")}
+          </p>
+          <div className="note-actions">
+            <button className="note-button" onClick={() => setEditMode(true)}>
+              Modifica
+            </button>
+            <button className="note-button" onClick={onClose}>
+              Chiudi
+            </button>
+          </div>
         </div>
       )}
-      <button onClick={() => setEditMode(!editMode)}>{editMode ? "Annulla" : "Modifica"}</button>
     </div>
   );
 };
