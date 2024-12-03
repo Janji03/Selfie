@@ -12,10 +12,14 @@ export const createPomodoro = async (pomodoroData) => {
 };
 
 //ottenere Pomodori precedenti
-export const getPreviousPomodoro = async (nPomodoro) => {
+export const getUserPomodoros = async (nPomodoro, userID) => {
   try {
     const res = await axiosInstance.get('/pomodoro', {
-      params: { limit: nPomodoro }}); 
+      params: { 
+        limit: nPomodoro, 
+        userID: userID
+      }
+    });
     return res.data;
   } catch (error) {
     console.error('Errore nel recupero dei Pomodori precedenti:', error);

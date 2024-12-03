@@ -3,9 +3,10 @@ import Pomodoro from '../models/Pomodoro.js';
 
 // Funzione per creare un nuovo Pomodoro
 export const createPomodoro = async (req, res) => {
+  const { studyTime, breakTime, cycles, userID } = req.body;
+  
   try {
-    const { studyTime, breakTime, cycles } = req.body;
-    const newPomodoro = new Pomodoro({ studyTime, breakTime, cycles });
+    const newPomodoro = new Pomodoro({ studyTime, breakTime, cycles, userID});
     await newPomodoro.save();
     res.status(201).json(newPomodoro);
   } catch (error) {
@@ -14,15 +15,19 @@ export const createPomodoro = async (req, res) => {
 };
 
 
- export const getPreviousPomodoros = async (req, res) => {
+export const getUserPomodoros = async (req, res) => {
   try {
-    //traduce limit in intero
     const limit = parseInt(req.query.limit, 10);
+    const userID = req.query.userID;
 
-    //pomdodoros contiene i risultati dellaa query
-    const pomodoros = limit       //.find query su Pomodoro, .sort({ date: -1 }) filtra in base a date in ordine decresecente
-      ? await Pomodoro.find().sort({ date: -1 }).limit(limit) // n pomodori
-      : await Pomodoro.find().sort({ date: -1 }); // tutti i pomodori
+    if (!userID) {
+      return res.status(400).json({ message: 'userID è richiesto.' });
+    }
+
+    const pomodoros = limit 
+    ? await Pomodoro.find({ userID }).limit(limit)
+    : await Pomodoro.find({ userID });
+
 
     res.status(200).json(pomodoros);
   } catch (error) {

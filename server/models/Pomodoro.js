@@ -13,11 +13,17 @@ const PomodoroSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
   date: {
     type: Date,
     default: Date.now,
-  },
+  }
 });
 
 const Pomodoro = mongoose.model('Pomodoro', PomodoroSchema);
 export default Pomodoro;
+
+

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { createPomodoro, getPreviousPomodoro } from '../../services/pomodoroService';
+import { createPomodoro, getUserPomodoros } from '../../services/pomodoroService';
+import PomodoroStyle from '../../styles/Pomodoro.css';
+
 
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
@@ -11,6 +13,8 @@ const Pomodoro = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [onBreak, setOnBreak] = useState(false); 
   const [nPomodoro, setNPomodoro] = useState(0);
+  const userID = localStorage.getItem("userID"); 
+
 
 
   const handleSubmit = async () => {
@@ -22,26 +26,28 @@ const Pomodoro = () => {
 
 
     const pomodoroData = {
-      studyTime,
-      breakTime,
+      studyTime: studyTime,
+      breakTime: breakTime,
       cycles: initialCycles,
+      userID: userID
     };
 
-    try {
-      await createPomodoro(pomodoroData);
-      console.log('Pomodoro salvato correttamente');
-    } catch (error) {
-      console.error('Errore creazione pomodoro: ', error);
-    }
+
+  try {
+    await createPomodoro(pomodoroData);
+    console.log('Pomodoro salvato correttamente');
+  } catch (error) {
+    console.error('Errore creazione pomodoro:', error);
+  }
   };
 
   const handleGet = async () => {
      try{
-      const listaPomodoro = await getPreviousPomodoro(nPomodoro);
-      console.log('Get okay')
+      const listaPomodoro = await getUserPomodoros(nPomodoro, userID);
+      console.log('Get pomodoro okay')
       console.log(listaPomodoro)
      } catch(error) {
-      console.error('Get non okay: ', error)
+      console.error('Get pomodoro non okay: ', error)
      }
   }
 
@@ -100,7 +106,92 @@ const Pomodoro = () => {
 
   return (
     <div>
-    <h1>Pomodoro Timer</h1>
+    <div className='pomodoro'>
+      <div className='pomodoro-header'>
+        <div className='pomodoro-logo'><h1>Selfie</h1></div>
+        <div className='pomodoro-nav'>
+          <h4 className='pomodoro-nav-page'>Pomodoro</h4>
+          <h4>Note</h4>
+          <h4>Calendario</h4>
+          <i className="bi bi-person-fill"></i>
+        </div>
+      </div>
+
+      <div className='pomodoro-body'>
+        <div className='left-pomodoro'>
+        <h1>POMODORO TECHNIQUE</h1>
+        <form className="study-form">
+
+          <div className='pomo-info-form'>
+          <label htmlFor="total-time">Tempo complessivo:</label>
+                <input type="number" id="total-time"min={1} onChange={(e) => setTotalMinutes(e.target.value)} /> <br/>
+                {totalMinutes > 0 ? (
+                  <>
+                    {calculateProposals().map((proposal, index) => ( //setta i valori scelti dalle proposte
+                      <button key={index} type='button' onClick={() => {setStudyTime(proposal.study); 
+                                                            setBreakTime(proposal.break); 
+                                                            setInitialCycles(proposal.cycles);
+                                                            setRemainingCycles(proposal.cycles)}}>
+
+                      Studio: {proposal.study} minuti - Pausa: {proposal.break} minuti - Cicli: {proposal.cycles}</button> 
+                    ))} 
+                  </>
+                ):('')
+                }     
+          </div>
+      
+
+      <div className='pomo-info-form'>
+        <label htmlFor="study-time">Tempo di studio (minuti):</label>
+        <input type="number" id="study-time" min={1} value={studyTime} required onChange={(e) => setStudyTime(Number(e.target.value))} /> <br/>
+      </div>
+ 
+      <div className='pomo-info-form'>
+        <label htmlFor="break-time">Tempo di pausa (minuti):</label>
+        <input type="number" id="break-time" min={1} value={breakTime} required onChange={(e) => setBreakTime(Number(e.target.value))} /> <br/>
+      </div>
+
+      <div className='pomo-info-form'>
+        <label htmlFor="cycles">Cicli:</label>
+        <input type="number" id="cycles" min={1} value={initialCycles} required  onChange={(e) => {setRemainingCycles(Number(e.target.value)); 
+                                                                                           setInitialCycles(Number(e.target.value));}}/> <br/>
+
+        <button className='but-plus' type="button" onClick={() => setInitialCycles(initialCycles + 1)}>+</button>
+        <button className='but-min' type="button" onClick={() => setInitialCycles(Math.max(1, initialCycles - 1))}>-</button> 
+        <button className='but-start' type="submit" onClick={handleSubmit}>Inizia Sessione</button>
+      </div>
+      
+    </form>
+
+
+        </div>
+        <div className='right-pomodoro'>
+           <button onClick={handleGet}> get</button> 
+        </div>
+
+      </div>
+
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {/* <h1>Pomodoro Timer</h1>
 
     <form id="study-form">
       <label htmlFor="total-time">Tempo complessivo di studio (minuti):</label>
@@ -164,7 +255,7 @@ const Pomodoro = () => {
       <button onClick={() => {
           setIsRunning(false);
           alert('ciclo terminato forzato')
-      }}>Fine tutto</button>
+      }}>Fine tutto</button> */}
 
   </div>
 );
