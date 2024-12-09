@@ -89,6 +89,9 @@ const Notes = () => {
             <button className="create-note-button" type="submit">
               Crea Nota
             </button>
+            <button className="create-note-button" onClick={()=>setIsCreating(false)}>
+              Annulla
+            </button>
           </form>
         </div>
       )}
