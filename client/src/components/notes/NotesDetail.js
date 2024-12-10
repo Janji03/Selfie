@@ -9,6 +9,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
 
   useEffect(() => {
     if (note) {
+      setEditMode(false); // Reset editMode quando viene selezionata una nuova nota
       setEditedTitle(note.title);
       setEditedContent(note.content);
       setEditedCategories(note.categories.join(", "));
@@ -73,7 +74,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
           <p>
             <strong>Categorie:</strong> {note.categories.join(", ")}
           </p>
-          <div className="note-actions">
+          <div className="note-actions" style={{marginBottom: "10px"}}>
             <button className="note-button" onClick={() => setEditMode(true)}>
               Modifica
             </button>

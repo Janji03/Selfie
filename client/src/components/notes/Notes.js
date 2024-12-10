@@ -4,7 +4,7 @@ import { createNote, getNotes } from "../../services/noteService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
-import '../../styles/Notes.css';
+import "../../styles/Notes.css";
 
 const Notes = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -27,6 +27,13 @@ const Notes = () => {
         .catch((err) => setError(err.message));
     }
   }, [isAuthenticated, userID]);
+
+  // Sincronizza la selezione della nota con l'elenco delle note
+  useEffect(() => {
+    if (selectedNote && !notes.some((note) => note._id === selectedNote._id)) {
+      setSelectedNote(null); // Chiude il form se la nota è stata eliminata
+    }
+  }, [notes, selectedNote]);
 
   const handleCreateNote = (e) => {
     e.preventDefault();
@@ -89,7 +96,10 @@ const Notes = () => {
             <button className="create-note-button" type="submit">
               Crea Nota
             </button>
-            <button className="create-note-button" onClick={()=>setIsCreating(false)}>
+            <button
+              className="create-note-button"
+              onClick={() => setIsCreating(false)}
+            >
               Annulla
             </button>
           </form>
