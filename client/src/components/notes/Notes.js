@@ -86,7 +86,7 @@ const Notes = () => {
             />
             <input
               type="text"
-              placeholder="Categorie (separate da virgola)"
+              placeholder="Categoria"
               value={newNote.categories.join(", ")}
               onChange={(e) =>
                 setNewNote({ ...newNote, categories: e.target.value.split(",") })
@@ -117,6 +117,7 @@ const Notes = () => {
         setSelectedNote={setSelectedNote}
         refreshNotes={() => getNotes(userID).then(setNotes)}
       />
+    {error && <p className="error-message">{error}</p>} 
     </div>
   );
 };
