@@ -18,7 +18,7 @@ const formatDateTimeForInput = (date) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-const TimeMachine = () => {
+const TimeMachine = ({ onTimeUpdate }) => { 
     const { time, setTime } = useTimeMachine(); 
     const [inputTime, setInputTime] = useState(formatDateTimeForInput(time)); 
 
@@ -36,12 +36,14 @@ const TimeMachine = () => {
     const handleUpdateTime = () => {
         const newTime = new Date(inputTime); 
         setTime(newTime); 
+        onTimeUpdate(); 
     };
 
     const resetToLocalTime = () => {
         const localTime = new Date();
         setTime(localTime);
         setInputTime(formatDateTimeForInput(localTime)); 
+        onTimeUpdate();
     };
 
     const isInputDifferent = formatDateTimeForInput(time) !== inputTime;

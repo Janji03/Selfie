@@ -114,7 +114,7 @@ const Profile = () => {
 
       <button onClick={toggleEditModal}>Edit Profile</button>
 
-      <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile">
+      <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
         <EditProfileForm
           formData={formData}
           handleInputChange={handleInputChange}
