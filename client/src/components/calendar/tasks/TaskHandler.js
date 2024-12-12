@@ -21,6 +21,7 @@ const TaskHandler = ({
   setIsFormOpen,
   setTaskFormInitialData,
   currentTime,
+  isTimeUpdated,
   calendarTimeZone,
 }) => {
 
@@ -96,6 +97,7 @@ const TaskHandler = ({
         status: "pending",
         isOverdue: isPastDeadline, 
         deadline,
+        wasAllDay: data.allDay,
         timeZone: data.timeZone,
       },
     };
@@ -179,7 +181,7 @@ const TaskHandler = ({
           allDay: true,
         };
       } else if (taskDeadline >= today && task.extendedProps.isOverdue) {
-        const wasAllDay = taskDeadline.split("T")[1].slice(0, 5) === '00:00:00';
+        const wasAllDay = task.extendedProps.wasAllDay;
         const startDateTime = new Date(taskDeadline);
         const endDateTime = new Date(startDateTime.getTime() + 30 * 60 * 1000);
         return {
@@ -197,7 +199,7 @@ const TaskHandler = ({
       return { ...task };  
     });
     
-    if (new Date(currentTime).getTime() === new Date().getTime()) {
+    if (isTimeUpdated) {
       setTasks(updatedTasks);
     } else {
       await Promise.all(updatedTasks.map((task) => updateTask(task.id, task)));  

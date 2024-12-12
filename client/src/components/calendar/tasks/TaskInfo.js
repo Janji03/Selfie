@@ -43,6 +43,7 @@ const TaskInfo = ({
 
     const deadlineDate = DateTime.fromISO(selectedTask.extendedProps.deadline, { zone: "UTC" }).setZone(selectedTask.extendedProps.timeZone).toISO().split("T")[0];
     const deadlineTime = DateTime.fromISO(selectedTask.extendedProps.deadline, { zone: "UTC" }).setZone(selectedTask.extendedProps.timeZone).toISO().split("T")[1].slice(0, 5);
+    const isAllDay = selectedTask.extendedProps.wasAllDay;
 
     return (
       <div style={{ padding: "20px", borderRadius: "10px", ...taskStatusStyle }}>
@@ -55,14 +56,14 @@ const TaskInfo = ({
         </p>
 
         {/* Deadline Date Time*/}
-        {!selectedTask.allDay && (
+        {!isAllDay && (
             <p>
                 <strong>Deadline Time:</strong> {deadlineTime}
             </p>
         )}
 
         {/* All Day Event Indicator */}
-        {selectedTask.allDay && <p><strong>All Day Task</strong></p>}
+        {isAllDay && <p><strong>All Day Task</strong></p>}
   
         {/* Task Completion Status */}
         <p>

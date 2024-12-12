@@ -19,6 +19,10 @@ const ExtendedPropsSchema = new Schema({
         type: Date,
         required: true
     },
+    wasAllDay: {
+        type: Boolean,
+        required: true,
+    },
     itemType: {
       type: String,
       default: "task"

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
+import listPlugin from "@fullcalendar/list";
 import interactionPlugin from '@fullcalendar/interaction';
 import rrulePlugin from '@fullcalendar/rrule';
 import luxonPlugin from "@fullcalendar/luxon";
@@ -107,6 +108,7 @@ const Calendar = () => {
     setIsFormOpen,
     setTaskFormInitialData,
     currentTime,
+    isTimeUpdated,
     calendarTimeZone,
   });
 
@@ -141,9 +143,15 @@ const Calendar = () => {
   }, [isAuthenticated, userID]);
 
   useEffect(() => {
-    const combined = [...events, ...tasks];
-    setCombinedEvents(combined);
-  }, [events, tasks]);
+    if (currentView === "eventList") {
+      setCombinedEvents(events);
+    } else if (currentView === "taskList") {
+      setCombinedEvents(tasks);
+    } else {
+      const combined = [...events, ...tasks];
+      setCombinedEvents(combined);
+    }
+   }, [events, tasks, currentView]);
 
   useEffect(() => {
     const checkForOverdueTasksAtMidnight = async () => {
@@ -169,6 +177,15 @@ const Calendar = () => {
   useEffect(() => {
     checkForOverdueTasks();
   }, [isTimeUpdated]);
+
+  const handleViewChange = ({ view }) => {
+    if (view.type === "eventList" || view.type === "taskList") {
+      setCombinedEvents(view.type === "eventList" ? events : tasks);
+    } else {
+      setCombinedEvents([...events, ...tasks]); 
+    }
+    setCurrentView(view.type);
+  };
 
   const handleDateClick = (info) => {
     const startDateTime = info.dateStr;
@@ -231,7 +248,8 @@ const Calendar = () => {
     if (
       view.type === "timeGridDay" ||
       view.type === "timeGridWeek" ||
-      view.type === "listWeek"
+      view.type === "eventList" ||
+      view.type === "taskList" 
     ) {
       baseDate = new Date(view.currentStart);
     } else {
@@ -346,12 +364,12 @@ const Calendar = () => {
       <FullCalendar
         ref={calendarRef}
         key={isTimeUpdated ? currentTime.getTime() : 'static'} 
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, rrulePlugin, luxonPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, rrulePlugin, luxonPlugin]}
         initialView={currentView}
         headerToolbar={{
           left: 'today prev,next addEventButton',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay eventList,taskList',
         }}
         customButtons={{
           addEventButton: {
@@ -359,13 +377,23 @@ const Calendar = () => {
             click: handleAddItem,
           },
         }}
+        views={{
+          eventList: {
+            type: "list", 
+            duration: { month: 1 },
+            buttonText: "Event List",
+          },
+          taskList: {
+            type: "list", 
+            duration: { month: 1 },
+            buttonText: "Task List",
+          },
+        }}
         events={combinedEvents}
         timeZone={calendarTimeZone}
         now={currentTime} 
         nowIndicator={true}
-        viewDidMount={({ view }) => {
-          setCurrentView(view.type);
-        }}
+        datesSet={handleViewChange}
         dateClick={handleDateClick}
         eventClick={handleItemClick}
         selectable={true}

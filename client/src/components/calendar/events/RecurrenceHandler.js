@@ -35,7 +35,7 @@ const RecurrenceHandler = () => {
     // Start recurrence
     const startDateStr = DateTime.fromISO(startDateTime, { zone: 'utc' });
     const rruleStart = startDateStr.toFormat("yyyyMMdd'T'HHmmss'Z'");
-    let rruleString = `DTSTART:${rruleStart}` + '\n';
+    let rruleString = `DTSTART:${rruleStart}\n`;
 
     // Default recurrences
     if (type !== "CUSTOM") {

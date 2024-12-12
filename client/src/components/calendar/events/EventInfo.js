@@ -128,10 +128,22 @@ const EventInfo = ({ selectedEvent, selectedOccurrence, handleEditEvent, handleD
 
       {/* Event Time Information */}
       <p>
-        <strong>Start:</strong> {DateTime.fromISO(start, { zone: "UTC" }).setZone(selectedEvent.extendedProps.timeZone).toLocaleString(DateTime.DATETIME_FULL)}
+        <strong>Start:</strong> {selectedEvent.allDay
+          ? DateTime.fromISO(start, { zone: "UTC" })
+              .setZone(selectedEvent.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATE_SHORT) 
+          : DateTime.fromISO(start, { zone: "UTC" })
+              .setZone(selectedEvent.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
       <p>
-        <strong>End:</strong> {DateTime.fromISO(end, { zone: "UTC" }).setZone(selectedEvent.extendedProps.timeZone).toLocaleString(DateTime.DATETIME_FULL)}
+        <strong>End:</strong> {selectedEvent.allDay
+          ? DateTime.fromISO(end, { zone: "UTC" })
+              .setZone(selectedEvent.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATE_SHORT) 
+          : DateTime.fromISO(end, { zone: "UTC" })
+              .setZone(selectedEvent.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
       {/* All Day Event Indicator */}
