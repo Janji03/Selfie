@@ -12,13 +12,24 @@ import ProtectedRoute from './components/loginsignup/ProtectedRoute';
 import ForgotPassword from './components/loginsignup/ForgotPassword'; 
 import ResetPassword from './components/loginsignup/ResetPassword'; 
 
-
-
-
 const App = () => {
+  const globalTextStyle = {
+    position: 'fixed',
+    top: '10px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    fontSize: '2rem',
+    color: '#001789',
+    fontWeight: 'bold',
+    zIndex: 9999
+  };
+
   return (
     <AuthProvider>
       <Router>
+        {/* Scritta globale visibile su tutte le pagine */}
+        <div style={globalTextStyle}>selfie</div>
+        
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
