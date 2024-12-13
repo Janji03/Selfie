@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { getNotes } from "../../services/noteService";
 import { AuthContext } from "../../context/AuthContext";
+import noteIcon from '../notes/notepad.png'
 
 const NotesPreview = () => {
   const [recentNotes, setRecentNotes] = useState([]);
@@ -35,23 +36,26 @@ const NotesPreview = () => {
   }
 
   return (
-    <div>
-      <h3>Preview Note</h3>
-      <p> prendi note e appunti in modo intelligente.</p>
+    <div className="note-preview">
+                      <h3>Ultime 3 note:</h3>
       {recentNotes.length > 0 ? (
-        <ul>
+        <ul className="note-list">
           {recentNotes.map((note) => (
-            <li key={note.id}>
+            <div className="note-item">
+              <li key={note.id} className='note-content'>
               <h2>{note.title}</h2>
               <h4>{note.categories}</h4>
               <p>{note.content.slice(0, 30)}...</p>
-            </li>
+              </li>
+            </div>
+              
+            
           ))}
         </ul>
       ) : (
         <p>Non ci sono note recenti.</p>
       )}
-      <Link to="/notes">Vai alle Note</Link>
+      <Link to="/notes" className="note-link">Vai alle Note</Link>
     </div>
   );
 };

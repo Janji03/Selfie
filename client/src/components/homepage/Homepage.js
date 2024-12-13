@@ -101,7 +101,10 @@ const Homepage = () => {
         <div className="bottom-home-page-section section-white">
           <div className="section-description">
             <h1 className="title">Calendario</h1>
-            <p className="subtitle">Organizza le tue giornate in modo semplice e intuitivo.</p>
+            <p className='subtitle'>
+              Organizza i tuoi impegni con il nostro <strong>calendario interattivo</strong>. Pianifica attività quotidiane, 
+              eventi e <em>scadenze importanti</em>. Mantieni il controllo del tuo tempo in modo semplice e visivamente chiaro.
+            </p>
           </div>
           <div className="preview">
             <div className="preview-box">Anteprima Calendario</div>
@@ -117,14 +120,18 @@ const Homepage = () => {
 
           <div className="section-description">
             <h1 className="title">Pomodoro Technique</h1>
-            <p className="subtitle">Massimizza la tua produttività con sessioni di lavoro focalizzate.</p>
+            <p className="subtitle">Aumenta la tua produttività con la tecnica <strong>Pomodoro</strong>. Lavora in sessioni di <em>tempo concentrato</em>, 
+              seguite da brevi pause. Ottieni il massimo dal tuo lavoro, rimanendo motivato e concentrato.
+            </p>
           </div>
         </div>
 
         <div className="bottom-home-page-section section-white">
           <div className="section-description">
             <h1 className="title">Note</h1>
-            <p className="subtitle">Appunta le tue idee e i tuoi pensieri in un istante.</p>
+            <p className="subtitle">Tieni traccia delle tue idee con il nostro <strong>blocco note digitale</strong>. Salva appunti rapidi, 
+            idee creative e <em>pensieri importanti</em> in un unico posto. Semplice, veloce ed efficiente.
+            </p>
           </div>
 
           <div className="preview">

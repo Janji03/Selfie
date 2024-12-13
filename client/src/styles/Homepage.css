@@ -426,17 +426,18 @@
             flex-direction: column;
             width: 35%;
             text-align: center;
+            justify-content: center;
         }
         
         .section-description .title {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-size: 2.4vw;
+            margin: 0;
         }
         
         .section-description .subtitle {
             font-family: 'Figtree', sans-serif;
-            font-size: 1rem;
+            font-size: 1.4vw;
         }
         
         .preview {
@@ -449,16 +450,13 @@
         
         .preview-box {
             background-color: #fff;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 10px 50px;
+            box-shadow: rgba(0, 0, 0, 0.18) 0px 10px 50px;
             border-radius: 10px;
             padding: 20px;
             width: 80%;
-            height: 80%;
+            height: 90%;
             display: flex;
-            justify-content: center;
-            align-items: center;
             font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
             text-align: center;
         }
   

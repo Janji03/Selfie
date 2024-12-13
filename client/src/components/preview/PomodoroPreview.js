@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getUserPomodoros } from '../../services/pomodoroService'
+import PreviewStyle from '../../styles/Preview.css';
+import pomodoroIcon from '../pomodoro/pomodoro.png'
+
 
 const PomodoroPreview = () => {
   const [lastPomodoro, setLastPomodoro] = useState(null);
@@ -27,19 +30,20 @@ const PomodoroPreview = () => {
   }, [userID]);
 
   return (
-    <div>
-      <h3>Preview Pomodoro</h3>
-      <p>Rimani concentrato e traccia il tuo tempo.</p>
+    <div className='Pomodoro-preview'>
       {lastPomodoro ? (
         <div>
-          <p><strong>Study Time:</strong> {lastPomodoro.studyTime} minuti</p>
-          <p><strong>Break Time:</strong> {lastPomodoro.breakTime} minuti</p>
-          <p><strong>Cycles:</strong> {lastPomodoro.cycles}</p>
+        <img src={pomodoroIcon}></img>
+        <div className='pomodoro-elements'>
+          <p><strong>Study Time:</strong> <br/> {lastPomodoro.studyTime} minuti</p>
+          <p><strong>Break Time:</strong><br/> {lastPomodoro.breakTime} minuti</p>
+          <p><strong>Cycles:</strong> <br/>{lastPomodoro.cycles}</p>
+        </div>
         </div>
       ) : (
         <p>Non trovato ultimo pomodoro</p>
       )}
-      <Link to="/pomodoro">Vai al Pomodoro</Link>
+      <Link to="/pomodoro" className='pomo-link'>Vai al Pomodoro</Link>
     </div>
   );
 };
