@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import HomepageStyle from '../../styles/Homepage.css';
+import PomodoroPreview from '../preview/PomodoroPreview';
+import NotesPreview from '../preview/NotesPreview';
 
 const Homepage = () => {
   const [isCalendarPreviewOpen, setIsCalendarPreviewOpen] = useState(false);
@@ -21,7 +23,7 @@ const Homepage = () => {
       return (
         <div className='home-preview note-preview'>
           <i className="bi bi-x-lg" onClick={() => setIsNotePreviewOpen(false)}></i>
-          <h2>Note Preview</h2>
+          <NotesPreview/>
         </div>
       );
     }
@@ -30,7 +32,7 @@ const Homepage = () => {
       return (
         <div className='home-preview pomodoro-preview'>
           <i className="bi bi-x-lg" onClick={() => setIsPomodoroPreviewOpen(false)}></i>
-          <h2>Pomodoro Preview</h2>
+          <PomodoroPreview/>
         </div>
       );
     }
@@ -67,7 +69,8 @@ const Homepage = () => {
             onClick={() => setIsNotePreviewOpen(true)}
           ></i>
         </div>
-      </div>
+
+        </div>
     );
   };
 
@@ -89,7 +92,50 @@ const Homepage = () => {
       </div>
 
       
-      <div className='homepage-bottom'>{renderPreview()}</div>
+      <div className='homepage-bottom'>
+        {renderPreview()}
+
+
+        <div className="home-page-wide">
+
+        <div className="bottom-home-page-section section-white">
+          <div className="section-description">
+            <h1 className="title">Calendario</h1>
+            <p className="subtitle">Organizza le tue giornate in modo semplice e intuitivo.</p>
+          </div>
+          <div className="preview">
+            <div className="preview-box">Anteprima Calendario</div>
+          </div>
+        </div>
+
+        <div className="bottom-home-page-section section-blue">
+          <div className="preview">
+
+            <div className="preview-box">          
+              <PomodoroPreview/></div>
+            </div>
+
+          <div className="section-description">
+            <h1 className="title">Pomodoro Technique</h1>
+            <p className="subtitle">Massimizza la tua produttività con sessioni di lavoro focalizzate.</p>
+          </div>
+        </div>
+
+        <div className="bottom-home-page-section section-white">
+          <div className="section-description">
+            <h1 className="title">Note</h1>
+            <p className="subtitle">Appunta le tue idee e i tuoi pensieri in un istante.</p>
+          </div>
+
+          <div className="preview">
+            <div className="preview-box">
+              <NotesPreview/></div>
+          </div>
+
+        </div>
+        </div>
+
+      </div>
     </div>
   );
 };
