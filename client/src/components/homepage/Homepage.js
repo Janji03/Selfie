@@ -2,6 +2,7 @@ import React from 'react';
 import HomepageStyle from '../../styles/Homepage.css'
 
 import TimeMachinePreview from '../preview/TimeMachinePreview';
+import CalendarPreview from '../preview/CalendarPreview';
 
 const Homepage = () => {
   return (
@@ -26,8 +27,7 @@ const Homepage = () => {
           <div className='elem-grid full-width'>
             <i className="bi bi-calendar-event"></i> 
             <div className='subsection-calendar'>
-              <h2>Calendario</h2>
-              <p>Aggiungi eventi per non dimenticare</p>
+              <CalendarPreview />
               <i className="bi bi-box-arrow-up-right"></i>
             </div>
             
