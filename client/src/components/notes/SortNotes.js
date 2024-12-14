@@ -1,38 +1,46 @@
 import React from "react";
 
 const SortNotes = ({ notes, setNotes }) => {
-  const sortAlphabetically = () => {
-    const sorted = [...notes].sort((a, b) => a.title.localeCompare(b.title));
-    setNotes(sorted);
-  };
+  const handleSortChange = (event) => {
+    const sortType = event.target.value;
+    let sorted = [...notes];
 
-  const sortByDate = () => {
-    const sorted = [...notes].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    setNotes(sorted);
-  };
+    switch (sortType) {
+      case "alphabetical":
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "date":
+        sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      case "length":
+        sorted.sort((a, b) => b.content.length - a.content.length);
+        break;
+      case "category":
+        sorted.sort((a, b) => {
+          const categoryA = a.categories[0]?.toLowerCase() || "";
+          const categoryB = b.categories[0]?.toLowerCase() || "";
+          return categoryA.localeCompare(categoryB);
+        });
+        break;
+      default:
+        return;
+    }
 
-  const sortByLength = () => {
-    const sorted = [...notes].sort((a, b) => b.content.length - a.content.length);
     setNotes(sorted);
   };
-  const sortByCategory = () => {
-    const sorted = [...notes].sort((a, b) => {
-      const categoryA = a.categories[0]?.toLowerCase() || ""; 
-      const categoryB = b.categories[0]?.toLowerCase() || "";
-      return categoryA.localeCompare(categoryB);
-    });
-    setNotes(sorted);
-  };
-  
 
   return (
-    <div>
-      <h3>Ordina Note</h3>
-      <button onClick={sortAlphabetically}>Ordine Alfabetico</button>
-      <button onClick={sortByDate}>Data</button>
-      <button onClick={sortByLength}>Lunghezza Contenuto</button>
-      <button onClick={sortByCategory}>Categoria</button>
-
+    <div className="sort-notes-container">
+      <label htmlFor="sort-select" className="sort-label">
+        Ordina per:
+      </label>
+      <select id="sort-select" onChange={handleSortChange} defaultValue="" className="sort-select">
+        <option value="" disabled>Seleziona un'opzione</option>
+        <option value="alphabetical">Ordine Alfabetico</option>
+        <option value="date">Data</option>
+        <option value="length">Lunghezza Contenuto</option>
+        <option value="category">Categoria</option>
+      </select>
     </div>
   );
 };

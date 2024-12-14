@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { forgotPassword } from '../../services/authService';
+import '../../styles/Auth.css'; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -19,20 +20,27 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div>
-      <h2>Recupera Password</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Inserisci la tua email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <button type="submit">Invia Email</button>
-      </form>
-      {message && <p style={{ color: 'green' }}>{message}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1>Recupera Password</h1>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <div className="data">
+            <label>Email</label>
+            <input
+              type="email"
+              placeholder="Inserisci la tua email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="auth-btn">
+            <button type="submit">Invia Email</button>
+          </div>
+        </form>
+        {message && <p className="auth-message">{message}</p>}
+        {error && <p className="auth-error">{error}</p>}
+      </div>
     </div>
   );
 };

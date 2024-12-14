@@ -4,13 +4,15 @@ import { createNote, getNotes } from "../../services/noteService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
+import "../../styles/Notes.css";
 
 const Notes = () => {
   const { isAuthenticated } = useContext(AuthContext);
-  const userID = localStorage.getItem("userID"); // Recupera userID
+  const userID = localStorage.getItem("userID");
   const [notes, setNotes] = useState([]);
-  const [selectedNote, setSelectedNote] = useState(null); // Nota attualmente selezionata
+  const [selectedNote, setSelectedNote] = useState(null);
   const [error, setError] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
 
   const [newNote, setNewNote] = useState({
     title: "",
@@ -26,64 +28,84 @@ const Notes = () => {
     }
   }, [isAuthenticated, userID]);
 
+  // Sincronizza la selezione della nota con l'elenco delle note
+  useEffect(() => {
+    if (selectedNote && !notes.some((note) => note._id === selectedNote._id)) {
+      setSelectedNote(null); // Chiude il form se la nota è stata eliminata
+    }
+  }, [notes, selectedNote]);
+
   const handleCreateNote = (e) => {
     e.preventDefault();
-  
+
     if (!newNote.title || !newNote.categories.length) {
       setError("Titolo e categorie sono obbligatori");
       return;
     }
-  
+
     if (!newNote.content.trim()) {
       setError("Il contenuto non può essere vuoto");
       return;
     }
-  
+
     createNote({ ...newNote, userID })
       .then((createdNote) => {
         setNotes((prev) => [...prev, createdNote]);
-        setNewNote({ title: "", content: "", categories: [] }); // Reset form
-        setError(null); // Reset error
+        setNewNote({ title: "", content: "", categories: [] });
+        setError(null);
+        setIsCreating(false);
       })
       .catch((err) => setError(err.message));
   };
-  
 
   return (
-    <div>
-      <h1>Note</h1>
-      <form onSubmit={handleCreateNote}>
-        <input
-          type="text"
-          placeholder="Titolo"
-          value={newNote.title}
-          onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-          required
-        />
-        {error && !newNote.title && <span className="error">Obbligatorio!</span>}
-        
-        <textarea
-          placeholder="Contenuto"
-          value={newNote.content}
-          onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-          required
-        />
-         {error && !newNote.title && <span className="error">Obbligatorio!</span>}
-        
-        <input
-          type="text"
-          placeholder="Categorie (separate da virgola)"
-          value={newNote.categories.join(", ")}
-          onChange={(e) =>
-            setNewNote({ ...newNote, categories: e.target.value.split(",") })
-          }
-          required
-        />
-        {error && !newNote.categories.length && <span className="error">Obbligatorio!</span>}
-        
-        <button type="submit">Crea Nota</button>
-      </form>
-      
+    <div className="notes-container">
+      <button
+        className="new-note-button"
+        onClick={() => setIsCreating(true)}
+      >
+        Nuova Nota
+      </button>
+
+      {isCreating && (
+        <div className="new-note-card">
+          <h2>Nuova Nota</h2>
+          <form onSubmit={handleCreateNote}>
+            <input
+              type="text"
+              placeholder="Titolo"
+              value={newNote.title}
+              onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+              required
+            />
+            <textarea
+              placeholder="Contenuto"
+              value={newNote.content}
+              onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Categoria"
+              value={newNote.categories.join(", ")}
+              onChange={(e) =>
+                setNewNote({ ...newNote, categories: e.target.value.split(",") })
+              }
+              required
+            />
+            <button className="create-note-button" type="submit">
+              Crea Nota
+            </button>
+            <button
+              className="create-note-button"
+              onClick={() => setIsCreating(false)}
+            >
+              Annulla
+            </button>
+          </form>
+        </div>
+      )}
+
       <NotesDetail
         note={selectedNote}
         onClose={() => setSelectedNote(null)}
@@ -95,6 +117,7 @@ const Notes = () => {
         setSelectedNote={setSelectedNote}
         refreshNotes={() => getNotes(userID).then(setNotes)}
       />
+    {error && <p className="error-message">{error}</p>} 
     </div>
   );
 };
