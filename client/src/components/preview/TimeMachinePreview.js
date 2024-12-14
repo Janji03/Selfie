@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TimeMachine from '../timemachine/TimeMachine'; 
 import Modal from '../common/Modal';
 
-const TimeMachinePreview = ({ onTimeUpdate }) => {
+const TimeMachinePreview = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
@@ -15,11 +15,10 @@ const TimeMachinePreview = ({ onTimeUpdate }) => {
             </div>
 
             <Modal isOpen={isModalOpen} onClose={closeModal} title="TimeMachine" zIndex={1000}>
-                <TimeMachine onTimeUpdate={onTimeUpdate} /> 
+                <TimeMachine /> 
             </Modal>
         </div>
     );
 };
 
 export default TimeMachinePreview;
-

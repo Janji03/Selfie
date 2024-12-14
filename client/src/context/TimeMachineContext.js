@@ -4,6 +4,7 @@ const TimeMachineContext = createContext();
 
 export const TimeMachineProvider = ({ children }) => {
     const [time, setTime] = useState(new Date()); 
+    const [isTimeMachineActive, setIsTimeMachineActive] = useState(false);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -14,7 +15,7 @@ export const TimeMachineProvider = ({ children }) => {
     }, []);
 
     return (
-        <TimeMachineContext.Provider value={{ time, setTime }}>
+        <TimeMachineContext.Provider value={{ time, setTime, isTimeMachineActive, setIsTimeMachineActive }}>
             {children}
         </TimeMachineContext.Provider>
     );

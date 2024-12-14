@@ -18,8 +18,8 @@ const formatDateTimeForInput = (date) => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
-const TimeMachine = ({ onTimeUpdate }) => { 
-    const { time, setTime } = useTimeMachine(); 
+const TimeMachine = () => { 
+    const { time, setTime, isTimeMachineActive, setIsTimeMachineActive } = useTimeMachine(); 
     const [inputTime, setInputTime] = useState(formatDateTimeForInput(time)); 
 
     const handleInputChange = (event) => {
@@ -36,14 +36,21 @@ const TimeMachine = ({ onTimeUpdate }) => {
     const handleUpdateTime = () => {
         const newTime = new Date(inputTime); 
         setTime(newTime); 
-        onTimeUpdate(); 
+        if (isTimeMachineActive) {
+            setIsTimeMachineActive(false);   
+            setTimeout(() => {
+                setIsTimeMachineActive(true);
+            }, 10);
+        } else {
+            setIsTimeMachineActive(true);
+        }
     };
 
     const resetToLocalTime = () => {
         const localTime = new Date();
         setTime(localTime);
+        setIsTimeMachineActive(false);
         setInputTime(formatDateTimeForInput(localTime)); 
-        onTimeUpdate();
     };
 
     const isInputDifferent = formatDateTimeForInput(time) !== inputTime;
@@ -60,6 +67,10 @@ const TimeMachine = ({ onTimeUpdate }) => {
                 <button onClick={handleUpdateTime}>Update Time</button>
             )}
             <button onClick={resetToLocalTime}>Reset to Local Time</button>
+            {isTimeMachineActive ? (
+                <h3>TIME MACHINE <span style={{ color: 'green' }}>ACTIVE</span></h3>
+            ) :
+                <h3>TIME MACHINE <span style={{ color: 'red' }}>NOT ACTIVE</span></h3>}
         </div>
     );
 };

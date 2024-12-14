@@ -37,9 +37,10 @@ const Calendar = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const userID = localStorage.getItem("userID");
 
-  const { time } = useTimeMachine(); 
-  const [currentTime, setCurrentTime] = useState(time);
-  const [isTimeUpdated, setIsTimeUpdated] = useState(false); 
+  const isInitialMount = useRef(true);
+  const [calendarRenderKey, setCalendarRenderKey] = useState(0);
+
+  const { time, isTimeMachineActive } = useTimeMachine(); 
 
   const [calendarTimeZone, setCalendarTimeZone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -61,11 +62,28 @@ const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
 
-  const isEventEditing = selectedEvent !== null;
-  const isTaskEditing = selectedTask !== null;
-
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
+
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      
+      const fetchEventsAndTasks = async () => {
+        try {
+          const fetchedEvents = await getEvents(userID);
+          const fetchedTasks = await getTasks(userID);
+          setEvents(fetchedEvents);
+          setTasks(fetchedTasks);
+          const combined = [...fetchedEvents, ...fetchedTasks];
+          setCombinedEvents(combined);
+        } catch (error) {
+          console.error("Error fetching events or tasks:", error);
+        }
+      };
+      fetchEventsAndTasks();
+    }
+  }, [isAuthenticated, userID]);
 
 
   const {
@@ -107,40 +125,53 @@ const Calendar = () => {
     setIsEditMode,
     setIsFormOpen,
     setTaskFormInitialData,
-    currentTime,
-    isTimeUpdated,
+    time,
+    isTimeMachineActive,
     calendarTimeZone,
   });
 
   const { decrementOneDay, roundTime } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
-    setCurrentTime(time); 
-    setIsTimeUpdated(false);
-  }, [time]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false; 
+      return;
+    }
 
-  const handleTimeUpdate = () => {
-    setIsTimeUpdated(true);
+    checkForOverdueTasks();
+    handleTriggerReRender(); 
+  }, [isTimeMachineActive]);
+
+  const handleTriggerReRender = () => {
+    setCalendarRenderKey((prevKey) => prevKey + 1);
   };
 
+  // boh non ho idea se funzioni
   useEffect(() => {
-    if (isAuthenticated) {
-      
-      const fetchEventsAndTasks = async () => {
-        try {
-          const fetchedEvents = await getEvents(userID);
-          const fetchedTasks = await getTasks(userID);
-          setEvents(fetchedEvents);
-          setTasks(fetchedTasks);
-          const combined = [...fetchedEvents, ...fetchedTasks];
-          setCombinedEvents(combined);
-        } catch (error) {
-          console.error("Error fetching events or tasks:", error);
-        }
-      };
-      fetchEventsAndTasks();
-    }
-  }, [isAuthenticated, userID]);
+    let intervalId;
+  
+    const checkForOverdueTasksAtMidnight = async () => {
+      console.log("Checking for overdue tasks at midnight...");
+      await checkForOverdueTasks();
+    };
+  
+    const now = new Date();
+    const millisTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
+
+    const timeoutId = setTimeout(async () => {
+      await checkForOverdueTasksAtMidnight();
+  
+      intervalId = setInterval(() => {
+        checkForOverdueTasksAtMidnight();
+      }, 24 * 60 * 60 * 1000);
+    }, millisTillMidnight);
+  
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
+  }, []);
+  
 
   useEffect(() => {
     if (currentView === "eventList") {
@@ -151,32 +182,8 @@ const Calendar = () => {
       const combined = [...events, ...tasks];
       setCombinedEvents(combined);
     }
-   }, [events, tasks, currentView]);
-
-  useEffect(() => {
-    const checkForOverdueTasksAtMidnight = async () => {
-      await checkForOverdueTasks();  
-    };
-    
-    const now = new Date(currentTime);
-    const millisTillMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) - now;
-  
-    const timeoutId = setTimeout(() => {
-      checkForOverdueTasksAtMidnight();
-  
-      const intervalId = setInterval(() => {
-        checkForOverdueTasksAtMidnight();
-      }, 24 * 60 * 60 * 1000);
-  
-      return () => clearInterval(intervalId); 
-    }, millisTillMidnight);
-  
-    return () => clearTimeout(timeoutId);
-  }, [tasks, checkForOverdueTasks]);
-
-  useEffect(() => {
-    checkForOverdueTasks();
-  }, [isTimeUpdated]);
+    handleTriggerReRender();
+  }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
     if (view.type === "eventList" || view.type === "taskList") {
@@ -215,9 +222,13 @@ const Calendar = () => {
     setIsFormOpen(false);
     const clickedItemType = info.event._def.extendedProps.itemType;
     const clickedItemId = info.event._def.publicId;
-    clickedItemType === "event"
-      ? handleEventClick(info, clickedItemId)
-      : handleTaskClick(clickedItemId);
+    if (clickedItemType === "event") {
+      setCurrentFormTab("event"); 
+      handleEventClick(info, clickedItemId);
+    } else {
+      setCurrentFormTab("task"); 
+      handleTaskClick(clickedItemId);
+    }
   };
 
   const handleSelectRange = (info) => {
@@ -239,6 +250,7 @@ const Calendar = () => {
   };
 
   const handleAddItem = () => {
+    setCurrentFormTab("event");
     const calendarApi = calendarRef.current.getApi();
     const view = calendarApi.view;
 
@@ -253,7 +265,7 @@ const Calendar = () => {
     ) {
       baseDate = new Date(view.currentStart);
     } else {
-      baseDate = new Date(currentTime);
+      baseDate = new Date(time);
     }
 
     if (selectedRange) {
@@ -288,6 +300,9 @@ const Calendar = () => {
     setSelectedRange(null);
   };
 
+  const isEventEditing = selectedEvent !== null;
+  const isTaskEditing = selectedTask !== null;
+
   const renderForm = () => {
     if (currentFormTab === "event") {
       return (
@@ -312,18 +327,22 @@ const Calendar = () => {
 
   return (
     <div>
-      <TimeMachinePreview onTimeUpdate={handleTimeUpdate} />
+      <TimeMachinePreview />
 
       <Modal
         isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        title={currentFormTab === 'event' ? 'Event' : 'Task'}
+        onClose={() => {
+          setIsFormOpen(false);
+          if (isTaskEditing) setCurrentFormTab("task");
+          else if (isEventEditing) setCurrentFormTab("event");
+        }}
+        title={currentFormTab === "event" ? "Event" : "Task"}
         zIndex={1100}
       >
         <TabSwitcher
           currentFormTab={currentFormTab}
           setCurrentFormTab={setCurrentFormTab}
-          disableEventTab={isTaskEditing}  
+          disableEventTab={isTaskEditing}
           disableTaskTab={isEventEditing}
         />
         {renderForm()}
@@ -363,7 +382,7 @@ const Calendar = () => {
 
       <FullCalendar
         ref={calendarRef}
-        key={isTimeUpdated ? currentTime.getTime() : 'static'} 
+        key={calendarRenderKey} 
         plugins={[dayGridPlugin, timeGridPlugin, listPlugin, interactionPlugin, rrulePlugin, luxonPlugin]}
         initialView={currentView}
         headerToolbar={{
@@ -391,7 +410,7 @@ const Calendar = () => {
         }}
         events={combinedEvents}
         timeZone={calendarTimeZone}
-        now={currentTime} 
+        now={time} 
         nowIndicator={true}
         datesSet={handleViewChange}
         dateClick={handleDateClick}
