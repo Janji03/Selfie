@@ -1,107 +1,112 @@
-
-    .Pomodoro-preview{
-        width: 100%;
-        color: #002aff;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .pomodoro-elements{
-        display: flex;
-        width: 100%;
-        justify-content: space-evenly;
-    }
-
-
-    .Pomodoro-preview img{
-        height: auto;
-        width: 13%;
-    }
-
-    .pomo-link, .note-link{
-            width: 35%;
-            margin-top: 20px;
-            padding: 2%;
-            font-family: 'Poppins';
-            font-size: 15px;
-            font-weight: 700;
-            background-color: #fff;
-            border: solid 1px #002aff;
-            color: #002aff;
-            text-decoration: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-          }
-        
-    .pomo-link:hover, .note-link:hover{
-    background-color: #001789;
-    color: white;
-    }
-
-.note-preview{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.Pomodoro-preview {
+  width: 100%;
+  color: #002aff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.note-preview h3{
-    margin: 0;
-    font-family: 'Figtree';
-    color: #002aff;
+.pomodoro-elements {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
 }
 
+.Pomodoro-preview img {
+  height: auto;
+  width: 13%;
+}
 
- 
+.pomo-link,
+.note-link,
+.calendar-link {
+  width: 35%;
+  margin-top: 20px;
+  padding: 2%;
+  font-family: "Poppins";
+  font-size: 15px;
+  font-weight: 700;
+  background-color: #fff;
+  border: solid 1px #002aff;
+  color: #002aff;
+  text-decoration: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.pomo-link:hover,
+.note-link:hover,
+.calendar-link:hover {
+  background-color: #001789;
+  color: white;
+}
+
+.note-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.note-preview h3 {
+  margin: 0;
+  font-family: "Figtree";
+  color: #002aff;
+}
+
 .note-list {
-    display: flex;
-    justify-content: space-evenly; 
-    list-style-type: none; 
-    margin: 0;
-    padding: 0;
-    height: 90%;  
-    max-width: 100%;
-    margin-top: 10px;
+  display: flex;
+  justify-content: space-evenly;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  height: 90%;
+  max-width: 100%;
+  margin-top: 10px;
 }
 
-  .note-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    max-width: calc(33.33% - 5px); 
-    margin: 0 5px; 
-    background-color: #e3ecff78;
-    padding: 10px;
-    border-radius: 10px;
-    height: 90%;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  }
+.note-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: calc(33.33% - 5px);
+  margin: 0 5px;
+  background-color: #e3ecff78;
+  padding: 10px;
+  border-radius: 10px;
+  height: 90%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
 
-  
-  .note-item h2 {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: #001789;
-    margin: 0;
-  }
-  
-  .note-item h4 {
-    font-size: 1rem;
-    font-weight: 200;
-    color: #00178966; 
-    margin: 0;
-    margin-bottom: 10px;
-    margin-top: -5px;
-  }
-  
-  .note-item p {
-    font-size: 0.8rem;
-    color: #002aff; 
-    margin: 0;
-  }
-  
+.note-item h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #001789;
+  margin: 0;
+}
 
-  
+.note-item h4 {
+  font-size: 1rem;
+  font-weight: 200;
+  color: #00178966;
+  margin: 0;
+  margin-bottom: 10px;
+  margin-top: -5px;
+}
+
+.note-item p {
+  font-size: 0.8rem;
+  color: #002aff;
+  margin: 0;
+}
+
+.calendar-preview {
+  width: 100%;
+  color: #002aff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

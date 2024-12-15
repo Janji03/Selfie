@@ -1,32 +1,39 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from "./axiosInstance";
 
 // Funzione per il signup
 export const signup = async (userData) => {
   try {
-    const response = await axiosInstance.post('auth/signup', userData);
-    return response.data; 
+    const response = await axiosInstance.post("auth/signup", userData);
+    return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Errore durante la registrazione');
+    throw new Error(
+      error.response?.data?.message || "Errore durante la registrazione"
+    );
   }
 };
 
 // Funzione per il login
 export const login = async (userData) => {
   try {
-    const response = await axiosInstance.post('auth/login', userData);
-    return response.data; 
+    const response = await axiosInstance.post("auth/login", userData);
+    return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Errore durante il login');
+    throw new Error(error.response?.data?.message || "Errore durante il login");
   }
 };
 
 // Funzione forgot password
 export const forgotPassword = async (email) => {
   try {
-    const response = await axiosInstance.post('auth/forgot-password', { email });
-    return response.data; 
+    const response = await axiosInstance.post("auth/forgot-password", {
+      email,
+    });
+    return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Errore durante il recupero della password');
+    throw new Error(
+      error.response?.data?.message ||
+        "Errore durante il recupero della password"
+    );
   }
 };
 
@@ -38,6 +45,8 @@ export const resetPassword = async (token, newPassword) => {
     });
     return response.data;
   } catch (error) {
-    throw new Error(error.response?.data?.message || 'Errore durante il reset della password');
+    throw new Error(
+      error.response?.data?.message || "Errore durante il reset della password"
+    );
   }
 };

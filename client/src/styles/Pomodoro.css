@@ -1,153 +1,145 @@
-
-
-.pomodoro{
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    width: 100%;
+.pomodoro {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
 }
 
-.pomodoro-header{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: 8vh;
-    width: 100%;
-    border-bottom: #ccd1ec6d solid 1px;
-    background-color: #fff;
+.pomodoro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 8vh;
+  width: 100%;
+  border-bottom: #ccd1ec6d solid 1px;
+  background-color: #fff;
 }
 
-.pomodoro-logo{
-    font-family: 'Poppins', sans-serif;
-    font-size: 10vw;
-    color: #284bff;
-    color: #001789;
-    width: auto;
-    font-size: 2vw;
-    padding-left: 15px;
-
+.pomodoro-logo {
+  font-family: "Poppins", sans-serif;
+  font-size: 10vw;
+  color: #284bff;
+  color: #001789;
+  width: auto;
+  font-size: 2vw;
+  padding-left: 15px;
 }
 
-.pomodoro-nav{
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 52%;
-    color: #ccd1ec;
-    font-family: 'Figtree', sans-serif;
-    font-size: 1.9vw;
+.pomodoro-nav {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 52%;
+  color: #ccd1ec;
+  font-family: "Figtree", sans-serif;
+  font-size: 1.9vw;
 }
 
-.pomodoro-nav-page{
-    border-radius: 15px;
-    border: #ccd1ec solid 1px;
-    padding: 2%;
-    color: #a6add1;
+.pomodoro-nav-page {
+  border-radius: 15px;
+  border: #ccd1ec solid 1px;
+  padding: 2%;
+  color: #a6add1;
 }
 
-.pomodoro-nav i{
-    color: #001789;
-    font-size: 3vw;
+.pomodoro-nav i {
+  color: #001789;
+  font-size: 3vw;
 }
 
-.left-pomodoro{
-    background-color: #001789;
-    width: 50%;
-    height: 92vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+.left-pomodoro {
+  background-color: #001789;
+  width: 50%;
+  height: 92vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.left-pomodoro h1{
-    text-align: center;
-    color: #fff;
-    font-family: 'Poppins';
-    font-size: 3.6vw;
+.left-pomodoro h1 {
+  text-align: center;
+  color: #fff;
+  font-family: "Poppins";
+  font-size: 3.6vw;
 }
 
-
-.study-form{
-    padding: 20px;
-    border-radius: 10px;
-    height: auto;
-    width: 70%;
-    background-color: white;
-    color: black;
-  }
-
-
-.pomo-info-form{
-    margin: 10px 0;
-    position: relative;
-  }
-
-  .but-plus, .but-min {
-    background-color: transparent;
-    border: 0;
-    font-size: 40px;
-    font-family: 'Poppins', sans-serif;
-    margin-right: 8px;
-    position: absolute;
-    top: 12%; /*rivedere*/
-    cursor: pointer;
-  }
-
-  .but-plus{
-    right: 10%;
-  }
-
-  .but-min{
-    right: 0;
-  }
-
-  .but-plus:hover, .but-min:hover{
-    color: #001789;
-  }
-
-
-  .but-start{
-    margin-top: 20px;
-    padding: 3%;
-    font-family: 'Poppins';
-    font-size: 18px;
-    font-weight: 700;
-    background-color: #fff;
-    border: solid 1px #001789;
-    color: #001789;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.4s ease;
-  }
-
-  .but-start:hover{
-    background-color: #001789;
-    color: white;
-  }
-  
-  
-  .pomo-info-form input{
-    font-size: 16px;
-    font-family: 'Figtree';
-    padding: 8px 16px;
-    width: 90%;
-    margin-top: 1px;
-    min-height: 44px;
-    border: unset;
-    border-radius: 4px;
-    outline-color: rgb(84 105 212 / 0.5);
-    background-color: rgb(255, 255, 255);
-    box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, 
-                rgba(0, 0, 0, 0) 0px 0px 0px 0px, 
-                rgba(0, 0, 0, 0) 0px 0px 0px 0px, 
-                rgba(60, 66, 87, 0.16) 0px 0px 0px 1px, 
-                rgba(0, 0, 0, 0) 0px 0px 0px 0px, 
-                rgba(0, 0, 0, 0) 0px 0px 0px 0px, 
-                rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+.study-form {
+  padding: 20px;
+  border-radius: 10px;
+  height: auto;
+  width: 70%;
+  background-color: white;
+  color: black;
 }
 
-.pomo-info-form label{
-    font-family: 'Figtree';
-    font-size: 5ù2vw;
+.pomo-info-form {
+  margin: 10px 0;
+  position: relative;
+}
+
+.but-plus,
+.but-min {
+  background-color: transparent;
+  border: 0;
+  font-size: 40px;
+  font-family: "Poppins", sans-serif;
+  margin-right: 8px;
+  position: absolute;
+  top: 12%; /*rivedere*/
+  cursor: pointer;
+}
+
+.but-plus {
+  right: 10%;
+}
+
+.but-min {
+  right: 0;
+}
+
+.but-plus:hover,
+.but-min:hover {
+  color: #001789;
+}
+
+.but-start {
+  margin-top: 20px;
+  padding: 3%;
+  font-family: "Poppins";
+  font-size: 18px;
+  font-weight: 700;
+  background-color: #fff;
+  border: solid 1px #001789;
+  color: #001789;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.but-start:hover {
+  background-color: #001789;
+  color: white;
+}
+
+.pomo-info-form input {
+  font-size: 16px;
+  font-family: "Figtree";
+  padding: 8px 16px;
+  width: 90%;
+  margin-top: 1px;
+  min-height: 44px;
+  border: unset;
+  border-radius: 4px;
+  outline-color: rgb(84 105 212 / 0.5);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(60, 66, 87, 0.16) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+}
+
+.pomo-info-form label {
+  font-family: "Figtree";
+  font-size: 5ù2vw;
 }

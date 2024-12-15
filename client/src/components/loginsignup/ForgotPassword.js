@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import { forgotPassword } from '../../services/authService';
-import '../../styles/Auth.css'; 
+import React, { useState } from "react";
+import { forgotPassword } from "../../services/authService";
+import "../../styles/Auth.css";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
     try {
       const response = await forgotPassword(email);
-      setMessage(response.message); 
+      setMessage(response.message);
     } catch (err) {
       setError(err.message);
     }

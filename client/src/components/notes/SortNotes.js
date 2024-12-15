@@ -34,8 +34,15 @@ const SortNotes = ({ notes, setNotes }) => {
       <label htmlFor="sort-select" className="sort-label">
         Ordina per:
       </label>
-      <select id="sort-select" onChange={handleSortChange} defaultValue="" className="sort-select">
-        <option value="" disabled>Seleziona un'opzione</option>
+      <select
+        id="sort-select"
+        onChange={handleSortChange}
+        defaultValue=""
+        className="sort-select"
+      >
+        <option value="" disabled>
+          Seleziona un'opzione
+        </option>
         <option value="alphabetical">Ordine Alfabetico</option>
         <option value="date">Data</option>
         <option value="length">Lunghezza Contenuto</option>

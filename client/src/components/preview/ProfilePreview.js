@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { getUser } from '../../services/userService';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { getUser } from "../../services/userService";
 
 const ProfilePreview = () => {
   const [profileImage, setProfileImage] = useState("");
 
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  const userID = localStorage.getItem('userID');
+  const userID = localStorage.getItem("userID");
 
   const baseURL = "http://localhost:5000/";
 
@@ -19,10 +19,10 @@ const ProfilePreview = () => {
           setProfileImage(baseURL + userInfo.profilePicture);
         }
       } catch (err) {
-        setError(err.message); 
+        setError(err.message);
       }
     };
-    fetchUserProfilePicture(); 
+    fetchUserProfilePicture();
   }, [userID]);
 
   return (

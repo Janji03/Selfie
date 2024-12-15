@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { resetPassword } from '../../services/authService';
-import '../../styles/Auth.css'; 
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { resetPassword } from "../../services/authService";
+import "../../styles/Auth.css";
 
 const ResetPassword = () => {
-  const { token } = useParams(); 
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const { token } = useParams();
+  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
     try {
       const response = await resetPassword(token, password);
-      setMessage(response.message); 
-      setTimeout(() => navigate('/login'), 3000); 
+      setMessage(response.message);
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(err.message);
     }

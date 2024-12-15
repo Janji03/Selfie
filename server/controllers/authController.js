@@ -1,8 +1,8 @@
-import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
-import config from '../config/config.js';
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import User from "../models/User.js";
+import jwt from "jsonwebtoken";
+import config from "../config/config.js";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 // Funzione per registrare un nuovo utente
 export const signup = async (req, res) => {
@@ -11,9 +11,11 @@ export const signup = async (req, res) => {
   try {
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'Utente già registrato con questa email.' });
+      return res
+        .status(400)
+        .json({ message: "Utente già registrato con questa email." });
     }
-    
+
     // Crea un nuovo utente
     const user = new User({ name, email, password });
     await user.save();
@@ -21,16 +23,18 @@ export const signup = async (req, res) => {
     const userID = user._id;
 
     // Genera un token JWT
-    const token = jwt.sign({ userId: userID }, config.jwtSecret, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: userID }, config.jwtSecret, {
+      expiresIn: "1h",
+    });
 
     res.status(201).json({
-      message: 'Utente registrato con successo!',
+      message: "Utente registrato con successo!",
       token,
       userID,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Errore del server.' });
+    res.status(500).json({ message: "Errore del server." });
   }
 };
 
@@ -41,25 +45,27 @@ export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Email o password errati.' });
+      return res.status(400).json({ message: "Email o password errati." });
     }
 
     const isMatch = await user.matchPassword(password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Email o password errati.' });
+      return res.status(400).json({ message: "Email o password errati." });
     }
 
-    const token = jwt.sign({ userId: user._id }, config.jwtSecret, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id }, config.jwtSecret, {
+      expiresIn: "1h",
+    });
     const userID = user._id;
 
     res.status(200).json({
-      message: 'Login effettuato con successo!',
+      message: "Login effettuato con successo!",
       token,
       userID,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Errore del server.' });
+    res.status(500).json({ message: "Errore del server." });
   }
 };
 
@@ -70,24 +76,24 @@ export const forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(404).json({ message: 'Utente non trovato.' });
+      return res.status(404).json({ message: "Utente non trovato." });
     }
 
     // Genera un token per il reset della password
-    const resetToken = crypto.randomBytes(20).toString('hex');
+    const resetToken = crypto.randomBytes(20).toString("hex");
     user.resetPasswordToken = crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(resetToken)
-      .digest('hex');
-    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; 
+      .digest("hex");
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
     const transporter = nodemailer.createTransport({
-      host: 'sandbox.smtp.mailtrap.io',
-      port: 2525, 
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
       auth: {
         user: config.mailtrapUser,
-        pass: config.mailtrapPass, 
+        pass: config.mailtrapPass,
       },
     });
 
@@ -96,7 +102,7 @@ export const forgotPassword = async (req, res) => {
     // Invia l'email con HTML
     await transporter.sendMail({
       to: user.email,
-      subject: 'Password Reset Request',
+      subject: "Password Reset Request",
       html: `
         <p>Hai richiesto di resettare la tua password.</p>
         <p>Clicca sul link sottostante per resettare la tua password:</p>
@@ -105,13 +111,12 @@ export const forgotPassword = async (req, res) => {
       `,
     });
 
-    res.status(200).json({ message: 'Email inviata con successo!' });
+    res.status(200).json({ message: "Email inviata con successo!" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Errore del server.' });
+    res.status(500).json({ message: "Errore del server." });
   }
 };
-
 
 // Funzione per resettare la password
 export const resetPassword = async (req, res) => {
@@ -119,7 +124,7 @@ export const resetPassword = async (req, res) => {
   const { password } = req.body;
 
   try {
-    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
     const user = await User.findOne({
       resetPasswordToken: hashedToken,
@@ -127,7 +132,7 @@ export const resetPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: 'Token non valido o scaduto.' });
+      return res.status(400).json({ message: "Token non valido o scaduto." });
     }
 
     user.password = password;
@@ -135,9 +140,9 @@ export const resetPassword = async (req, res) => {
     user.resetPasswordExpires = undefined;
     await user.save();
 
-    res.status(200).json({ message: 'Password aggiornata con successo!' });
+    res.status(200).json({ message: "Password aggiornata con successo!" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Errore del server.' });
+    res.status(500).json({ message: "Errore del server." });
   }
 };

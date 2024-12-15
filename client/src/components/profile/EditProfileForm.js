@@ -54,22 +54,6 @@ const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handle
         >
           <option value="male">Male</option>
           <option value="female">Female</option>
-          <option value="other">Other</option>
-          <option value="prefer not to say">Prefer Not to Say</option>
-        </select>
-      </div>
-      <div>
-        <label htmlFor="pronouns">Pronouns:</label>
-        <select
-          id="pronouns"
-          name="pronouns"
-          value={formData?.pronouns || "prefer not to say"}
-          onChange={handleInputChange}
-        >
-          <option value="he/him">He/Him</option>
-          <option value="she/her">She/Her</option>
-          <option value="they/them">They/Them</option>
-          <option value="other">Other</option>
           <option value="prefer not to say">Prefer Not to Say</option>
         </select>
       </div>

@@ -5,7 +5,9 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState(note?.content || "");
   const [editedTitle, setEditedTitle] = useState(note?.title || "");
-  const [editedCategories, setEditedCategories] = useState(note?.categories.join(", ") || "");
+  const [editedCategories, setEditedCategories] = useState(
+    note?.categories.join(", ") || ""
+  );
 
   useEffect(() => {
     if (note) {
@@ -74,7 +76,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
           <p>
             <strong>Categorie:</strong> {note.categories.join(", ")}
           </p>
-          <div className="note-actions" style={{marginBottom: "10px"}}>
+          <div className="note-actions" style={{ marginBottom: "10px" }}>
             <button className="note-button" onClick={() => setEditMode(true)}>
               Modifica
             </button>

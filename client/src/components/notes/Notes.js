@@ -60,10 +60,7 @@ const Notes = () => {
 
   return (
     <div className="notes-container">
-      <button
-        className="new-note-button"
-        onClick={() => setIsCreating(true)}
-      >
+      <button className="new-note-button" onClick={() => setIsCreating(true)}>
         Nuova Nota
       </button>
 
@@ -75,13 +72,17 @@ const Notes = () => {
               type="text"
               placeholder="Titolo"
               value={newNote.title}
-              onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+              onChange={(e) =>
+                setNewNote({ ...newNote, title: e.target.value })
+              }
               required
             />
             <textarea
               placeholder="Contenuto"
               value={newNote.content}
-              onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
+              onChange={(e) =>
+                setNewNote({ ...newNote, content: e.target.value })
+              }
               required
             />
             <input
@@ -89,7 +90,10 @@ const Notes = () => {
               placeholder="Categoria"
               value={newNote.categories.join(", ")}
               onChange={(e) =>
-                setNewNote({ ...newNote, categories: e.target.value.split(",") })
+                setNewNote({
+                  ...newNote,
+                  categories: e.target.value.split(","),
+                })
               }
               required
             />
@@ -117,7 +121,7 @@ const Notes = () => {
         setSelectedNote={setSelectedNote}
         refreshNotes={() => getNotes(userID).then(setNotes)}
       />
-    {error && <p className="error-message">{error}</p>} 
+      {error && <p className="error-message">{error}</p>}
     </div>
   );
 };
