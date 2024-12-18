@@ -28,11 +28,20 @@ const Homepage = () => {
 
     if (isNotePreviewOpen) {
       return (
-        <div className="home-preview note-preview">
+        <div className="home-preview notes-preview">
           <i
             className="bi bi-x-lg"
             onClick={() => setIsNotePreviewOpen(false)}
           ></i>
+          <div className="section-description">
+              <h1 className="title">Note</h1>
+              <p className="subtitle">
+                Tieni traccia delle tue idee con il nostro{" "}
+                <strong>blocco note digitale</strong>. Salva appunti rapidi,
+                idee creative e <em>pensieri importanti</em> in un unico posto.
+                
+              </p>
+            </div>
           <NotesPreview />
         </div>
       );
@@ -45,6 +54,15 @@ const Homepage = () => {
             className="bi bi-x-lg"
             onClick={() => setIsPomodoroPreviewOpen(false)}
           ></i>
+            <div className="section-description">
+              <h1 className="title">Pomodoro Technique</h1>
+              <p className="subtitle">
+                Aumenta la tua produttività con la tecnica{" "}
+                <strong>Pomodoro</strong>. Lavora in sessioni di{" "}
+                <em>tempo concentrato</em>, seguite da brevi pause. Ottieni il
+                massimo dal tuo lavoro, rimanendo motivato e concentrato.
+              </p>
+            </div>
           <PomodoroPreview />
         </div>
       );
@@ -90,6 +108,7 @@ const Homepage = () => {
               ></i>
               
           </div>
+            
             <span className="notes-preview-tablet"><NotesPreview/></span>
         </div>
       </div>

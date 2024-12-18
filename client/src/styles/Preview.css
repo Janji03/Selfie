@@ -233,3 +233,22 @@
     margin-top: 10px;
   }
 }
+
+@media (max-width:580px){
+  .pomo-link{
+    width: auto;
+    margin: 0;
+    border-color: #001789;
+    color: #001789;
+  }
+
+  .pomodoro-elements p{
+    background-color: #ebefff;
+    padding: 3%;
+    border-radius: 8px;
+  }
+
+  .notes-preview .section-description .title{
+    margin: 0;
+  }
+}
