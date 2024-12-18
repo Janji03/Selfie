@@ -81,7 +81,7 @@ const Homepage = () => {
         </div>
 
         <div className="elem-grid half-width">
-          <div className="note-content">
+          <div className="notes-content">
             <i className="bi bi-journal-plus"></i>
               <h2>Note</h2>
               <i

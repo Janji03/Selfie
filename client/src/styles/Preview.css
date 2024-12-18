@@ -18,6 +18,7 @@
   width: 13%;
 }
 
+
 .pomo-link,
 .note-link,
 .calendar-link {
@@ -42,6 +43,7 @@
   background-color: #001789;
   color: white;
 }
+
 
 .note-preview {
   display: flex;
@@ -134,4 +136,100 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+
+@media (max-width:1000px) and (min-width:765px){
+  .pomodoro-elements{
+    font-size: 1rem;
+    text-align: center;
+    justify-content: space-between;
+  }
+
+  .Pomodoro-preview{
+    text-align: center;
+  }
+
+  .Pomodoro-preview img{
+    margin-bottom: -5px;
+  }
+
+  .pomo-link{
+    width: auto;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width:765px) and (min-width:580px){
+  .pomodoro-elements{
+    font-size: 1rem;
+    flex-direction: column;
+  }
+
+  .pomodoro-elements p{
+    margin: 10px 0;
+  }
+
+  .pomodoro-preview-tablet{
+    width: 100%;
+  }
+
+  .Pomodoro-preview{
+    text-align: center;
+    justify-content: space-around;
+    align-items: baseline;
+  }
+
+  .Pomodoro-preview img{
+    width: 20%;
+    position: absolute;
+    top: 17%;
+    right: 18%;
+  }
+
+  .pomo-link{
+    font-size: 0.9rem;
+    width: 35%;
+    margin-top: 5px;
+    position: absolute;
+    bottom: 15%;
+    right: 10%;
+  }
+}
+
+@media (max-width:900px) and (min-width:580px){
+  
+  .note-link{
+    width: auto;
+    margin-top: 12px;
+  }
+
+  .note-item:nth-child(3){
+    display: none;
+  }
+
+  .note-preview h3{
+    display: none;
+  }
+
+  .note-list{
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+
+@media (max-width:1000px) and (min-width:900px){
+  .note-preview h3{
+    display: none;
+  }
+
+  .note-list{
+    margin: 0;
+  }
+
+  .note-link{
+    text-align: center;
+    margin-top: 10px;
+  }
 }

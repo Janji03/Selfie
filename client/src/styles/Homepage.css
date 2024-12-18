@@ -306,7 +306,7 @@ color: rgb(114, 114, 114);
 }
 
 
-.pomodoro-content, .note-content{
+.pomodoro-content, .notes-content{
   text-align: center;
 }
 
@@ -364,7 +364,7 @@ color: rgb(114, 114, 114);
     display: none;
   }
 
-  .pomodoro-content, .note-content, .subsection-calendar{
+  .pomodoro-content, .notes-content, .subsection-calendar{
     display: none;
   }
 
