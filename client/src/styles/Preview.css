@@ -48,6 +48,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .note-preview h3 {
@@ -58,26 +59,28 @@
 
 .note-list {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;  
   list-style-type: none;
   margin: 0;
   padding: 0;
-  height: 90%;
-  max-width: 100%;
+  height: auto;  
+  width: 100%;  
   margin-top: 10px;
+  flex-wrap: nowrap;  
 }
 
 .note-item {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  max-width: calc(33.33% - 5px);
+  justify-content: flex-start;
+  width: calc(33.33% - 10px);  
   margin: 0 5px;
   background-color: #e3ecff78;
   padding: 10px;
   border-radius: 10px;
-  height: 90%;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  overflow: hidden;  
+  height: auto;  
 }
 
 .note-item h2 {
@@ -85,6 +88,9 @@
   font-weight: 700;
   color: #001789;
   margin: 0;
+  white-space: nowrap;  
+  overflow: hidden;  
+  text-overflow: ellipsis; 
 }
 
 .note-item h4 {
@@ -94,13 +100,32 @@
   margin: 0;
   margin-bottom: 10px;
   margin-top: -5px;
+  white-space: nowrap;  
+  overflow: hidden;  
+  text-overflow: ellipsis;  
 }
 
 .note-item p {
   font-size: 0.8rem;
   color: #002aff;
   margin: 0;
+  height: 40px;  
+  overflow: hidden;  
+  text-overflow: ellipsis; 
 }
+
+.note-link {
+  text-decoration: none;
+  color: #284bff;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.note-link:hover {
+  text-decoration: underline;
+  color: #001789;
+}
+
 
 .calendar-preview {
   width: 100%;

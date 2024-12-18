@@ -249,60 +249,76 @@ html {
   display: none;
 }
 
-@media (min-width: 580px) and (max-width: 850px) {
-  .homepage-header i {
-    color: red;
-  }
 
-  .homepage-header h1 {
-    font-size: 35px;
-  }
-
-  .homepage-subheader p {
-    font-size: 4.5vw;
-  }
-
-  .home-grid {
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-  }
-
-  .elem-grid.full-width {
-    grid-column: 1 / 3;
-    grid-row: 1 / 5;
-  }
-
-  .elem-grid.half-width {
-    grid-column: 3 / -1;
-    grid-row: span 2;
-  }
-
-  .elem-grid i {
-    font-size: 8vw;
-  }
-
-  .elem-grid h2 {
-    font-size: 6vw;
-  }
-
-  .homepage-bottom {
-    margin-top: -14vh;
-    height: 59vh;
-  }
-
-  .homepage-subheader p {
-    margin-top: 6vh;
-  }
-
-  .homepage-bottom i {
-    display: none;
-  }
+.time-machine-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 4.5vw;
+  height: 4.5vw;
+  background-color: #284bff;
+  border-radius: 50%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
 }
+
+.time-machine-button i{
+color: #fff;
+font-size: 2vw;
+cursor: pointer;
+}
+
+.popup-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.566);
+}
+
+.popup {
+position: absolute;
+top: 50%;
+left: 50%;
+width: 30%;
+height: 40%;
+transform: translate(-50%, -50%);
+background: #fff;
+padding: 20px;
+border-radius: 8px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.popup-content {
+text-align: center;
+}
+
+.popup-content i{
+position: absolute;
+top: 7%;
+right: 5%;
+font-size: 1.3vw;
+color: rgb(114, 114, 114);
+}
+
+
+.pomodoro-content, .note-content{
+  text-align: center;
+}
+
+.pomodoro-preview-tablet, .notes-preview-tablet, .calendar-preview-tablet{
+  display: none;
+}
+
+
+
+
 
 @media (min-width: 580px) and (max-width: 1000px) {
-  .homepage-header i {
-    color: red;
-  }
 
   .homepage-header h1 {
     font-size: 35px;
@@ -347,7 +363,26 @@ html {
   .homepage-bottom i {
     display: none;
   }
+
+  .pomodoro-content, .note-content, .subsection-calendar{
+    display: none;
+  }
+
+  .pomodoro-preview-tablet,.calendar-preview-tablet, .notes-preview-tablet{
+    display: block;
+  }
+    
 }
+
+
+
+
+
+
+
+
+
+
 
 @media (min-width: 1000px) {
   .homepage-top {
@@ -368,7 +403,7 @@ html {
     width: 100%;
   }
 
-  .home-grid {
+  .home-grid { 
     display: none;
   }
 

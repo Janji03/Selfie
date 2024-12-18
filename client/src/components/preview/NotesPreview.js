@@ -47,7 +47,7 @@ const NotesPreview = () => {
               <li key={note.id} className="note-content">
                 <h2>{note.title}</h2>
                 <h4>{note.categories}</h4>
-                <p>{note.content.slice(0, 30)}...</p>
+                <p>{note.content/* .slice(0, 30) */}{/* ... */}</p>
               </li>
             </div>
           ))}

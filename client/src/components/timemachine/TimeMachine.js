@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useTimeMachine } from "../../context/TimeMachineContext";
+import TimeMachineStyle from "../../styles/TimeMachine.css";
+
 
 const formatDateTime = (date) => {
   return new Intl.DateTimeFormat("en-GB", {
@@ -57,24 +59,27 @@ const TimeMachine = () => {
   const isInputDifferent = formatDateTimeForInput(time) !== inputTime;
 
   return (
-    <div>
-      <p>Current Time: {formatDateTime(time)}</p>
-      <input
-        type="datetime-local"
-        onChange={handleInputChange}
-        value={inputTime}
-      />
-      {isInputDifferent && (
-        <button onClick={handleUpdateTime}>Update Time</button>
-      )}
-      <button onClick={resetToLocalTime}>Reset to Local Time</button>
+    <div className="time-machine">
+      <p className="current-time">{formatDateTime(time)}</p>
+      <div className="time-machine-controls">
+          <input
+          type="datetime-local"
+          onChange={handleInputChange}
+          value={inputTime}
+        />
+        {isInputDifferent && (
+          <button onClick={handleUpdateTime} className="update-button">Update</button>
+        )}
+        <button onClick={resetToLocalTime} className="reset-button">Reset to Local Time</button>
+      </div>
+      
       {isTimeMachineActive ? (
         <h3>
-          TIME MACHINE <span style={{ color: "blue" }}>ACTIVE</span>
+          Time machine <span className="tm-active">ACTIVE</span>
         </h3>
       ) : (
         <h3>
-          TIME MACHINE <span style={{ color: "blue" }}>NOT ACTIVE</span>
+          Time machine <span className="tm-not-active">NOT ACTIVE</span>
         </h3>
       )}
     </div>

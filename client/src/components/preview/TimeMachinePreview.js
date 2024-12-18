@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TimeMachine from "../timemachine/TimeMachine";
 import Modal from "../common/Modal";
 
@@ -8,14 +8,17 @@ const TimeMachinePreview = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
+
   return (
     <div>
-      <div onClick={openModal}>🕒</div>
+
+      <div onClick={openModal}><i className="bi bi-clock-history"></i>
+      </div>
 
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title="TimeMachine"
+        title="Time Machine"
         zIndex={1000}
       >
         <TimeMachine />

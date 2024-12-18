@@ -10,6 +10,7 @@ const Homepage = () => {
   const [isPomodoroPreviewOpen, setIsPomodoroPreviewOpen] = useState(false);
   const [isNotePreviewOpen, setIsNotePreviewOpen] = useState(false);
 
+
   //scelta anteprima da mostrare
   const renderPreview = () => {
     if (isCalendarPreviewOpen) {
@@ -23,6 +24,7 @@ const Homepage = () => {
         </div>
       );
     }
+
 
     if (isNotePreviewOpen) {
       return (
@@ -61,31 +63,43 @@ const Homepage = () => {
               onClick={() => setIsCalendarPreviewOpen(true)}
             ></i>
           </div>
+          <span className="calendar-preview-tablet"><CalendarPreview/></span>
         </div>
 
         <div className="elem-grid half-width">
-          <i className="bi bi-clock-history"></i>
+          <div className="pomodoro-content">
+            <i className="bi bi-clock-history"></i>
           <h2>Pomodoro</h2>
           <i
             className="bi bi-box-arrow-up-right"
             onClick={() => setIsPomodoroPreviewOpen(true)}
           ></i>
+            
+          </div>
+          
+          <span className="pomodoro-preview-tablet"><PomodoroPreview/></span>
         </div>
 
         <div className="elem-grid half-width">
-          <i className="bi bi-journal-plus"></i>
-          <h2>Note</h2>
-          <i
-            className="bi bi-box-arrow-up-right"
-            onClick={() => setIsNotePreviewOpen(true)}
-          ></i>
+          <div className="note-content">
+            <i className="bi bi-journal-plus"></i>
+              <h2>Note</h2>
+              <i
+                className="bi bi-box-arrow-up-right"
+                onClick={() => setIsNotePreviewOpen(true)}
+              ></i>
+              
+          </div>
+            <span className="notes-preview-tablet"><NotesPreview/></span>
         </div>
       </div>
     );
   };
 
+
   return (
     <div>
+
       <div className="homepage-top">
         <div className="homepage-header">
           <h1>Selfie</h1>
@@ -99,6 +113,11 @@ const Homepage = () => {
           </p>
         </div>
       </div>
+
+      <div className="time-machine-button">
+          <TimeMachinePreview />
+      </div>
+
 
       <div className="homepage-bottom">
         {renderPreview()}
