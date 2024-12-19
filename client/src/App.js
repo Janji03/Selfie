@@ -30,9 +30,8 @@ const App = () => {
     <AuthProvider>
       <TimeMachineProvider>
         <Router>
-          {/* Scritta globale visibile su tutte le pagine */}
-          <div style={globalTextStyle}>selfie</div>
-
+          
+         
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
