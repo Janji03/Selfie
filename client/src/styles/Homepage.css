@@ -211,9 +211,10 @@ html {
   color: #ccd1ec;
 }
 
-    .full-width .bi-box-arrow-up-right:hover, .half-width .bi-box-arrow-up-right:hover{
-        color: #ffffff;
-    }
+.full-width .bi-box-arrow-up-right:hover,
+.half-width .bi-box-arrow-up-right:hover {
+  color: #ffffff;
+}
 
 .home-preview {
   height: 90%;
