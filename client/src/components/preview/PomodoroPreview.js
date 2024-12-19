@@ -27,7 +27,7 @@ const PomodoroPreview = () => {
   }, [userID]);
 
   return (
-    <div className="Pomodoro-preview">
+    <div className="pomodoro-preview">
       {lastPomodoro ? (
         <div>
           <img src={pomodoroIcon}></img>

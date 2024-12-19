@@ -15,7 +15,7 @@ const Homepage = () => {
   const renderPreview = () => {
     if (isCalendarPreviewOpen) {
       return (
-        <div className="home-preview calendario-preview">
+        <div className="home-preview calendar-preview-mobile">
           <i
             className="bi bi-x-lg"
             onClick={() => setIsCalendarPreviewOpen(false)}
@@ -28,7 +28,7 @@ const Homepage = () => {
 
     if (isNotePreviewOpen) {
       return (
-        <div className="home-preview notes-preview">
+        <div className="home-preview notes-preview-mobile">
           <i
             className="bi bi-x-lg"
             onClick={() => setIsNotePreviewOpen(false)}
@@ -49,7 +49,7 @@ const Homepage = () => {
 
     if (isPomodoroPreviewOpen) {
       return (
-        <div className="home-preview pomodoro-preview">
+        <div className="home-preview pomodoro-preview-mobile">
           <i
             className="bi bi-x-lg"
             onClick={() => setIsPomodoroPreviewOpen(false)}
@@ -81,7 +81,7 @@ const Homepage = () => {
               onClick={() => setIsCalendarPreviewOpen(true)}
             ></i>
           </div>
-          <span className="calendar-preview-tablet"><CalendarPreview/></span>
+          <span className="calendar-preview-tablet"><CalendarPreview/></span> {/* per versione tablet in cui sono direttamente visibili anteprime */}
         </div>
 
         <div className="elem-grid half-width">
@@ -94,9 +94,9 @@ const Homepage = () => {
           ></i>
             
           </div>
-          
           <span className="pomodoro-preview-tablet"><PomodoroPreview/></span>
         </div>
+
 
         <div className="elem-grid half-width">
           <div className="notes-content">
@@ -108,7 +108,6 @@ const Homepage = () => {
               ></i>
               
           </div>
-            
             <span className="notes-preview-tablet"><NotesPreview/></span>
         </div>
       </div>
@@ -141,8 +140,9 @@ const Homepage = () => {
       <div className="homepage-bottom">
         {renderPreview()}
 
-        <div className="home-page-wide">
-          <div className="bottom-home-page-section section-white">
+        <div className="home-page-wide"> {/* wide perchè questo blocco visto solo se min width 1000px */}
+
+          <div className="bottom-home-page-section section-white"> {/* section-white significa che è quella a sfondo bianco */}
             <div className="section-description">
               <h1 className="title">Calendario</h1>
               <p className="subtitle">
@@ -158,6 +158,8 @@ const Homepage = () => {
               </div>
             </div>
           </div>
+
+
 
           <div className="bottom-home-page-section section-blue">
             <div className="preview">
@@ -176,6 +178,9 @@ const Homepage = () => {
             </div>
           </div>
 
+
+
+
           <div className="bottom-home-page-section section-white">
             <div className="section-description">
               <h1 className="title">Note</h1>
@@ -192,6 +197,28 @@ const Homepage = () => {
               </div>
             </div>
           </div>
+
+
+          <div className=" section-blue footer">
+            <div className="footer-info">
+              <h2>Selfie</h2>
+            <ul>
+                <li>Lorenzo Casalini</li>
+                <li>Gianluca Casaburi</li>
+                <li>Vittorio Zedda</li>
+            </ul>
+            </div>
+              
+            <p>Università degli Studi di Bologna - Alma Mater Studiorum</p>
+            
+            <div className="footer-links">
+                <h4 >Contatti</h4> 
+                <h4 >Privacy Policy</h4> 
+                <h4 >Termini di Servizio</h4>
+            </div>
+          </div>
+
+
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-.Pomodoro-preview {
+.pomodoro-preview {
   width: 100%;
   color: #002aff;
   display: flex;
@@ -13,7 +13,7 @@
   justify-content: space-evenly;
 }
 
-.Pomodoro-preview img {
+.pomodoro-preview img {
   height: auto;
   width: 13%;
 }
@@ -56,7 +56,8 @@
 .note-preview h3 {
   margin: 0;
   font-family: "Figtree";
-  color: #002aff;
+  color: #284bff;
+  font-size: 1.5rem;
 }
 
 .note-list {
@@ -67,7 +68,7 @@
   padding: 0;
   height: auto;  
   width: 100%;  
-  margin-top: 10px;
+  margin-top: 20px;
   flex-wrap: nowrap;  
 }
 
@@ -118,18 +119,18 @@
 
 .note-link {
   text-decoration: none;
-  color: #284bff;
-  font-weight: 600;
+  color: #002aff;
+  font-weight: 700;
   margin-top: 20px;
+  
 }
 
 .note-link:hover {
-  text-decoration: underline;
-  color: #001789;
+  color: #fff;
 }
 
 
-.calendar-preview {
+.calendar-preview-mobile {
   width: 100%;
   color: #002aff;
   display: flex;
@@ -146,11 +147,11 @@
     justify-content: space-between;
   }
 
-  .Pomodoro-preview{
+  .pomodoro-preview{
     text-align: center;
   }
 
-  .Pomodoro-preview img{
+  .pomodoro-preview img{
     margin-bottom: -5px;
   }
 
@@ -174,13 +175,13 @@
     width: 100%;
   }
 
-  .Pomodoro-preview{
+  .pomodoro-preview{
     text-align: center;
     justify-content: space-around;
     align-items: baseline;
   }
 
-  .Pomodoro-preview img{
+  .pomodoro-preview img{
     width: 20%;
     position: absolute;
     top: 17%;
@@ -235,11 +236,15 @@
 }
 
 @media (max-width:580px){
-  .pomo-link{
+  .pomo-link, .note-link{
     width: auto;
     margin: 0;
     border-color: #001789;
     color: #001789;
+  }
+
+  .note-link{
+    margin-top: 3vh;
   }
 
   .pomodoro-elements p{
@@ -248,7 +253,25 @@
     border-radius: 8px;
   }
 
-  .notes-preview .section-description .title{
+  .home-preview .section-description{
+    padding: 0 20px ;
+  }
+
+  .home-preview .section-description .subtitle{
+    margin-top: 0;
+    margin-bottom: 4vh;
+  }
+
+  .notes-preview-mobile .section-description .title, .pomodoro-preview-mobile .section-description .title{
     margin: 0;
   }
+
+  .note-preview h3{
+    color: #001789;
+  }
+
+  .note-item p{
+    height: 7vh;
+  }
+
 }
