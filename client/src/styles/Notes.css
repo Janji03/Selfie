@@ -129,7 +129,13 @@
   font-size: 1rem;
   color: #4a4a4a;
   margin: 0;
+  max-height: 4.5em; /* Adatta in base al numero di righe desiderato */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
+
 
 .note-card .note-actions {
   display: flex;

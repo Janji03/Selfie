@@ -8,6 +8,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editedCategories, setEditedCategories] = useState(
     note?.categories.join(", ") || ""
   );
+  const [copiedContent, setCopiedContent] = useState("");
 
   useEffect(() => {
     if (note) {
@@ -31,6 +32,20 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
         onClose();
       })
       .catch(console.error);
+  };
+
+  const handleCopy = () => {
+    if (note) {
+      setCopiedContent(note.content);
+      alert("Contenuto copiato!");
+    }
+  };
+
+  const handlePaste = () => {
+    if (editMode && copiedContent) {
+      setEditedContent((prevContent) => prevContent + copiedContent);
+      alert("Contenuto incollato!");
+    }
   };
 
   if (!note) return null; // Non mostrare nulla se non c'è una nota selezionata
@@ -67,6 +82,9 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
             <button className="note-button" onClick={() => setEditMode(false)}>
               Annulla
             </button>
+            <button className="note-button" onClick={handlePaste}>
+              Incolla
+            </button>
           </div>
         </div>
       ) : (
@@ -82,6 +100,9 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
             </button>
             <button className="note-button" onClick={onClose}>
               Chiudi
+            </button>
+            <button className="note-button" onClick={handleCopy}>
+              Copia contenuto
             </button>
           </div>
         </div>
