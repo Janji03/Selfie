@@ -1,0 +1,277 @@
+.pomodoro-preview {
+  width: 100%;
+  color: #002aff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pomodoro-elements {
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+}
+
+.pomodoro-preview img {
+  height: auto;
+  width: 13%;
+}
+
+
+.pomo-link,
+.note-link,
+.calendar-link {
+  width: 35%;
+  margin-top: 20px;
+  padding: 2%;
+  font-family: "Poppins";
+  font-size: 15px;
+  font-weight: 700;
+  background-color: #fff;
+  border: solid 1px #002aff;
+  color: #002aff;
+  text-decoration: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+
+.pomo-link:hover,
+.note-link:hover,
+.calendar-link:hover {
+  background-color: #001789;
+  color: white;
+}
+
+
+.note-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.note-preview h3 {
+  margin: 0;
+  font-family: "Figtree";
+  color: #284bff;
+  font-size: 1.5rem;
+}
+
+.note-list {
+  display: flex;
+  justify-content: space-between;  
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  height: auto;  
+  width: 100%;  
+  margin-top: 20px;
+  flex-wrap: nowrap;  
+}
+
+.note-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: calc(33.33% - 10px);  
+  margin: 0 5px;
+  background-color: #e3ecff78;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  overflow: hidden;  
+  height: auto;  
+}
+
+.note-item h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #001789;
+  margin: 0;
+  white-space: nowrap;  
+  overflow: hidden;  
+  text-overflow: ellipsis; 
+}
+
+.note-item h4 {
+  font-size: 1rem;
+  font-weight: 200;
+  color: #00178966;
+  margin: 0;
+  margin-bottom: 10px;
+  margin-top: -5px;
+  white-space: nowrap;  
+  overflow: hidden;  
+  text-overflow: ellipsis;  
+}
+
+.note-item p {
+  font-size: 0.8rem;
+  color: #002aff;
+  margin: 0;
+  height: 40px;  
+  overflow: hidden;  
+  text-overflow: ellipsis; 
+}
+
+.note-link {
+  text-decoration: none;
+  color: #002aff;
+  font-weight: 700;
+  margin-top: 20px;
+  
+}
+
+.note-link:hover {
+  color: #fff;
+}
+
+
+.calendar-preview-mobile {
+  width: 100%;
+  color: #002aff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+
+@media (max-width:1000px) and (min-width:765px){
+  .pomodoro-elements{
+    font-size: 1rem;
+    text-align: center;
+    justify-content: space-between;
+  }
+
+  .pomodoro-preview{
+    text-align: center;
+  }
+
+  .pomodoro-preview img{
+    margin-bottom: -5px;
+  }
+
+  .pomo-link{
+    width: auto;
+    margin-top: 5px;
+  }
+}
+
+@media (max-width:765px) and (min-width:580px){
+  .pomodoro-elements{
+    font-size: 1rem;
+    flex-direction: column;
+  }
+
+  .pomodoro-elements p{
+    margin: 10px 0;
+  }
+
+  .pomodoro-preview-tablet{
+    width: 100%;
+  }
+
+  .pomodoro-preview{
+    text-align: center;
+    justify-content: space-around;
+    align-items: baseline;
+  }
+
+  .pomodoro-preview img{
+    width: 20%;
+    position: absolute;
+    top: 17%;
+    right: 18%;
+  }
+
+  .pomo-link{
+    font-size: 0.9rem;
+    width: 35%;
+    margin-top: 5px;
+    position: absolute;
+    bottom: 15%;
+    right: 10%;
+  }
+}
+
+@media (max-width:900px) and (min-width:580px){
+  
+  .note-link{
+    width: auto;
+    margin-top: 12px;
+  }
+
+  .note-item:nth-child(3){
+    display: none;
+  }
+
+  .note-preview h3{
+    display: none;
+  }
+
+  .note-list{
+    justify-content: center;
+    margin: 0;
+  }
+}
+
+
+@media (max-width:1000px) and (min-width:900px){
+  .note-preview h3{
+    display: none;
+  }
+
+  .note-list{
+    margin: 0;
+  }
+
+  .note-link{
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width:580px){
+  .pomo-link, .note-link{
+    width: auto;
+    margin: 0;
+    border-color: #001789;
+    color: #001789;
+  }
+
+  .note-link{
+    margin-top: 3vh;
+  }
+
+  .pomodoro-elements p{
+    background-color: #ebefff;
+    padding: 3%;
+    border-radius: 8px;
+  }
+
+  .home-preview .section-description{
+    padding: 0 20px ;
+  }
+
+  .home-preview .section-description .subtitle{
+    margin-top: 0;
+    margin-bottom: 4vh;
+  }
+
+  .notes-preview-mobile .section-description .title, .pomodoro-preview-mobile .section-description .title{
+    margin: 0;
+  }
+
+  .note-preview h3{
+    color: #001789;
+  }
+
+  .note-item p{
+    height: 7vh;
+  }
+
+}

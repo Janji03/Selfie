@@ -2,23 +2,29 @@ import axiosInstance from "./axiosInstance";
 
 // creare un nuovo Pomodoro
 export const createPomodoro = async (pomodoroData) => {
+  console.log('pomodoroData in services', pomodoroData);
   try {
-    const res = await axiosInstance.post('/pomodoro', pomodoroData);
+    const res = await axiosInstance.post('pomodoro', pomodoroData);
+    console.log('res', res);
     return res.data;
   } catch (error) {
-    console.error('Errore nella creazione del Pomodoro:', error);
+    console.error("Errore nella creazione del Pomodoro:", error);
     throw error;
   }
 };
 
 //ottenere Pomodori precedenti
-export const getPreviousPomodoro = async (nPomodoro) => {
+export const getUserPomodoros = async (nPomodoro, userID) => {
   try {
-    const res = await axiosInstance.get('/pomodoro', {
-      params: { limit: nPomodoro }}); 
+    const res = await axiosInstance.get('pomodoro', {
+      params: {
+        limit: nPomodoro,
+        userID: userID,
+      },
+    });
     return res.data;
   } catch (error) {
-    console.error('Errore nel recupero dei Pomodori precedenti:', error);
+    console.error("Errore nel recupero dei Pomodori precedenti:", error);
     throw error;
   }
 };

@@ -106,8 +106,6 @@ const Profile = () => {
           <p>Bio: {user.bio}</p>
           <p>Birthday: {user.birthday}</p>
           <p>Sex: {user.sex}</p>
-          <p>Pronouns: {user.pronouns}</p>
-
 
         </div>
       ) : (
@@ -116,7 +114,7 @@ const Profile = () => {
 
       <button onClick={toggleEditModal}>Edit Profile</button>
 
-      <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile">
+      <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
         <EditProfileForm
           formData={formData}
           handleInputChange={handleInputChange}

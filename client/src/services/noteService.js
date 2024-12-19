@@ -33,7 +33,8 @@ export const updateNote = async (id, noteData) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Errore durante l'aggiornamento della nota"
+      error.response?.data?.message ||
+        "Errore durante l'aggiornamento della nota"
     );
   }
 };
@@ -45,7 +46,8 @@ export const deleteNote = async (id) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Errore durante l'eliminazione della nota"
+      error.response?.data?.message ||
+        "Errore durante l'eliminazione della nota"
     );
   }
 };
@@ -57,7 +59,8 @@ export const duplicateNote = async (id) => {
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Errore durante la duplicazione della nota"
+      error.response?.data?.message ||
+        "Errore durante la duplicazione della nota"
     );
   }
 };

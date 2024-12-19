@@ -11,20 +11,34 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   };
 
   return (
-    <div>
-      <h2>Lista Note</h2>
-      <ul>
-        {notes.map((note) => (
-          <li key={note._id}>
-            <h3>{note.title}</h3>
-            <p>Categoria: {note.categories.join(", ")}</p>
-            <p>{note.content.slice(0, 200)}...</p>
-            <button onClick={() => setSelectedNote(note)}>Apri</button>
-            <button onClick={() => handleDuplicate(note._id)}>Duplica</button>
-            <button onClick={() => handleDelete(note._id)}>Elimina</button>
-          </li>
-        ))}
-      </ul>
+    <div className="notes-list">
+      {notes.map((note) => (
+        <div key={note._id} className="note-card">
+          <h3>{note.title}</h3>
+          <p>Categoria: {note.categories.join(", ")}</p>
+          <p>{note.content.slice(0, 200)}...</p>
+          <div className="note-actions">
+            <button
+              className="note-button"
+              onClick={() => setSelectedNote(note)}
+            >
+              Apri
+            </button>
+            <button
+              className="note-button"
+              onClick={() => handleDuplicate(note._id)}
+            >
+              Duplica
+            </button>
+            <button
+              className="note-button"
+              onClick={() => handleDelete(note._id)}
+            >
+              Elimina
+            </button>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

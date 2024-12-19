@@ -25,11 +25,11 @@ export const updateUser = async (id, userData) => {
 export const updateUserProfilePicture = async (id, file) => {
   try {
     const formData = new FormData();
-    formData.append('profilePicture', file);
+    formData.append("profilePicture", file);
 
     const response = await axiosInstance.put(`users/${id}/pfp`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data', 
+        "Content-Type": "multipart/form-data",
       },
     });
     console.log("response.data", response.data);
