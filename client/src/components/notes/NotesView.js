@@ -1,6 +1,6 @@
 import React from "react";
 import { deleteNote, duplicateNote } from "../../services/noteService";
-import markdownIcon from "./markdownIcon.png"; 
+import markdownIcon from "../../assets/markdownIcon.png"; 
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const handleDelete = (id) => {

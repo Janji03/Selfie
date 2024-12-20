@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { getNotes } from "../../services/noteService";
 import { AuthContext } from "../../context/AuthContext";
-import noteIcon from "../notes/notepad.png";
+import noteIcon from "../../assets/notepad.png"; // Import the note icon
 
 const NotesPreview = () => {
   const [recentNotes, setRecentNotes] = useState([]);
@@ -43,8 +43,9 @@ const NotesPreview = () => {
       {recentNotes.length > 0 ? (
         <ul className="note-list">
           {recentNotes.map((note) => (
-            <div className="note-item">
-              <li key={note.id} className="note-content">
+            <div className="note-item" key={note.id}>
+              <li className="note-content">
+                <img src={noteIcon} alt="Note Icon" className="note-icon" /> {/* Add the icon */}
                 <h2>{note.title}</h2>
                 <h4>{note.categories}</h4>
                 <p>{note.content/* .slice(0, 30) */}{/* ... */}</p>
