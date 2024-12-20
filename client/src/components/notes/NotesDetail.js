@@ -15,7 +15,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
 
   useEffect(() => {
     if (note) {
-      setEditMode(false); // Reset editMode quando viene selezionata una nuova nota
+      setEditMode(false); // Reset editMode when a new note is selected
       setEditedTitle(note.title);
       setEditedContent(note.content);
       setEditedCategories(note.categories.join(", "));
@@ -60,41 +60,59 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     }
   };
 
+  const toggleMarkdownPreview = () => {
+    setShowMarkdownPreview((prevState) => !prevState);
+  };
+
   if (!note) return null;
 
   return (
     <div className="note-detail-container">
       {editMode ? (
-        <div className="edit-note-card">
-          <h2>Modifica Nota</h2>
-          <input
-            type="text"
-            value={editedTitle}
-            onChange={(e) => setEditedTitle(e.target.value)}
-            placeholder="Modifica Titolo"
-            required
-          />
-          <textarea
-            value={editedContent}
-            onChange={(e) => setEditedContent(e.target.value)}
-            placeholder="Modifica Contenuto"
-            required
-          />
-          <input
-            type="text"
-            value={editedCategories}
-            onChange={(e) => setEditedCategories(e.target.value)}
-            placeholder="Modifica Categorie (separate da virgola)"
-            required
-          />
-          <button
-            onClick={() =>
-              setShowMarkdownPreview(!showMarkdownPreview)
-            }
-          >
-            {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
-          </button>
-
+        <React.Fragment>
+          <div className="edit-note-card">
+            <h2>Modifica Nota</h2>
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+              placeholder="Modifica Titolo"
+              required
+            />
+            <textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+              placeholder="Modifica Contenuto"
+              required
+            />
+            <input
+              type="text"
+              value={editedCategories}
+              onChange={(e) => setEditedCategories(e.target.value)}
+              placeholder="Modifica Categorie (separate da virgola)"
+              required
+            />
+            <div className="note-actions">
+              <button className="save-note-button" onClick={handleSave}>
+                Salva e Chiudi
+              </button>
+              <button
+                className="note-button"
+                onClick={() => setEditMode(false)}
+              >
+                Annulla
+              </button>
+              <button className="note-button" onClick={handlePaste}>
+                Incolla
+              </button>
+              <button
+                className="note-button"
+                onClick={toggleMarkdownPreview}
+              >
+                {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
+              </button>
+            </div>
+          </div>
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -104,34 +122,36 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               ></div>
             </div>
           )}
-
-          <div className="note-actions">
-            <button className="save-note-button" onClick={handleSave}>
-              Salva e Chiudi
-            </button>
-            <button className="note-button" onClick={() => setEditMode(false)}>
-              Annulla
-            </button>
-            <button className="note-button" onClick={handlePaste}>
-              Incolla
-            </button>
-          </div>
-        </div>
+        </React.Fragment>
       ) : (
-        <div className="note-view-card">
-          <h2>{note.title}</h2>
-          <p>{note.content}</p>
-          <p>
-            <strong>Categorie:</strong> {note.categories.join(", ")}
-          </p>
-          <button
-            onClick={() =>
-              setShowMarkdownPreview(!showMarkdownPreview)
-            }
-          >
-            {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
-          </button>
-
+        <React.Fragment>
+          <div className="note-view-card">
+            <h2>{note.title}</h2>
+            <p>{note.content}</p>
+            <p>
+              <strong>Categorie:</strong> {note.categories.join(", ")}
+            </p>
+            <div className="note-actions">
+              <button
+                className="note-button"
+                onClick={() => setEditMode(true)}
+              >
+                Modifica
+              </button>
+              <button className="note-button" onClick={onClose}>
+                Chiudi
+              </button>
+              <button className="note-button" onClick={handleCopy}>
+                Copia contenuto
+              </button>
+              <button
+                className="note-button"
+                onClick={toggleMarkdownPreview}
+              >
+                {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
+              </button>
+            </div>
+          </div>
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -141,19 +161,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               ></div>
             </div>
           )}
-
-          <div className="note-actions">
-            <button className="note-button" onClick={() => setEditMode(true)}>
-              Modifica
-            </button>
-            <button className="note-button" onClick={onClose}>
-              Chiudi
-            </button>
-            <button className="note-button" onClick={handleCopy}>
-              Copia contenuto
-            </button>
-          </div>
-        </div>
+        </React.Fragment>
       )}
     </div>
   );

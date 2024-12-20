@@ -299,3 +299,19 @@
   height: 20px;
   margin-left: 10px;
 }
+
+.note-detail-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.note-view-card,
+.edit-note-card {
+  flex: 1;
+}
+
+.markdown-preview {
+  flex: 1;
+  max-width: 300px;
+}
