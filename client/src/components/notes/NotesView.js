@@ -3,7 +3,12 @@ import { deleteNote, duplicateNote } from "../../services/noteService";
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const handleDelete = (id) => {
-    deleteNote(id).then(refreshNotes).catch(console.error);
+    deleteNote(id)
+      .then(() => {
+        refreshNotes();
+        setSelectedNote((current) => (current?._id === id ? null : current)); // Resetta la selezione se la nota corrente è eliminata
+      })
+      .catch(console.error);
   };
 
   const handleDuplicate = (id) => {
@@ -42,5 +47,6 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
     </div>
   );
 };
+
 
 export default NotesView;

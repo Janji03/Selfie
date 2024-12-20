@@ -258,3 +258,33 @@
     max-width: calc(33.333% - 15px);
   }
 }
+
+.new-note-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.markdown-preview {
+  background: #f9f9f9;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 20px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.markdown-preview h2 {
+  font-family: "Figtree", sans-serif;
+  font-size: 1.5rem;
+  color: #001789;
+  margin-bottom: 15px;
+}
+
+.preview-content {
+  font-size: 1rem;
+  color: #4a4a4a;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+ 

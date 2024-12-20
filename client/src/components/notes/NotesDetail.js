@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { updateNote } from "../../services/noteService";
 
-const NotesDetail = ({ note, onClose, refreshNotes }) => {
+const NotesDetail = ({ note, onClose, onDelete }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState(note?.content || "");
   const [editedTitle, setEditedTitle] = useState(note?.title || "");
@@ -27,7 +27,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       categories: editedCategories.split(",").map((cat) => cat.trim()),
     })
       .then(() => {
-        refreshNotes();
         setEditMode(false);
         onClose();
       })
@@ -48,7 +47,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     }
   };
 
-  if (!note) return null; // Non mostrare nulla se non c'è una nota selezionata
+  if (!note) return null;
 
   return (
     <div className="note-detail-container">
@@ -110,5 +109,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     </div>
   );
 };
+
 
 export default NotesDetail;

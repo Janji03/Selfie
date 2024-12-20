@@ -39,7 +39,7 @@ const NotesPreview = () => {
 
   return (
     <div className="note-preview">
-      <h3>Ultime 3 note:</h3>
+      <h3>Ultime note:</h3>
       {recentNotes.length > 0 ? (
         <ul className="note-list">
           {recentNotes.map((note) => (
