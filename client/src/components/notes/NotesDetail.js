@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { updateNote } from "../../services/noteService";
+import { marked } from "marked";
 
-const NotesDetail = ({ note, onClose, onDelete }) => {
+const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState(note?.content || "");
   const [editedTitle, setEditedTitle] = useState(note?.title || "");
@@ -9,6 +10,8 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
     note?.categories.join(", ") || ""
   );
   const [copiedContent, setCopiedContent] = useState("");
+  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
+  const [markdownPreview, setMarkdownPreview] = useState("");
 
   useEffect(() => {
     if (note) {
@@ -16,8 +19,17 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
       setEditedTitle(note.title);
       setEditedContent(note.content);
       setEditedCategories(note.categories.join(", "));
+      setMarkdownPreview(marked(note.content || ""));
     }
   }, [note]);
+
+  useEffect(() => {
+    if (editMode) {
+      setMarkdownPreview(marked(editedContent));
+    } else if (note) {
+      setMarkdownPreview(marked(note.content || ""));
+    }
+  }, [editedContent, editMode]);
 
   const handleSave = () => {
     if (!note) return;
@@ -27,6 +39,7 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
       categories: editedCategories.split(",").map((cat) => cat.trim()),
     })
       .then(() => {
+        refreshNotes();
         setEditMode(false);
         onClose();
       })
@@ -74,6 +87,24 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
             placeholder="Modifica Categorie (separate da virgola)"
             required
           />
+          <button
+            onClick={() =>
+              setShowMarkdownPreview(!showMarkdownPreview)
+            }
+          >
+            {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
+          </button>
+
+          {showMarkdownPreview && (
+            <div className="markdown-preview">
+              <h2>Anteprima Markdown</h2>
+              <div
+                className="preview-content"
+                dangerouslySetInnerHTML={{ __html: markdownPreview }}
+              ></div>
+            </div>
+          )}
+
           <div className="note-actions">
             <button className="save-note-button" onClick={handleSave}>
               Salva e Chiudi
@@ -93,7 +124,25 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
           <p>
             <strong>Categorie:</strong> {note.categories.join(", ")}
           </p>
-          <div className="note-actions" style={{ marginBottom: "10px" }}>
+          <button
+            onClick={() =>
+              setShowMarkdownPreview(!showMarkdownPreview)
+            }
+          >
+            {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
+          </button>
+
+          {showMarkdownPreview && (
+            <div className="markdown-preview">
+              <h2>Anteprima Markdown</h2>
+              <div
+                className="preview-content"
+                dangerouslySetInnerHTML={{ __html: markdownPreview }}
+              ></div>
+            </div>
+          )}
+
+          <div className="note-actions">
             <button className="note-button" onClick={() => setEditMode(true)}>
               Modifica
             </button>
@@ -109,6 +158,5 @@ const NotesDetail = ({ note, onClose, onDelete }) => {
     </div>
   );
 };
-
 
 export default NotesDetail;
