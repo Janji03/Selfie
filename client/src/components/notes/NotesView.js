@@ -1,12 +1,13 @@
 import React from "react";
 import { deleteNote, duplicateNote } from "../../services/noteService";
+import markdownIcon from "./markdownIcon.png"; 
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const handleDelete = (id) => {
     deleteNote(id)
       .then(() => {
         refreshNotes();
-        setSelectedNote((current) => (current?._id === id ? null : current)); // Resetta la selezione se la nota corrente è eliminata
+        setSelectedNote((current) => (current?._id === id ? null : current));
       })
       .catch(console.error);
   };
@@ -15,11 +16,25 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
     duplicateNote(id).then(refreshNotes).catch(console.error);
   };
 
+  const isMarkdown = (content) => {
+    // Controlla se contiene sintassi Markdown comune
+    return /[#*_~`-]/.test(content);
+  };
+
   return (
     <div className="notes-list">
       {notes.map((note) => (
         <div key={note._id} className="note-card">
-          <h3>{note.title}</h3>
+          <div className="note-header">
+            <h3>{note.title}</h3>
+            {isMarkdown(note.content) && (
+              <img
+                src={markdownIcon}
+                alt="Markdown icon"
+                className="markdown-icon"
+              />
+            )}
+          </div>
           <p>Categoria: {note.categories.join(", ")}</p>
           <p>{note.content.slice(0, 200)}...</p>
           <div className="note-actions">
@@ -47,6 +62,5 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
     </div>
   );
 };
-
 
 export default NotesView;
