@@ -4,6 +4,7 @@ import { createNote, getNotes } from "../../services/noteService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
+import MarkdownLegend from "./MarkdownLegend";
 import "../../styles/Notes.css";
 import { marked } from "marked";
 
@@ -15,6 +16,7 @@ const Notes = () => {
   const [error, setError] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
+  const [showMarkdownLegend, setShowMarkdownLegend] = useState(false);
 
   const [newNote, setNewNote] = useState({
     title: "",
@@ -62,10 +64,17 @@ const Notes = () => {
 
   return (
     <div className="notes-container">
-      <button className="new-note-button" onClick={() => setIsCreating(true)}>
-        Nuova Nota
-      </button>
-
+      <div className="note-header">
+        <button className="new-note-button" onClick={() => setIsCreating(true)}>
+          Nuova Nota
+        </button>
+        <button
+          className="new-note-button"
+          onClick={() => setShowMarkdownLegend(true)}
+        >
+          Legenda Markdown
+        </button>
+      </div>
       {isCreating && (
         <div className="new-note-section">
           <div className="new-note-card">
@@ -129,6 +138,10 @@ const Notes = () => {
             </div>
           )}
         </div>
+      )}
+
+      {showMarkdownLegend && (
+        <MarkdownLegend onClose={() => setShowMarkdownLegend(false)} />
       )}
 
       <NotesDetail
