@@ -1,0 +1,95 @@
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: "Poppins", sans-serif;
+  }
+  
+  .profile-header {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #001789;
+    margin-bottom: 20px;
+  }
+  
+  .profile-details {
+    text-align: center;
+  }
+  
+  .profile-name {
+    font-size: 2rem;
+    color: #001789;
+    margin-bottom: 10px;
+  }
+  
+  .profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid #001789;
+  }
+  
+  .profile-info {
+    font-size: 1.2rem;
+    margin: 5px 0;
+  }
+  
+  .profile-actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .edit-button {
+    background: #001789;
+    color: white;
+  }
+  
+  .edit-button:hover {
+    background: #284bff;
+  }
+  
+  .delete-button {
+    background: #96221e;
+    color: white;
+  }
+  
+  .delete-button:hover {
+    background: #c12e29;
+  }
+  
+  .logout-button {
+    background: #001789;
+    color: white;
+  }
+  
+  .logout-button:hover {
+    background: #0224cc;
+  }
+  
+  .error-message {
+    color: #d9534f;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #001789;
+  }
+  
