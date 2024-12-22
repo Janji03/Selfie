@@ -4,6 +4,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { getUser, updateUser, updateUserProfilePicture, deleteUser } from '../../services/userService';
 import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
+import "../../styles/Profile.css";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
