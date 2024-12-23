@@ -6,6 +6,7 @@ import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
 import "../../styles/Profile.css";
 
+
 const Profile = () => {
   const [user, setUser] = useState(null);
 
