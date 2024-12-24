@@ -9,7 +9,7 @@ const ExtendedPropsSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "completed", "overdue"],
+      enum: ["pending", "completed"],
       required: true,
     },
     isOverdue: {

@@ -235,6 +235,8 @@ const TaskHandler = ({
       return { ...task };
     });
 
+    console.log('isTimeMachineActive', isTimeMachineActive);
+
     setTasks(updatedTasks);
     if (!isTimeMachineActive) {
       await Promise.all(updatedTasks.map((task) => updateTask(task.id, task)));

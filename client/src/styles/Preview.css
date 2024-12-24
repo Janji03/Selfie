@@ -130,6 +130,14 @@
 }
 
 
+.calendar-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 .calendar-preview-mobile {
   width: 100%;
   color: #002aff;

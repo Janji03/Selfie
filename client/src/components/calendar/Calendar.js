@@ -30,6 +30,8 @@ import { getTasks } from "../../services/taskService";
 
 import DateUtilities from "./DateUtilities";
 
+import "../../styles/Calendar.css";
+
 const Calendar = () => {
   const calendarRef = useRef(null);
 
@@ -324,7 +326,9 @@ const Calendar = () => {
 
   return (
     <div>
-      <TimeMachinePreview />
+      <div className="time-machine-button">
+        <TimeMachinePreview />
+      </div>
 
       <Modal
         isOpen={isFormOpen}
@@ -377,51 +381,71 @@ const Calendar = () => {
         )}
       </Modal>
 
-      <FullCalendar
-        ref={calendarRef}
-        key={calendarRenderKey}
-        plugins={[
-          dayGridPlugin,
-          timeGridPlugin,
-          listPlugin,
-          interactionPlugin,
-          rrulePlugin,
-          luxonPlugin,
-        ]}
-        initialView={currentView}
-        headerToolbar={{
-          left: "today prev,next addEventButton",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
-        }}
-        customButtons={{
-          addEventButton: {
-            text: "+",
-            click: handleAddItem,
-          },
-        }}
-        views={{
-          eventList: {
-            type: "list",
-            duration: { month: 1 },
-            buttonText: "Event List",
-          },
-          taskList: {
-            type: "list",
-            duration: { month: 1 },
-            buttonText: "Task List",
-          },
-        }}
-        events={combinedEvents}
-        timeZone={calendarTimeZone}
-        now={time}
-        nowIndicator={true}
-        datesSet={handleViewChange}
-        dateClick={handleDateClick}
-        eventClick={handleItemClick}
-        selectable={true}
-        select={handleSelectRange}
-      />
+      <div className="calendar">
+        <FullCalendar
+          ref={calendarRef}
+          key={calendarRenderKey}
+          plugins={[
+            dayGridPlugin,
+            timeGridPlugin,
+            listPlugin,
+            interactionPlugin,
+            rrulePlugin,
+            luxonPlugin,
+          ]}
+          initialView={currentView}
+          headerToolbar={{
+            left: "today prev,next addEventButton",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
+          }}
+          customButtons={{
+            addEventButton: {
+              text: "+",
+              click: handleAddItem,
+            },
+          }}
+          views={{
+            eventList: {
+              type: "list",
+              duration: { month: 1 },
+              buttonText: "Event List",
+            },
+            taskList: {
+              type: "list",
+              duration: { month: 1 },
+              buttonText: "Task List",
+            },
+          }}
+          events={combinedEvents}
+          timeZone={calendarTimeZone}
+          now={time}
+          nowIndicator={true}
+          datesSet={handleViewChange}
+          dateClick={handleDateClick}
+          eventClick={handleItemClick}
+          selectable={true}
+          select={handleSelectRange}
+          eventClassNames={(eventInfo) => {
+            const { itemType, isOverdue, status } =
+              eventInfo.event.extendedProps;
+            if (itemType === "task") {
+              if (status === "completed") {
+                return "task-completed";
+              }
+              if (isOverdue) {
+                return "task-overdue";
+              }
+              return "task-pending";
+            } else {
+              return "event";
+            }
+          }}
+          stickyHeaderDates={true}
+          handleWindowResize={true}
+          // height={}
+        />
+      </div>
     </div>
   );
 };
