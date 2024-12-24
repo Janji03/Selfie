@@ -24,7 +24,7 @@ const TaskHandler = ({
   isTimeMachineActive,
   calendarTimeZone,
 }) => {
-  const { addThirtyMinutes } = DateUtilities({ calendarTimeZone });
+  const { addThirtyMinutes, convertEventTimes } = DateUtilities({ calendarTimeZone });
 
   const handleTaskClick = async (clickedItemId) => {
     try {
@@ -81,6 +81,8 @@ const TaskHandler = ({
   };
 
   const handleTaskFormSubmit = async (data) => {
+    const taskTimeZone = data.timeZone;
+
     const now = new Date(time);
     const nowDate = now.toISOString().split("T")[0];
     const nowTime = now.toISOString().split("T")[1].slice(0, 5);
@@ -90,10 +92,8 @@ const TaskHandler = ({
 
     const deadlineDate = data.deadlineDate;
     const deadlineTime = data.deadlineTime;
-    const deadlineDateTime = `${deadlineDate}T${deadlineTime}`;
-    const deadlineEndDateTime = `${data.deadlineDate}T${addThirtyMinutes(
-      data.deadlineTime
-    )}`;
+    const deadlineDateTime = `${deadlineDate}T${deadlineTime}:00`;
+    const deadlineEndDateTime = `${data.deadlineDate}T${addThirtyMinutes(data.deadlineTime)}:00`;
 
     const deadline = isAllDay ? deadlineDate : deadlineDateTime;
     const endDeadline = isAllDay ? deadlineDate : deadlineEndDateTime;
@@ -102,11 +102,15 @@ const TaskHandler = ({
 
     const isOverdue = deadline <= current;
 
+    const utcDeadline = DateTime.fromISO(deadline, { zone: taskTimeZone }).toUTC().toISO();
+    const utcEndDeadline = DateTime.fromISO(endDeadline, { zone: taskTimeZone }).toUTC().toISO();
+    const utcCurrent = DateTime.fromISO(current, { zone: taskTimeZone }).toUTC().toISO();
+
     const newTask = {
       id: uuidv4(),
       title: data.title,
-      start: isOverdue ? current : deadline,
-      end: isOverdue ? current : endDeadline,
+      start: isOverdue ? utcCurrent  : utcDeadline,
+      end: isOverdue ? utcCurrent  : utcEndDeadline,
       allDay: isOverdue ? true : isAllDay,
       extendedProps: {
         status: "pending",
@@ -116,17 +120,27 @@ const TaskHandler = ({
         timeZone: data.timeZone,
       },
     };
+
     try {
       if (isEditMode) {
         const updatedTask = await updateTask(selectedTask.id, newTask);
+
+        // Convert the updated task from UTC to Local Timezone
+        const convertedTask = convertEventTimes(updatedTask);
+
         const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...updatedTask } : task
+          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
         );
+
         setTasks(updatedTasks);
         setSelectedTask(updatedTask);
       } else {
         const createdTask = await createTask(newTask, userID);
-        setTasks([...tasks, createdTask]);
+
+        // Convert the updated task from UTC to Local Timezone
+        const convertedTask = convertEventTimes(createdTask);
+
+        setTasks([...tasks, convertedTask]);
       }
       setIsFormOpen(false);
     } catch (error) {

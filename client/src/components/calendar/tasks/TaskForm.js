@@ -41,6 +41,10 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
         adjustedFormData.title = "New Task";
       }
 
+      if (adjustedFormData.allDay) {
+        adjustedFormData.deadlineTime = "00:00";
+      }
+
       onSubmit({ ...adjustedFormData });
     }
   };

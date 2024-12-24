@@ -76,6 +76,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         const endDate = new Date(adjustedFormData.endDate);
         endDate.setDate(endDate.getDate() + 1);
         adjustedFormData.endDate = endDate.toISOString().split("T")[0];
+        adjustedFormData.endTime = "00:00";
       }
 
       if (!adjustedFormData.isRecurring) {

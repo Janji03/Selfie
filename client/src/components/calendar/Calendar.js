@@ -14,6 +14,8 @@ import { useTimeMachine } from "../../context/TimeMachineContext";
 
 import Modal from "../common/Modal";
 
+import TimeZoneForm from "./TimeZoneForm";
+
 import TabSwitcher from "./TabSwitcher";
 
 import EventForm from "./events/EventForm";
@@ -46,6 +48,7 @@ const Calendar = () => {
   const [calendarTimeZone, setCalendarTimeZone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
+  const [isTZFormOpen, setIsTZFormOpen] = useState(false);
 
   const [currentView, setCurrentView] = useState("dayGridMonth");
 
@@ -65,6 +68,8 @@ const Calendar = () => {
 
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
+  
+  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -72,9 +77,15 @@ const Calendar = () => {
         try {
           const fetchedEvents = await getEvents(userID);
           const fetchedTasks = await getTasks(userID);
-          setEvents(fetchedEvents);
-          setTasks(fetchedTasks);
-          const combined = [...fetchedEvents, ...fetchedTasks];
+
+          // Convert the events and tasks to calendar timezone
+          const convertedEvents = fetchedEvents.map((event) => convertEventTimes(event));
+          const convertedTasks = fetchedTasks.map((task) => convertEventTimes(task));
+          
+          setEvents(convertedEvents);
+          setTasks(convertedTasks);
+          
+          const combined = [...convertedEvents, ...convertedTasks];
           setCombinedEvents(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
@@ -128,7 +139,6 @@ const Calendar = () => {
     calendarTimeZone,
   });
 
-  const { decrementOneDay, roundTime } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -324,6 +334,24 @@ const Calendar = () => {
     }
   };
 
+  const handleChangeTimeZone = () => {
+    setIsTZFormOpen(true);
+  };
+
+  const handleTZFormSubmit = (newTimeZone) => {
+    setCalendarTimeZone(newTimeZone);
+    setIsTZFormOpen(false);
+
+    const convertedEvents = events.map((event) => convertEventTimes(event));
+    const convertedTasks = tasks.map((task) => convertEventTimes(task));
+    
+    setEvents(convertedEvents);
+    setTasks(convertedTasks);
+    
+    const combined = [...convertedEvents, ...convertedTasks];
+    setCombinedEvents(combined);
+  };
+
   return (
     <div>
       <div className="time-machine-button">
@@ -381,6 +409,18 @@ const Calendar = () => {
         )}
       </Modal>
 
+      <Modal
+        isOpen={isTZFormOpen}
+        onClose={() => setIsTZFormOpen(false)}
+        title={"Timezone"}
+        zIndex={1000}
+      >
+        <TimeZoneForm
+          initialTimeZone={calendarTimeZone}
+          onSubmit={handleTZFormSubmit}
+        />
+      </Modal>
+
       <div className="calendar">
         <FullCalendar
           ref={calendarRef}
@@ -395,7 +435,7 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "today prev,next addEventButton",
+            left: "today prev,next addEventButton calendarTimeZoneButton",
             center: "title",
             right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
           }}
@@ -404,6 +444,10 @@ const Calendar = () => {
               text: "+",
               click: handleAddItem,
             },
+            calendarTimeZoneButton: {
+              text: 'Timezone',
+              click: handleChangeTimeZone,
+            }
           }}
           views={{
             eventList: {
@@ -426,21 +470,6 @@ const Calendar = () => {
           eventClick={handleItemClick}
           selectable={true}
           select={handleSelectRange}
-          eventClassNames={(eventInfo) => {
-            const { itemType, isOverdue, status } =
-              eventInfo.event.extendedProps;
-            if (itemType === "task") {
-              if (status === "completed") {
-                return "task-completed";
-              }
-              if (isOverdue) {
-                return "task-overdue";
-              }
-              return "task-pending";
-            } else {
-              return "event";
-            }
-          }}
           stickyHeaderDates={true}
           handleWindowResize={true}
           // height={}

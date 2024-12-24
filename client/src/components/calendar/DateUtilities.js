@@ -32,51 +32,32 @@ const DateUtilities = ({ calendarTimeZone }) => {
 
   const convertEventTimes = (event) => {
     const { start, end, rrule } = event;
-
-    const updatedStart = DateTime.fromISO(start, { zone: "UTC" })
-      .setZone(calendarTimeZone)
-      .toISO();
-    const updatedEnd = DateTime.fromISO(end, { zone: "UTC" })
-      .setZone(calendarTimeZone)
-      .toISO();
-
-    let updatedRRule = rrule;
+  
+    const convertedStart = DateTime.fromISO(start, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
+    const convertedEnd = DateTime.fromISO(end, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
+  
+    let convertedRRule = rrule;
     if (rrule) {
       const rruleStartMatch = rrule.match(/DTSTART:(\d{8}T\d{6}Z)/);
       if (rruleStartMatch) {
-        const rruleStart = rruleStartMatch[1];
+        const updatedRRuleStart = DateTime
+          .fromISO(convertedStart) 
+          .toUTC()                                 
+          .toFormat("yyyyMMdd'T'HHmmss'Z'");       
+        
+        convertedRRule = rrule.replace(
+          /DTSTART:\d{8}T\d{6}Z/,
+          `DTSTART:${updatedRRuleStart}`
+        );
 
-        const rruleStartISO = DateTime.fromFormat(
-          rruleStart,
-          "yyyyMMdd'T'HHmmss'Z'",
-          { zone: "UTC" }
-        ).toISO();
-
-        const updatedRRuleStart = DateTime.fromISO(rruleStartISO, {
-          zone: "UTC",
-        })
-          .setZone(calendarTimeZone)
-          .toFormat("yyyyMMdd'T'HHmmss");
-
-        if (calendarTimeZone === "UTC") {
-          updatedRRule = rrule.replace(
-            /DTSTART:\d{8}T\d{6}Z/,
-            `DTSTART:${updatedRRuleStart}Z`
-          );
-        } else {
-          updatedRRule = rrule.replace(
-            /DTSTART:\d{8}T\d{6}Z/,
-            `DTSTART;TZID=${calendarTimeZone}:${updatedRRuleStart}`
-          );
-        }
       }
     }
-
+  
     return {
       ...event,
-      start: updatedStart,
-      end: updatedEnd,
-      rrule: updatedRRule,
+      start: convertedStart,
+      end: convertedEnd,
+      rrule: convertedRRule,
     };
   };
 

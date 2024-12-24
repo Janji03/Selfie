@@ -41,19 +41,6 @@ const TaskInfo = ({
     selectedTask.extendedProps.isOverdue
   );
 
-  const deadlineDate = DateTime.fromISO(selectedTask.extendedProps.deadline, {
-    zone: "UTC",
-  })
-    .setZone(selectedTask.extendedProps.timeZone)
-    .toISO()
-    .split("T")[0];
-  const deadlineTime = DateTime.fromISO(selectedTask.extendedProps.deadline, {
-    zone: "UTC",
-  })
-    .setZone(selectedTask.extendedProps.timeZone)
-    .toISO()
-    .split("T")[1]
-    .slice(0, 5);
   const isAllDay = selectedTask.extendedProps.wasAllDay;
 
   return (
@@ -63,17 +50,16 @@ const TaskInfo = ({
         {selectedTask.title}
       </h2>
 
-      {/* Deadline Date */}
       <p>
-        <strong>Deadline Date:</strong> {deadlineDate}
+        <strong>Deadline:</strong>{" "}
+        {selectedTask.allDay
+          ? DateTime.fromISO(selectedTask.extendedProps.deadline, { zone: "UTC" })
+              .setZone(selectedTask.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATE_SHORT)
+          : DateTime.fromISO(selectedTask.extendedProps.deadline, { zone: "UTC" })
+              .setZone(selectedTask.extendedProps.timeZone)
+              .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
-
-      {/* Deadline Date Time*/}
-      {!isAllDay && (
-        <p>
-          <strong>Deadline Time:</strong> {deadlineTime}
-        </p>
-      )}
 
       {/* All Day Event Indicator */}
       {isAllDay && (
