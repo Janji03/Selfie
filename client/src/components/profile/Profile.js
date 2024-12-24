@@ -5,6 +5,7 @@ import { getUser, updateUser, updateUserProfilePicture, deleteUser } from '../..
 import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
 import "../../styles/Profile.css";
+import DefaultIcon from '../../assets/default.png';
 
 
 const Profile = () => {
@@ -29,23 +30,25 @@ const Profile = () => {
       try {
         if (userID) {
           const userInfo = await getUser(userID);
-          setUser(userInfo); 
+          setUser(userInfo);
           setFormData(userInfo);
           if (userInfo.profilePicture) {
             setProfileImage(baseURL + userInfo.profilePicture);
+          } else {
+            setProfileImage(DefaultIcon);
           }
         }
       } catch (err) {
-        setError(err.message); 
+        setError(err.message);
       }
     };
-    fetchUserData(); 
+    fetchUserData();
   }, [userID, token]);
 
 
   const handleLogout = async () => {
     try {
-      logout(); 
+      logout();
       navigate('/login');
     } catch (err) {
       setError(err.message);
@@ -64,9 +67,14 @@ const Profile = () => {
     setFormData((prev) => ({ ...prev, profilePicture: file }));
     const reader = new FileReader();
     reader.onloadend = () => {
-      setProfileImage(reader.result); 
+      setProfileImage(reader.result);
     };
     if (file) reader.readAsDataURL(file);
+    if (!file) {
+      setProfileImage(DefaultIcon);
+      return;
+    }
+    
   };
 
   const handleFormSubmit = async (e) => {
@@ -78,8 +86,8 @@ const Profile = () => {
         setProfileImage(baseURL + profilePictureResponse.profilePicture);
       }
       await updateUser(userID, formData);
-      setUser(formData); 
-      toggleEditModal(); 
+      setUser(formData);
+      toggleEditModal();
     } catch (err) {
       setError(err.message);
     }
@@ -87,16 +95,16 @@ const Profile = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteUser(userID); 
-      logout(); 
-      navigate('/login'); 
+      await deleteUser(userID);
+      logout();
+      navigate('/login');
     } catch (err) {
-      setError(err.message); 
+      setError(err.message);
     }
   };
 
 
-  return   (
+  return (
     <div className="profile-wrapper">
       <div className="profile-container">
         <h1 className="profile-header">Profilo</h1>
@@ -104,7 +112,12 @@ const Profile = () => {
         {user ? (
           <div className="profile-details">
             <h2 className="profile-name">{user.name}</h2>
-            {profileImage && <img src={profileImage} alt="Profile" className="profile-image" />}
+            {profileImage && <img
+              src={profileImage || DefaultIcon}
+              alt="Profile"
+              className="profile-image"
+            />
+            }
             <p className="profile-info"><strong>Email:</strong> {user.email}</p>
             <p className="profile-info"><strong>Bio:</strong> {user.bio}</p>
             <p className="profile-info"><strong>Birthday:</strong> {user.birthday}</p>
