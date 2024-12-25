@@ -8,6 +8,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
 import pomodoroRoutes from "./routes/pomodoroRoutes.js";
 import config from "./config/config.js";
+// import agenda from "./config/agendaConfig.js"; 
+// import scheduleNotifications from "./scheduler/notificationScheduler.js"; 
 
 const app = express();
 
@@ -26,6 +28,12 @@ app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/pomodoro", pomodoroRoutes);
+
+// (async () => {
+//   await agenda.start();
+//   await scheduleNotifications(); 
+//   console.log("Agenda workers started.");
+// })();
 
 const PORT = config.port;
 app.listen(PORT, () => {

@@ -435,16 +435,16 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "today prev,next addEventButton calendarTimeZoneButton",
-            center: "title",
+            left: "today addEvent calendarTimeZone",
+            center: "prev title next",
             right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
           }}
           customButtons={{
-            addEventButton: {
-              text: "+",
+            addEvent: {
+              text: "",
               click: handleAddItem,
             },
-            calendarTimeZoneButton: {
+            calendarTimeZone: {
               text: 'Timezone',
               click: handleChangeTimeZone,
             }
@@ -472,7 +472,7 @@ const Calendar = () => {
           select={handleSelectRange}
           stickyHeaderDates={true}
           handleWindowResize={true}
-          // height={}
+          height={"100%"}
         />
       </div>
     </div>
