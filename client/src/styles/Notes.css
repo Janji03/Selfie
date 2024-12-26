@@ -129,7 +129,13 @@
   font-size: 1rem;
   color: #4a4a4a;
   margin: 0;
+  max-height: 4.5em; /* Adatta in base al numero di righe desiderato */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
+
 
 .note-card .note-actions {
   display: flex;
@@ -251,4 +257,61 @@
     flex: 1 1 calc(33.333% - 15px);
     max-width: calc(33.333% - 15px);
   }
+}
+
+.new-note-section {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.markdown-preview {
+  background: #f9f9f9;
+  border-radius: 20px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 20px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.markdown-preview h2 {
+  font-family: "Figtree", sans-serif;
+  font-size: 1.5rem;
+  color: #001789;
+  margin-bottom: 15px;
+}
+
+.preview-content {
+  font-size: 1rem;
+  color: #4a4a4a;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.note-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.markdown-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
+.note-detail-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.note-view-card,
+.edit-note-card {
+  flex: 1;
+}
+
+.markdown-preview {
+  flex: 1;
+  max-width: 300px;
 }
