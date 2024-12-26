@@ -2,7 +2,7 @@ import React from "react";
 
 const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handleFormSubmit, onCancel }) => {
   return (
-    <form onSubmit={handleFormSubmit}>
+    <form className="edit-profile-form" onSubmit={handleFormSubmit}>
       <div>
         <label htmlFor="name">Name:</label>
         <input
