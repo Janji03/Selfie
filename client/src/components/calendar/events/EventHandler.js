@@ -58,10 +58,25 @@ const EventHandler = ({
         );
       }
 
+      const notifications = selectedEvent.extendedProps.notifications || [];
+      const formattedNotifications = notifications.map((notif) => {
+        const notifDateTime = DateTime.fromISO(notif.time, {
+          zone: "UTC",
+        }).setZone(calendarTimeZone);
+
+        return {
+          date: notifDateTime.toISO().split("T")[0],
+          time: notifDateTime.toISO().split("T")[1].slice(0, 5),
+          repeatInterval: notif.repeatInterval || null,
+          repeatCount: notif.repeatCount || 0,
+          methods: notif.methods || ["browser"],
+        };
+      });
+
       setEventFormInitialData({
         title: selectedEvent.title,
         startDate: DateTime.fromISO(selectedEvent.start, { zone: "UTC" })
-           .setZone(calendarTimeZone)
+          .setZone(calendarTimeZone)
           .toISO()
           .split("T")[0],
         startTime: DateTime.fromISO(selectedEvent.start, { zone: "UTC" })
@@ -119,6 +134,7 @@ const EventHandler = ({
               ),
               endOccurrences: 1,
             },
+        notifications: formattedNotifications,
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -130,10 +146,8 @@ const EventHandler = ({
       try {
         if (eventOccurrenceDate) {
           const exdate = selectedEvent.exdate ? [...selectedEvent.exdate] : [];
-          console.log("eventOccurrenceDate", eventOccurrenceDate);
           exdate.push(eventOccurrenceDate.toISOString());
           const updatedEvent = { ...selectedEvent, exdate };
-          console.log("updatedEvent", updatedEvent);
           await updateEvent(selectedEvent.id, updatedEvent);
 
           const updatedEvents = events.map((evt) =>
@@ -160,8 +174,14 @@ const EventHandler = ({
     const eventStartDateTime = `${data.startDate}T${data.startTime}:00`;
     const eventEndDateTime = `${data.endDate}T${data.endTime}:00`;
 
-    const utcStart = DateTime.fromISO(eventStartDateTime, { zone: eventTimeZone }).toUTC().toISO();
-    const utcEnd = DateTime.fromISO(eventEndDateTime, { zone: eventTimeZone }).toUTC().toISO();
+    const utcStart = DateTime.fromISO(eventStartDateTime, {
+      zone: eventTimeZone,
+    })
+      .toUTC()
+      .toISO();
+    const utcEnd = DateTime.fromISO(eventEndDateTime, { zone: eventTimeZone })
+      .toUTC()
+      .toISO();
 
     const rruleString = handleRecurrence(data.recurrence, utcStart);
 
@@ -170,6 +190,16 @@ const EventHandler = ({
       eventStartDateTime,
       eventEndDateTime
     );
+
+    const notificationData = data.notifications.map((notif) => {
+      return {
+        time: utcStart,
+        repeatInterval: notif.repeatInterval || null,
+        repeatCount: notif.repeatCount || 0,
+        methods: notif.methods || ["browser"],
+        isSent: false,
+      };
+    });
 
     const newEvent = {
       id: uuidv4(),
@@ -182,6 +212,7 @@ const EventHandler = ({
       extendedProps: {
         location: data.location,
         description: data.description,
+        notifications: notificationData,
         timeZone: eventTimeZone,
         ...(rruleString && {
           recurrenceType:
@@ -257,6 +288,7 @@ const EventHandler = ({
         endDate: calculateEndDateRecurrence(startDateTime, "DAILY"),
         endOccurrences: 1,
       },
+      notifications: [],
     });
   };
 

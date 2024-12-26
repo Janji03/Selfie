@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import RecurrenceForm from "./RecurrenceForm";
+import NotificationForm from "./NotificationForm";
 import TimeZoneForm from "../TimeZoneForm";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
@@ -263,6 +264,8 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             <span style={{ color: "red" }}>{errors.description}</span>
           )}
         </div>
+        <label>Notifications</label>
+        <NotificationForm formData={formData} setFormData={setFormData} />
         <div>
           <label>Time Zone:</label>
           <TimeZoneForm

@@ -159,7 +159,6 @@ const Calendar = () => {
     let intervalId;
 
     const checkForOverdueTasksAtMidnight = async () => {
-      console.log("Checking for overdue tasks at midnight...");
       await checkForOverdueTasks();
     };
 
@@ -445,7 +444,7 @@ const Calendar = () => {
               click: handleAddItem,
             },
             calendarTimeZone: {
-              text: 'Timezone',
+              text: "",
               click: handleChangeTimeZone,
             }
           }}
@@ -453,12 +452,12 @@ const Calendar = () => {
             eventList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "Event List",
+              buttonText: "events",
             },
             taskList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "Task List",
+              buttonText: "tasks",
             },
           }}
           events={combinedEvents}

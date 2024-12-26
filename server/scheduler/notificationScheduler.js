@@ -1,5 +1,5 @@
-import agenda from '../config/agendaConfig.js';
-import notificationJob from '../jobs/notificationJob.js';
+import agenda from '../config/agenda.js';
+import notificationJob from '../jobs/notificationJobs.js'
 import Event from '../models/Event.js';
 
 notificationJob(agenda);

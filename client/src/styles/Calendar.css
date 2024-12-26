@@ -76,6 +76,9 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 10px; /* Spacing between elements */
+  padding: 10px;
 }
 
 .calendar .fc-toolbar-chunk {
@@ -130,17 +133,6 @@
 .calendar .fc {
   flex-grow: 1;
   width: 100%;
-}
-
-
-/* Base toolbar styling */
-.calendar .fc-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
-  gap: 10px; /* Spacing between elements */
-  padding: 10px;
 }
 
 /* Left section */
