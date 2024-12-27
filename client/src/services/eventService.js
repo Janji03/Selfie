@@ -63,3 +63,20 @@ export const deleteEvent = async (id) => {
     );
   }
 };
+
+//aggiorna cicli completati
+export const updateCompletedCycles = async (id, completedCycles) => {
+
+  try {
+    const response = await axiosInstance.put(`events/${id}/completed-cycles`, {
+      completedCycles,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message ||
+        "Errore durante l'aggiornamento dei cicli completati"
+    );
+  }
+};
+

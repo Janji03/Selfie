@@ -3,6 +3,8 @@ import {
   createPomodoro,
   getUserPomodoros,
 } from "../../services/pomodoroService";
+import { updateCompletedCycles } from "../../services/eventService";
+import { useLocation } from "react-router-dom";
 import PomodoroStyle from "../../styles/Pomodoro.css";
 
 const Pomodoro = () => {
@@ -15,7 +17,12 @@ const Pomodoro = () => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [onBreak, setOnBreak] = useState(false);
   const [nPomodoro, setNPomodoro] = useState(0);
+  const [sessionNumber, setSessionNumber] = useState(0);
   const userID = localStorage.getItem("userID");
+
+
+  const location = useLocation();
+  const { id, title, pomodoroSettings } = location.state || {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +31,7 @@ const Pomodoro = () => {
     setRemainingCycles(initialCycles);
     setIsRunning(true);
     setOnBreak(false);
+    setSessionNumber(sessionNumber + 1)
 
     const pomodoroData = {
       studyTime: studyTime,
@@ -32,10 +40,11 @@ const Pomodoro = () => {
       userID: userID,
     };
 
-    setStudyTime(0);
+
+    /* setStudyTime(0);
     setBreakTime(0);
     setInitialCycles(0);
-    setTotalMinutes(0);
+    setTotalMinutes(0); */
 
     try {
       await createPomodoro(pomodoroData);
@@ -44,6 +53,8 @@ const Pomodoro = () => {
       console.error("Errore creazione pomodoro:", error);
     }
   };
+
+
 
   const handleGet = async () => {
     try {
@@ -55,6 +66,8 @@ const Pomodoro = () => {
     }
   };
 
+
+
   const calculateProposals = () => {
     const breakTime = Math.floor(totalMinutes * 0.2);
     const studyTime = totalMinutes - breakTime;
@@ -65,6 +78,8 @@ const Pomodoro = () => {
     ];
   };
 
+
+
   //converte numeri normali in tempo
   const convertTime = () => {
     const seconds = timeLeft;
@@ -73,7 +88,26 @@ const Pomodoro = () => {
     return `${minutes}:${remainderSeconds < 10 ? "0" : ""}${remainderSeconds}`;
   };
 
+
+
+  const handleCycleCompletion = async (eventId, completedCycles) => {
+    try {
+      const updatedEvent = await updateCompletedCycles(eventId, completedCycles);
+      console.log("Evento aggiornato con successo:", updatedEvent);
+    } catch (error) {
+      console.error("Errore durante l'aggiornamento dei cicli completati:", error.message);
+    }
+  };
+
+
+
   useEffect(() => {
+    if (pomodoroSettings) {
+      setStudyTime(pomodoroSettings.studyTime)
+      setBreakTime(pomodoroSettings.breakTime)
+      setInitialCycles(pomodoroSettings.cycles)
+      }
+    
     if (isRunning) {
       if (timeLeft > 0) {
         const interval = setInterval(() => {
@@ -89,6 +123,9 @@ const Pomodoro = () => {
             alert("inizio pausa");
             setRemainingCycles((prevCycles) => prevCycles - 1); //riduci cicli
             setTimeLeft(breakTime * 60); //pausa
+            if(pomodoroSettings && sessionNumber > 0){
+              handleCycleCompletion(id, ((initialCycles-remainingcycles)+1));
+            }
           } else {
             alert("inizio studio");
             setTimeLeft(studyTime * 60);
@@ -102,7 +139,7 @@ const Pomodoro = () => {
         }
       }
     }
-  }, [isRunning, timeLeft]);
+  }, [isRunning, timeLeft, pomodoroSettings]);
 
   return (
     <div>
@@ -228,6 +265,35 @@ const Pomodoro = () => {
           </div>
           <div className="right-pomodoro">
             <button onClick={handleGet}> get</button>
+
+            {pomodoroSettings && (
+              <h2>{title}</h2>
+            )}
+
+            <h1>Timer:{convertTime()}</h1>
+
+            <button onClick={() => {
+              setTimeLeft(1)}
+              }>Vai al prossimo</button>
+
+
+              <button onClick={() => {
+                if(onBreak){
+                  setTimeLeft(breakTime * 60)
+                } else setTimeLeft(studyTime * 60)
+                alert('ricomincia questo ciclo')
+              }}>Ricomincia questo</button>
+
+
+            <button onClick={handleSubmit}>
+              Ricomincia tutto</button>
+
+
+              <button onClick={() => {
+                  setIsRunning(false);
+                  alert('ciclo terminato forzato')
+              }}>Fine tutto</button> 
+
           </div>
         </div>
       </div>

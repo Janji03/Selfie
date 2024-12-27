@@ -2,10 +2,8 @@ import axiosInstance from "./axiosInstance";
 
 // creare un nuovo Pomodoro
 export const createPomodoro = async (pomodoroData) => {
-  console.log('pomodoroData in services', pomodoroData);
   try {
     const res = await axiosInstance.post('pomodoro', pomodoroData);
-    console.log('res', res);
     return res.data;
   } catch (error) {
     console.error("Errore nella creazione del Pomodoro:", error);

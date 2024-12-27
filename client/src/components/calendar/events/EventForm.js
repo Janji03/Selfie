@@ -5,6 +5,13 @@ import TimeZoneForm from "../TimeZoneForm";
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const [formData, setFormData] = useState({
     ...initialData,
+    isPomodoro: false,
+    pomodoroSettings: {
+      studyTime: null,
+      breakTime: null,
+      cycles: null,
+      completedCycles: null,
+    },
   });
 
   const [errors, setErrors] = useState({});
@@ -14,10 +21,11 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const MAX_LOCATION_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
 
+
   const validateForm = () => {
     const newErrors = {};
-    const {
-      title,
+    const { 
+      title, 
       startDate,
       startTime,
       endDate,
@@ -25,10 +33,20 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       allDay,
       location,
       description,
+      isPomodoro 
     } = formData;
 
-    if (title.length > MAX_TITLE_LENGTH) {
-      newErrors.title = `Event title can be max ${MAX_TITLE_LENGTH} characters.`;
+
+    if (!title || title.length > MAX_TITLE_LENGTH) {
+      newErrors.title = `Event title must be between 1 and ${MAX_TITLE_LENGTH} characters.`;
+    }
+
+    if (isPomodoro) {
+      const { studyTime, breakTime, cycles } = formData.pomodoroSettings;
+      if (!studyTime || !breakTime || !cycles) {
+        newErrors.pomodoroSettings =
+          "Study time, break time, and cycles are required for Pomodoro.";
+      }
     }
 
     if (location.length > MAX_LOCATION_LENGTH) {
@@ -60,11 +78,22 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+    
+   
+
+    
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
       const adjustedFormData = { ...formData };
+
+      // Logica specifica per eventi Pomodoro
+      if (adjustedFormData.isPomodoro) {
+        adjustedFormData.endDate = formData.startDate; // Forza endDate uguale a startDate
+      }
+
       if (
         !adjustedFormData.title ||
         adjustedFormData.title.trim().length === 0
@@ -82,6 +111,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         adjustedFormData.recurrence = null;
       }
 
+      if (adjustedFormData.isPomodoro) {
+        adjustedFormData.pomodoroSettings = { ...formData.pomodoroSettings };
+      }
+   
       onSubmit({ ...adjustedFormData });
     }
   };
@@ -92,6 +125,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       timeZone: selectedTimeZone,
     }));
   };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -137,6 +171,35 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     setFormData({ ...initialData });
   };
 
+
+  // Funzione per calcolare le proposte di studio
+  const calculateProposals = () => {
+    const startTime = new Date(`${formData.startDate}T${formData.startTime}`);
+    const endTime = new Date(`${formData.startDate}T${formData.endTime}`);
+    const totalMinutes = Math.floor((endTime - startTime) / 60000); 
+
+    const breakTime = Math.floor(totalMinutes * 0.2);
+    const studyTime = totalMinutes - breakTime;
+    return [
+      { study: studyTime, break: breakTime, cycles: 1 },
+      { study: Math.floor(studyTime / 2), break: breakTime, cycles: 2 },
+      { study: Math.floor(studyTime / 3), break: breakTime, cycles: 3 },
+    ];
+  };
+
+  // Funzione per selezionare una proposta Pomodoro
+  const handleProposalSelect = (proposal) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      pomodoroSettings: {
+        studyTime: proposal.study,
+        breakTime: proposal.break,
+        cycles: proposal.cycles,
+      },
+    }));
+    console.log(formData);
+  };
+
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -150,125 +213,239 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
           />
           {errors.title && <span style={{ color: "red" }}>{errors.title}</span>}
         </div>
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="allDay"
-              checked={formData.allDay}
-              onChange={handleChange}
-            />
-            All Day
-          </label>
-        </div>
-        <div>
-          <label>Start Date:</label>
-          <input
-            type="date"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleChange}
-          />
-        </div>
-        {!formData.allDay && (
-          <div>
-            <label>Start Time:</label>
-            <input
-              type="time"
-              name="startTime"
-              value={formData.startTime}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-        <div>
-          <label>End Date:</label>
-          <input
-            type="date"
-            name="endDate"
-            value={formData.endDate}
-            onChange={handleChange}
-            style={{
-              textDecoration:
-                new Date(formData.endDate) < new Date(formData.startDate)
-                  ? "line-through"
-                  : "none",
-            }}
-          />
-          {errors.endDate && (
-            <span style={{ color: "red" }}>{errors.endDate}</span>
-          )}
-        </div>
-        {!formData.allDay && (
-          <div>
-            <label>End Time:</label>
-            <input
-              type="time"
-              name="endTime"
-              value={formData.endTime}
-              onChange={handleChange}
-              style={{
-                textDecoration:
-                  formData.startDate === formData.endDate &&
-                  formData.endTime <= formData.startTime
-                    ? "line-through"
-                    : "none",
-              }}
-            />
 
-            {errors.endTime && (
-              <span style={{ color: "red" }}>{errors.endTime}</span>
-            )}
-          </div>
-        )}
         <div>
           <label>
             <input
               type="checkbox"
-              name="isRecurring"
-              checked={formData.isRecurring}
+              name="isPomodoro"
+              checked={formData.isPomodoro}
               onChange={handleChange}
             />
-            Is Recurring
+            Is Pomodoro
           </label>
         </div>
-        {formData.isRecurring && (
-          <RecurrenceForm
-            formData={formData}
-            setFormData={setFormData}
-            handleChange={handleChange}
-          />
+
+        {formData.isPomodoro ? (
+          <>
+            {/* Campi specifici per il Pomodoro */}
+            <div>
+              <label>Start Date:</label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label>Start Time:</label>
+              <input
+                type="time"
+                name="startTime"
+                value={formData.startTime}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label>End Time:</label>
+              <input
+                type="time"
+                name="endTime"
+                value={formData.endTime}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="isRecurring"
+                  checked={formData.isRecurring}
+                  onChange={handleChange}
+                />
+                Is Recurring
+              </label>
+            </div>
+            {formData.isRecurring && (
+              <RecurrenceForm
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+              />
+            )}
+
+            {/* Sezione Proposte Pomodoro */}
+            <div>
+              <h3>Pomodoro Proposals</h3>
+              {calculateProposals().map((proposal, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleProposalSelect(proposal)}
+                >
+                  Study: {proposal.study} min, Break: {proposal.break} min, Cycles:{" "} {proposal.cycles} <br/>
+                </button>
+              ))}
+            </div>
+
+            {/* Modifica manuale delle impostazioni Pomodoro */}
+            <div>
+              <label>Study Time (min):</label>
+              <input
+                type="number"
+                name="studyTime"
+                value={formData.pomodoroSettings.studyTime || ""}
+                onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    pomodoroSettings: {
+                      ...prevFormData.pomodoroSettings,
+                      studyTime: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <label>Break Time (min):</label>
+              <input
+                type="number"
+                name="breakTime"
+                value={formData.pomodoroSettings.breakTime || ""}
+                onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    pomodoroSettings: {
+                      ...prevFormData.pomodoroSettings,
+                      breakTime: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+            <div>
+              <label>Cycles:</label>
+              <input
+                type="number"
+                name="cycles"
+                value={formData.pomodoroSettings.cycles || ""}
+                onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    pomodoroSettings: {
+                      ...prevFormData.pomodoroSettings,
+                      cycles: e.target.value,
+                    },
+                  }))
+                }
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            {/* Campi standard per eventi non Pomodoro */}
+            <div>
+              <label>Start Date:</label>
+              <input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label>End Date:</label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="allDay"
+                  checked={formData.allDay}
+                  onChange={handleChange}
+                />
+                All Day
+              </label>
+            </div>
+
+            {!formData.allDay && (
+              <>
+                <div>
+                  <label>Start Time:</label>
+                  <input
+                    type="time"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div>
+                  <label>End Time:</label>
+                  <input
+                    type="time"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleChange}
+                  />
+                </div>
+              </>
+            )}
+
+            <div>
+              <label>Location:</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="isRecurring"
+                  checked={formData.isRecurring}
+                  onChange={handleChange}
+                />
+                Is Recurring
+              </label>
+            </div>
+            {formData.isRecurring && (
+              <RecurrenceForm
+                formData={formData}
+                setFormData={setFormData}
+                handleChange={handleChange}
+              />
+            )}
+
+            <div>
+              <label>Description:</label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label>Time Zone:</label>
+              <TimeZoneForm
+                initialTimeZone={formData.timeZone}
+                onSubmit={handleTimeZoneChange}
+              />
+            </div>
+          </>
         )}
-        <div>
-          <label>Location:</label>
-          <input
-            type="text"
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-          />
-          {errors.location && (
-            <span style={{ color: "red" }}>{errors.location}</span>
-          )}
-        </div>
-        <div>
-          <label>Description:</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-          />
-          {errors.description && (
-            <span style={{ color: "red" }}>{errors.description}</span>
-          )}
-        </div>
-        <div>
-          <label>Time Zone:</label>
-          <TimeZoneForm
-            initialTimeZone={formData.timeZone}
-            onSubmit={handleTimeZoneChange}
-          />
-        </div>
+
         <button type="submit">
           {isEditMode ? "Save Changes" : "Add Event"}
         </button>

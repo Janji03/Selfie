@@ -25,6 +25,8 @@ import TaskHandler from "./tasks/TaskHandler";
 import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
+import redistributePomodoroTime from "./events/EventPomodoroRedistribution"
+
 import { getEvents } from "../../services/eventService";
 import { getTasks } from "../../services/taskService";
 
@@ -78,7 +80,18 @@ const Calendar = () => {
           console.error("Error fetching events or tasks:", error);
         }
       };
+
+      const fetchAndRedistributeEvents = async () => {
+        try {
+          await redistributePomodoroTime(userID, time, setEvents);
+        } catch (error) {
+          console.error("Error during redistribution:", error);
+        }
+      };
+  
       fetchEventsAndTasks();
+      fetchAndRedistributeEvents();
+
     }
   }, [isAuthenticated, userID]);
 

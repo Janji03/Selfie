@@ -21,11 +21,44 @@ const ExtendedPropsSchema = new Schema(
       type: String,
       enum: ["DAILY", "WEEKLY", "MONTHLY", "YEARLY", "CUSTOM"],
       default: null,
-      required: false,
     },
     itemType: {
       type: String,
       default: "event",
+    },
+    isPomodoro: {
+      type: Boolean,
+      default: false, 
+    },
+    pomodoroSettings: {
+      studyTime: {
+        type: Number, 
+        required: function () {
+          return this.isPomodoro;
+        },
+        default: null,
+      },
+      breakTime: {
+        type: Number, 
+        required: function () {
+          return this.isPomodoro;
+        },
+        default: null,
+      },
+      cycles: {
+        type: Number, 
+        required: function () {
+          return this.isPomodoro;
+        },
+        default: null,
+      },
+      completedCycles: {
+        type: Number, 
+        required: function () {
+          return this.isPomodoro;
+        },
+        default: null,
+      },
     },
   },
   { _id: false }
@@ -87,6 +120,11 @@ eventSchema.pre("save", function (next) {
   if (!this.rrule && this.extendedProps.recurrenceType) {
     this.extendedProps.recurrenceType = undefined;
   }
+
+  if (this.extendedProps.isPomodoro) { //forse si può togliere
+    this.end = this.start; 
+  }
+
   next();
 });
 

@@ -1,5 +1,7 @@
 import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
+import { Link } from "react-router-dom";
+
 const EventInfo = ({
   selectedEvent,
   selectedOccurrence,
@@ -258,6 +260,25 @@ const EventInfo = ({
       >
         Edit Event
       </button>
+
+      {selectedEvent.extendedProps.isPomodoro && (
+        <div> 
+        <button>
+        <Link
+        to="/pomodoro"
+        state={{
+          id: selectedEvent.id,
+          title: selectedEvent.title,
+          pomodoroSettings: selectedEvent.extendedProps.pomodoroSettings,
+        }}
+      >
+        Vai al Pomodoro
+      </Link>
+        </button>
+        </div>
+
+        
+      )} 
     </div>
   );
 };

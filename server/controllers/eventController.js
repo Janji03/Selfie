@@ -81,3 +81,37 @@ export const deleteEvent = async (req, res) => {
     res.status(500).json({ error: "Errore nell'eliminazione dell'evento" });
   }
 };
+
+
+//aggiorna cicli completati
+export const updateCompletedCycles = async (req, res) => {
+  const { id } = req.params;
+  const { completedCycles } = req.body;
+
+
+  if (typeof completedCycles !== "number" || completedCycles < 0) {
+
+    return res
+      .status(400)
+      .json({ error: "Il valore di completedCycles deve essere un numero valido" });
+  }
+
+  try {
+    const updatedEvent = await Event.findOneAndUpdate(
+      { id },
+      { "extendedProps.pomodoroSettings.completedCycles": completedCycles },
+      {
+        new: true, //per returnare il file aggiornato
+        runValidators: true, //per attivare i vari limiti e validatori di mongoose
+      }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: "Evento non trovato" });
+    }
+
+    res.status(200).json(updatedEvent);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nell'aggiornamento dell'evento" });
+  }
+};

@@ -196,9 +196,18 @@ const EventHandler = ({
           recurrenceType:
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
+         isPomodoro: data.isPomodoro, 
+        pomodoroSettings: {
+          studyTime: data.pomodoroSettings.studyTime,
+          breakTime: data.pomodoroSettings.breakTime, 
+          cycles: data.pomodoroSettings.cycles,
+          completedCycles: data.pomodoroSettings.completedCycles,
+        }
       },
       exdate: [],
     };
+
+    console.log(newEvent);
 
     try {
       if (isEditMode) {
