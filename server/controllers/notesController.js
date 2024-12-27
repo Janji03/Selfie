@@ -2,7 +2,7 @@ import Note from "../models/Note.js";
 
 // crea una nota
 export const createNote = async (req, res) => {
-  const { title, content, categories, userID } = req.body;
+  const { title, content, categories, userID, visibility, accessList } = req.body;
 
   if (!title || !categories || categories.length === 0) {
     return res
@@ -14,12 +14,24 @@ export const createNote = async (req, res) => {
     return res.status(400).json({ error: "Il contenuto non può essere vuoto" });
   }
 
+  // Validazione per visibility
+  if (visibility && !['open', 'restricted', 'private'].includes(visibility)) {
+    return res.status(400).json({ error: "Visibilità non valida" });
+  }
+
+  // Se la visibilità è 'restricted', controlla che accessList sia presente
+  if (visibility === 'restricted' && (!accessList || accessList.length === 0)) {
+    return res.status(400).json({ error: "La lista di accesso è obbligatoria per visibilità 'restricted'" });
+  }
+
   try {
     const newNote = new Note({
       title,
       content,
       categories,
       userID,
+      visibility: visibility || 'open', // Impostazione della visibilità predefinita su 'open'
+      accessList: accessList || [], // Impostazione di accessList vuota per visibilità predefinita
     });
 
     const savedNote = await newNote.save();
@@ -29,23 +41,35 @@ export const createNote = async (req, res) => {
   }
 };
 
+
 // Ottieni tutte le note
 export const getNotes = async (req, res) => {
   const { userID } = req.query;
 
   try {
-    const notes = await Note.find({ userID });
+    // Trova tutte le note pubbliche, tutte le note private dell'utente e tutte le note "restricted" a cui l'utente ha accesso
+    const notes = await Note.find({
+      $or: [
+        { visibility: 'open' }, // Note pubbliche
+        { userID }, // Le note dell'utente
+        { visibility: 'restricted', accessList: userID }, // Le note a cui l'utente ha accesso
+      ],
+    });
+
     res.status(200).json(notes);
   } catch (error) {
     res.status(500).json({ error: "Errore nel recupero delle note" });
   }
 };
 
+
 // Aggiorna una nota
 export const updateNote = async (req, res) => {
   const { id } = req.params;
-  const { title, content, categories } = req.body;
+  const { title, content, categories, visibility, accessList } = req.body;
+  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
 
+  // Validazione dei campi obbligatori
   if (!title || !categories || categories.length === 0) {
     return res
       .status(400)
@@ -53,15 +77,26 @@ export const updateNote = async (req, res) => {
   }
 
   try {
-    const updatedNote = await Note.findByIdAndUpdate(
-      id,
-      { title, content, categories },
-      { new: true }
-    );
+    // Trova la nota esistente
+    const note = await Note.findById(id);
 
-    if (!updatedNote) {
+    if (!note) {
       return res.status(404).json({ error: "Nota non trovata" });
     }
+
+    // Verifica che l'utente sia l'autore della nota o abbia accesso alla nota "restricted"
+    if (note.userID.toString() !== userID && (note.visibility === 'restricted' && !note.accessList.includes(userID))) {
+      return res.status(403).json({ error: "Non hai i permessi per modificare questa nota" });
+    }
+
+    // Aggiorna la nota con i nuovi valori
+    note.title = title;
+    note.content = content;
+    note.categories = categories;
+    note.visibility = visibility || note.visibility; // Imposta la visibilità solo se fornita
+    note.accessList = accessList || note.accessList; // Imposta accessList solo se fornita
+
+    const updatedNote = await note.save(); // Salva la nota aggiornata
 
     res.status(200).json(updatedNote);
   } catch (error) {
@@ -69,16 +104,27 @@ export const updateNote = async (req, res) => {
   }
 };
 
+
 // Cancella una nota
 export const deleteNote = async (req, res) => {
   const { id } = req.params;
+  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
 
   try {
-    const deletedNote = await Note.findByIdAndDelete(id);
+    // Trova la nota
+    const note = await Note.findById(id);
 
-    if (!deletedNote) {
+    if (!note) {
       return res.status(404).json({ error: "Nota non trovata" });
     }
+
+    // Verifica che l'utente sia l'autore della nota o abbia accesso alla nota "restricted"
+    if (note.userID.toString() !== userID && (note.visibility === 'restricted' && !note.accessList.includes(userID))) {
+      return res.status(403).json({ error: "Non hai i permessi per eliminare questa nota" });
+    }
+
+    // Elimina la nota
+    await Note.findByIdAndDelete(id);
 
     res.status(200).json({ message: "Nota eliminata con successo" });
   } catch (error) {
@@ -86,9 +132,11 @@ export const deleteNote = async (req, res) => {
   }
 };
 
+
 // Duplica una nota
 export const duplicateNote = async (req, res) => {
   const { id } = req.params;
+  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
 
   try {
     // Trova la nota originale
@@ -98,12 +146,19 @@ export const duplicateNote = async (req, res) => {
       return res.status(404).json({ error: "Nota originale non trovata" });
     }
 
+    // Verifica che l'utente sia l'autore della nota o abbia accesso alla nota "restricted"
+    if (originalNote.userID.toString() !== userID && (originalNote.visibility === 'restricted' && !originalNote.accessList.includes(userID))) {
+      return res.status(403).json({ error: "Non hai i permessi per duplicare questa nota" });
+    }
+
     // Crea la nota duplicata
     const duplicatedNote = new Note({
       title: `Copia di ${originalNote.title}`,
       content: originalNote.content,
       categories: originalNote.categories,
       userID: originalNote.userID,
+      visibility: originalNote.visibility,  // Mantieni la visibilità originale
+      accessList: originalNote.accessList,  // Mantieni la lista di accesso originale
     });
 
     // Salva la nota duplicata

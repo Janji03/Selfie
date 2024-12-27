@@ -19,6 +19,16 @@ const noteSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  accessList: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
+  visibility: {
+    type: String,
+    enum: ['open', 'restricted', 'private'],
+    default: 'open', // 'open' for all, 'restricted' for specific users, 'private' for only the author
+  },
   createdAt: {
     type: Date,
     default: Date.now,

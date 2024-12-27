@@ -4,6 +4,7 @@ import {
   updateUser,
   updateUserProfilePicture,
   deleteUser,
+  getAllUserIdsAndNames,
 } from "../controllers/userController.js";
 import upload from "../utils/uploadUtils.js";
 
@@ -17,5 +18,7 @@ router.put(
   updateUserProfilePicture
 );
 router.delete("/:id", deleteUser);
+
+router.get("/all", getAllUserIdsAndNames);
 
 export default router;

@@ -83,3 +83,22 @@ export const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+// Funzione per ottenere tutti gli ID e i nomi degli utenti
+export const getAllUserIdsAndNames = async (req, res) => {
+  try {
+    const users = await User.find({}, { _id: 1, name: 1 });
+
+    console.log("Utenti trovati:", users);  // Log degli utenti trovati
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "Nessun utente trovato" });
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Errore nel recupero degli utenti:", error.message);  // Log dell'errore
+    res.status(500).json({ message: "Errore nel recupero degli utenti", error: error.message });
+  }
+};
+

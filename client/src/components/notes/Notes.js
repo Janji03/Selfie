@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { createNote, getNotes } from "../../services/noteService";
+//import { getAllUsers } from "../../services/userService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
@@ -25,6 +26,9 @@ const Notes = () => {
   });
 
   const [markdownPreview, setMarkdownPreview] = useState("");
+  const [visibility, setVisibility] = useState("open"); // Visibilità predefinita
+  const [userList, setUserList] = useState([]); // Lista degli utenti
+  const [selectedUsers, setSelectedUsers] = useState([]); // Utenti selezionati per la visibilità "restricted"
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -33,6 +37,14 @@ const Notes = () => {
         .catch((err) => setError(err.message));
     }
   }, [isAuthenticated, userID]);
+
+ /* useEffect(() => {
+    // Recupera la lista di utenti
+    
+    getAllUsers()
+      .then((data) => setUserList(data))
+      .catch((err) => setError(err.message));
+  }, []); */
 
   useEffect(() => {
     setMarkdownPreview(marked(newNote.content || ""));
@@ -51,7 +63,15 @@ const Notes = () => {
       return;
     }
 
-    createNote({ ...newNote, userID })
+    // Includiamo la visibilità e la lista di utenti se visibilità è 'restricted'
+    const noteData = {
+      ...newNote,
+      userID,
+      visibility,
+      accessList: visibility === "restricted" ? selectedUsers : [],
+    };
+
+    createNote(noteData)
       .then((createdNote) => {
         setNotes((prev) => [...prev, createdNote]);
         setNewNote({ title: "", content: "", categories: [] });
@@ -109,6 +129,58 @@ const Notes = () => {
                 }
                 required
               />
+
+              {/* Sezione per selezionare la visibilità */}
+              <div className="visibility-options">
+                <label>
+                  <input
+                    type="radio"
+                    value="open"
+                    checked={visibility === "open"}
+                    onChange={() => setVisibility("open")}
+                  />
+                  Pubblica
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="private"
+                    checked={visibility === "private"}
+                    onChange={() => setVisibility("private")}
+                  />
+                  Privata
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="restricted"
+                    checked={visibility === "restricted"}
+                    onChange={() => setVisibility("restricted")}
+                  />
+                  Ristretta
+                </label>
+              </div>
+
+              {/* Se visibilità è 'restricted', permetti di selezionare gli utenti */}
+              {/*visibility === "restricted" && (
+                <div className="restricted-access">
+                  <label>Seleziona utenti per l'accesso:</label>
+                  <select
+                    multiple
+                    value={selectedUsers}
+                    onChange={(e) =>
+                      setSelectedUsers(Array.from(e.target.selectedOptions, (option) => option.value))
+                    }
+                  >
+                    {userList.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )*/}
+
               <button className="create-note-button" type="submit">
                 Crea Nota
               </button>
@@ -119,11 +191,8 @@ const Notes = () => {
                 Annulla
               </button>
             </form>
-            <button
-              onClick={() =>
-                setShowMarkdownPreview(!showMarkdownPreview)
-              }
-            >
+
+            <button onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}>
               {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
             </button>
           </div>
