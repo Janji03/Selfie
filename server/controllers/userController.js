@@ -102,3 +102,17 @@ export const getAllUserIdsAndNames = async (req, res) => {
   }
 };
 
+// Funzione per ottenere tutti gli ID degli utenti
+export const getAllUserIds = async (req, res) => {
+  try {
+    const users = await User.find({}, { _id: 1 });
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "Nessun utente trovato" });
+    }
+
+    res.status(200).json(users.map(user => user._id));
+  } catch (error) {
+    res.status(500).json({ message: "Errore nel recupero degli utenti", error: error.message });
+  }
+};

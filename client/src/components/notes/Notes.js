@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { createNote, getNotes } from "../../services/noteService";
-//import { getAllUsers } from "../../services/userService";
+import { getAllUserIds } from "../../services/userService"; // Importa il servizio per ottenere gli ID utenti
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
@@ -38,17 +38,26 @@ const Notes = () => {
     }
   }, [isAuthenticated, userID]);
 
- /* useEffect(() => {
-    // Recupera la lista di utenti
-    
-    getAllUsers()
-      .then((data) => setUserList(data))
-      .catch((err) => setError(err.message));
-  }, []); */
-
   useEffect(() => {
     setMarkdownPreview(marked(newNote.content || ""));
   }, [newNote.content]);
+
+  // Carica gli ID utenti quando la visibilità è "restricted"
+  useEffect(() => {
+    if (visibility === "restricted") {
+      getAllUserIds()
+        .then(setUserList)
+        .catch((err) => setError(err.message));
+    }
+  }, [visibility]);
+
+  const handleUserSelection = (id) => {
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter((userId) => userId !== id));
+    } else {
+      setSelectedUsers([...selectedUsers, id]);
+    }
+  };
 
   const handleCreateNote = (e) => {
     e.preventDefault();
@@ -63,7 +72,6 @@ const Notes = () => {
       return;
     }
 
-    // Includiamo la visibilità e la lista di utenti se visibilità è 'restricted'
     const noteData = {
       ...newNote,
       userID,
@@ -130,7 +138,6 @@ const Notes = () => {
                 required
               />
 
-              {/* Sezione per selezionare la visibilità */}
               <div className="visibility-options">
                 <label>
                   <input
@@ -161,25 +168,25 @@ const Notes = () => {
                 </label>
               </div>
 
-              {/* Se visibilità è 'restricted', permetti di selezionare gli utenti */}
-              {/*visibility === "restricted" && (
-                <div className="restricted-access">
-                  <label>Seleziona utenti per l'accesso:</label>
-                  <select
-                    multiple
-                    value={selectedUsers}
-                    onChange={(e) =>
-                      setSelectedUsers(Array.from(e.target.selectedOptions, (option) => option.value))
-                    }
-                  >
+              {visibility === "restricted" && (
+                <div className="user-selection">
+                  <h3>Seleziona gli utenti:</h3>
+                  <ul>
                     {userList.map((user) => (
-                      <option key={user._id} value={user._id}>
-                        {user.name}
-                      </option>
+                      <li key={user}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(user)}
+                            onChange={() => handleUserSelection(user)}
+                          />
+                          {user}
+                        </label>
+                      </li>
                     ))}
-                  </select>
+                  </ul>
                 </div>
-              )*/}
+              )}
 
               <button className="create-note-button" type="submit">
                 Crea Nota
@@ -191,7 +198,6 @@ const Notes = () => {
                 Annulla
               </button>
             </form>
-
             <button onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}>
               {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
             </button>

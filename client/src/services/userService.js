@@ -53,3 +53,13 @@ export const deleteUser = async (id) => {
   }
 };
 
+export const getAllUserIds = async () => {
+  try {
+    const response = await axiosInstance.get("users/");
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore durante il recupero degli ID utenti"
+    );
+  }
+};

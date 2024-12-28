@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { updateNote } from "../../services/noteService";
+import { getAllUserIds } from "../../services/userService";
 import { marked } from "marked";
 
 const NotesDetail = ({ note, onClose, refreshNotes }) => {
@@ -9,7 +10,9 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const [editedCategories, setEditedCategories] = useState(
     note?.categories.join(", ") || ""
   );
-  const [copiedContent, setCopiedContent] = useState("");
+  const [visibility, setVisibility] = useState(note?.visibility || "open");
+  const [userList, setUserList] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState(note?.accessList || []);
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
   const [markdownPreview, setMarkdownPreview] = useState("");
 
@@ -20,6 +23,8 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       setEditedContent(note.content);
       setEditedCategories(note.categories.join(", "));
       setMarkdownPreview(marked(note.content || ""));
+      setVisibility(note.visibility);
+      setSelectedUsers(note.accessList || []);
     }
   }, [note]);
 
@@ -31,13 +36,22 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     }
   }, [editedContent, editMode]);
 
+  useEffect(() => {
+    if (visibility === "restricted") {
+      getAllUserIds().then(setUserList).catch(console.error);
+    }
+  }, [visibility]);
+
   const handleSave = () => {
     if (!note) return;
-    updateNote(note._id, {
+    const updatedNote = {
       title: editedTitle,
       content: editedContent,
       categories: editedCategories.split(",").map((cat) => cat.trim()),
-    })
+      visibility,
+      accessList: visibility === "restricted" ? selectedUsers : [],
+    };
+    updateNote(note._id, updatedNote)
       .then(() => {
         refreshNotes();
         setEditMode(false);
@@ -46,17 +60,11 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       .catch(console.error);
   };
 
-  const handleCopy = () => {
-    if (note) {
-      setCopiedContent(note.content);
-      alert("Contenuto copiato!");
-    }
-  };
-
-  const handlePaste = () => {
-    if (editMode && copiedContent) {
-      setEditedContent((prevContent) => prevContent + copiedContent);
-      alert("Contenuto incollato!");
+  const handleUserSelection = (id) => {
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter((userId) => userId !== id));
+    } else {
+      setSelectedUsers([...selectedUsers, id]);
     }
   };
 
@@ -92,6 +100,56 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               placeholder="Modifica Categorie (separate da virgola)"
               required
             />
+            <div className="visibility-options">
+              <label>
+                <input
+                  type="radio"
+                  value="open"
+                  checked={visibility === "open"}
+                  onChange={() => setVisibility("open")}
+                />
+                Pubblica
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="private"
+                  checked={visibility === "private"}
+                  onChange={() => setVisibility("private")}
+                />
+                Privata
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  value="restricted"
+                  checked={visibility === "restricted"}
+                  onChange={() => setVisibility("restricted")}
+                />
+                Ristretta
+              </label>
+            </div>
+
+            {visibility === "restricted" && (
+              <div className="user-selection">
+                <h3>Seleziona gli utenti:</h3>
+                <ul>
+                  {userList.map((user) => (
+                    <li key={user}>
+                      <label>
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user)}
+                          onChange={() => handleUserSelection(user)}
+                        />
+                        {user}
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="note-actions">
               <button className="save-note-button" onClick={handleSave}>
                 Salva e Chiudi
@@ -101,9 +159,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
                 onClick={() => setEditMode(false)}
               >
                 Annulla
-              </button>
-              <button className="note-button" onClick={handlePaste}>
-                Incolla
               </button>
               <button
                 className="note-button"
@@ -131,6 +186,14 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
             <p>
               <strong>Categorie:</strong> {note.categories.join(", ")}
             </p>
+            <p>
+              <strong>Visibilità:</strong> {note.visibility}
+            </p>
+            {note.visibility === "restricted" && (
+              <p>
+                <strong>Accesso:</strong> {note.accessList.join(", ")}
+              </p>
+            )}
             <div className="note-actions">
               <button
                 className="note-button"
@@ -140,15 +203,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               </button>
               <button className="note-button" onClick={onClose}>
                 Chiudi
-              </button>
-              <button className="note-button" onClick={handleCopy}>
-                Copia contenuto
-              </button>
-              <button
-                className="note-button"
-                onClick={toggleMarkdownPreview}
-              >
-                {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
               </button>
             </div>
           </div>

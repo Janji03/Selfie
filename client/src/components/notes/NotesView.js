@@ -37,6 +37,7 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
           </div>
           <p>Categoria: {note.categories.join(", ")}</p>
           <p>{note.content.slice(0, 200)}...</p>
+          <p>Visibilità: {note.visibility}</p> {/* Mostra la visibilità della nota */}
           <div className="note-actions">
             <button
               className="note-button"
