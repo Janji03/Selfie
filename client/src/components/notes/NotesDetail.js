@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { updateNote } from "../../services/noteService";
 import { getAllUserIds } from "../../services/userService";
 import { marked } from "marked";
+import { AuthContext } from "../../context/AuthContext"; // Importa il contesto
 
 const NotesDetail = ({ note, onClose, refreshNotes }) => {
+  const userID = localStorage.getItem("userID");
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState(note?.content || "");
   const [editedTitle, setEditedTitle] = useState(note?.title || "");
@@ -36,29 +38,35 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     }
   }, [editedContent, editMode]);
 
+  // Carica gli utenti solo se la visibilità è "restricted"
   useEffect(() => {
     if (visibility === "restricted") {
       getAllUserIds().then(setUserList).catch(console.error);
     }
   }, [visibility]);
 
-  const handleSave = () => {
-    if (!note) return;
-    const updatedNote = {
-      title: editedTitle,
-      content: editedContent,
-      categories: editedCategories.split(",").map((cat) => cat.trim()),
-      visibility,
-      accessList: visibility === "restricted" ? selectedUsers : [],
-    };
-    updateNote(note._id, updatedNote)
-      .then(() => {
-        refreshNotes();
-        setEditMode(false);
-        onClose();
-      })
-      .catch(console.error);
+const handleSave = () => {
+  if (!note) return;
+
+  const updatedNote = {
+    title: editedTitle,
+    content: editedContent,
+    categories: editedCategories.split(",").map((cat) => cat.trim()),
+    visibility,
+    accessList: visibility === "restricted" ? selectedUsers : [],
   };
+
+  console.log("Updated note: ", updatedNote); // Aggiungi questa linea per il debug
+
+  updateNote(note._id, updatedNote)
+    .then(() => {
+      refreshNotes(); // Ricarica le note
+      setEditMode(false); // Disabilita la modalità di modifica
+      onClose(); // Chiudi il form di modifica
+    })
+    .catch(console.error);
+};
+
 
   const handleUserSelection = (id) => {
     if (selectedUsers.includes(id)) {
@@ -86,6 +94,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               onChange={(e) => setEditedTitle(e.target.value)}
               placeholder="Modifica Titolo"
               required
+              
             />
             <textarea
               value={editedContent}
@@ -99,38 +108,42 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               onChange={(e) => setEditedCategories(e.target.value)}
               placeholder="Modifica Categorie (separate da virgola)"
               required
+              
             />
-            <div className="visibility-options">
-              <label>
-                <input
-                  type="radio"
-                  value="open"
-                  checked={visibility === "open"}
-                  onChange={() => setVisibility("open")}
-                />
-                Pubblica
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="private"
-                  checked={visibility === "private"}
-                  onChange={() => setVisibility("private")}
-                />
-                Privata
-              </label>
-              <label>
-                <input
-                  type="radio"
-                  value="restricted"
-                  checked={visibility === "restricted"}
-                  onChange={() => setVisibility("restricted")}
-                />
-                Ristretta
-              </label>
-            </div>
+            
+            {note.userID === userID && (  // Solo il proprietario può vedere le opzioni di visibilità
+              <div className="visibility-options">
+                <label>
+                  <input
+                    type="radio"
+                    value="open"
+                    checked={visibility === "open"}
+                    onChange={() => setVisibility("open")}
+                  />
+                  Pubblica
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="private"
+                    checked={visibility === "private"}
+                    onChange={() => setVisibility("private")}
+                  />
+                  Privata
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="restricted"
+                    checked={visibility === "restricted"}
+                    onChange={() => setVisibility("restricted")}
+                  />
+                  Ristretta
+                </label>
+              </div>
+            )}
 
-            {visibility === "restricted" && (
+            {visibility === "restricted" && note.userID === userID && (  // Mostra la lista degli utenti solo se la visibilità è "restricted"
               <div className="user-selection">
                 <h3>Seleziona gli utenti:</h3>
                 <ul>
@@ -168,6 +181,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               </button>
             </div>
           </div>
+
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -206,6 +220,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               </button>
             </div>
           </div>
+
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>

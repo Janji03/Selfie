@@ -3,6 +3,8 @@ import { deleteNote, duplicateNote } from "../../services/noteService";
 import markdownIcon from "../../assets/markdownIcon.png"; 
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
+  const userID = localStorage.getItem("userID");
+
   const handleDelete = (id) => {
     deleteNote(id)
       .then(() => {
@@ -51,12 +53,15 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
             >
               Duplica
             </button>
-            <button
-              className="note-button"
-              onClick={() => handleDelete(note._id)}
-            >
-              Elimina
-            </button>
+            {/* Mostra il pulsante Elimina solo se l'utente è il proprietario */}
+            {note.userID === userID && (
+              <button
+                className="note-button"
+                onClick={() => handleDelete(note._id)}
+              >
+                Elimina
+              </button>
+            )}
           </div>
         </div>
       ))}

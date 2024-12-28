@@ -62,43 +62,40 @@ export const getNotes = async (req, res) => {
   }
 };
 
-
-// Aggiorna una nota
+// modifica una nota
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content, categories, visibility, accessList } = req.body;
-  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
+  const { userID } = req.query;
 
-  // Validazione dei campi obbligatori
+  console.log("Received data:", { title, content, categories, visibility, accessList }); // Aggiungi il log qui
+
   if (!title || !categories || categories.length === 0) {
-    return res
-      .status(400)
-      .json({ error: "Titolo e categorie sono obbligatori" });
+    return res.status(400).json({ error: "Titolo e categorie sono obbligatori" });
   }
 
   try {
-    // Trova la nota esistente
     const note = await Note.findById(id);
 
     if (!note) {
       return res.status(404).json({ error: "Nota non trovata" });
     }
 
-    // Verifica che l'utente sia l'autore della nota o abbia accesso alla nota "restricted"
-    if (note.userID.toString() !== userID && (note.visibility === 'restricted' && !note.accessList.includes(userID))) {
-      return res.status(403).json({ error: "Non hai i permessi per modificare questa nota" });
-    }
 
-    // Aggiorna la nota con i nuovi valori
+    // Modifica il contenuto e altre informazioni, ma solo se l'utente è il proprietario
     note.title = title;
     note.content = content;
     note.categories = categories;
-    note.visibility = visibility || note.visibility; // Imposta la visibilità solo se fornita
-    note.accessList = accessList || note.accessList; // Imposta accessList solo se fornita
+
+    // Solo il proprietario può modificare la visibilità
+    
+      if (visibility) note.visibility = visibility; // Modifica la visibilità
+      if (accessList) note.accessList = accessList; // Modifica l'accesso
+    
 
     const updatedNote = await note.save(); // Salva la nota aggiornata
-
     res.status(200).json(updatedNote);
+
   } catch (error) {
     res.status(500).json({ error: "Errore nell'aggiornamento della nota" });
   }
