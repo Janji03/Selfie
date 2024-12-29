@@ -49,16 +49,13 @@ export const deleteNote = async (id) => {
   });
 };
 
-
-// Duplica una nota
-export const duplicateNote = async (id) => {
+export const duplicateNote = async (id, userID) => {
   try {
-    const response = await axiosInstance.post(`notes/${id}/duplicate`);
+    const response = await axiosInstance.post(`notes/${id}/duplicate`, { userID });
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message ||
-        "Errore durante la duplicazione della nota"
+      error.response?.data?.message || "Errore durante la duplicazione della nota"
     );
   }
 };

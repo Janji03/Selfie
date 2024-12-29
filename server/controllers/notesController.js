@@ -129,39 +129,30 @@ export const deleteNote = async (req, res) => {
   }
 };
 
-
 // Duplica una nota
 export const duplicateNote = async (req, res) => {
-  const { id } = req.params;
-  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
+  const { id } = req.params; // ID della nota originale
+  const { userID } = req.body; // ID dell'utente che duplica
 
   try {
-    // Trova la nota originale
     const originalNote = await Note.findById(id);
-
     if (!originalNote) {
       return res.status(404).json({ error: "Nota originale non trovata" });
     }
 
-    // Verifica che l'utente sia l'autore della nota o abbia accesso alla nota "restricted"
-    if (originalNote.userID.toString() !== userID && (originalNote.visibility === 'restricted' && !originalNote.accessList.includes(userID))) {
-      return res.status(403).json({ error: "Non hai i permessi per duplicare questa nota" });
-    }
-
-    // Crea la nota duplicata
     const duplicatedNote = new Note({
       title: `Copia di ${originalNote.title}`,
       content: originalNote.content,
       categories: originalNote.categories,
-      userID: originalNote.userID,
-      visibility: originalNote.visibility,  // Mantieni la visibilità originale
-      accessList: originalNote.accessList,  // Mantieni la lista di accesso originale
+      userID, // Assegna l'utente che duplica come autore
+      visibility: 'private', // Imposta di default la visibilità come privata
+      accessList: [], // Nessuna lista di accesso per impostazione predefinita
     });
 
-    // Salva la nota duplicata
-    const savedDuplicate = await duplicatedNote.save();
-    res.status(201).json(savedDuplicate);
+    const savedNote = await duplicatedNote.save();
+    res.status(201).json(savedNote);
   } catch (error) {
-    res.status(500).json({ error: "Errore nella duplicazione della nota" });
+    res.status(500).json({ error: "Errore durante la duplicazione della nota" });
   }
 };
+
