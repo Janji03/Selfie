@@ -24,6 +24,10 @@ const ExtendedPropsSchema = new Schema(
       type: Boolean,
       required: true,
     },
+    notifications: {
+      type: Boolean,
+      required: true,
+    },
     itemType: {
       type: String,
       default: "task",

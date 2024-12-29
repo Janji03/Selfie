@@ -14,14 +14,6 @@ const NotificationForm = ({ formData, setFormData }) => {
     10080: "1 week before",
   };
 
-  const repeatOptions = {
-    once: "After X times",
-    everyMinute: "Every minute",
-    every15Minutes: "Every 15 minutes",
-    every30Minutes: "Every 30 minutes",
-    everyHour: "Every hour",
-  };
-
   const handleNotificationChange = (index, field, value) => {
     const updatedNotifications = [...formData.notifications];
     updatedNotifications[index] = {
@@ -51,10 +43,8 @@ const NotificationForm = ({ formData, setFormData }) => {
 
   const addNotification = () => {
     const newNotification = {
-      timeBefore: "0", 
-      methods: ["browser"],
-      repeatOption: "once", 
-      repeatCount: 1, 
+      timeBefore: 0, 
+      methods: ["email"],
       isSent: false, 
     };
 
@@ -107,42 +97,11 @@ const NotificationForm = ({ formData, setFormData }) => {
             </select>
           </div>
 
-          {/* Repeat Option */}
-          <div>
-            <label>Repeat:</label>
-            <select
-              value={notif.repeatOption}
-              onChange={(e) =>
-                handleNotificationChange(index, "repeatOption", e.target.value)
-              }
-            >
-              {Object.entries(repeatOptions).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            {notif.repeatOption === "once" && (
-              <input
-                type="number"
-                value={notif.repeatCount}
-                min="1"
-                onChange={(e) =>
-                  handleNotificationChange(
-                    index,
-                    "repeatCount",
-                    Math.max(1, parseInt(e.target.value) || 1)
-                  )
-                }
-              />
-            )}
-          </div>
-
           {/* Notification Methods */}
           <div>
             <label>Methods:</label>
             <div>
-              {["browser", "email", "whatsapp"].map((method) => (
+              {["email", "whatsapp"].map((method) => (
                 <label key={method} style={{ marginRight: "10px" }}>
                   <input
                     type="checkbox"

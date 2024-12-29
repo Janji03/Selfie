@@ -60,16 +60,9 @@ const EventHandler = ({
 
       const notifications = selectedEvent.extendedProps.notifications || [];
       const formattedNotifications = notifications.map((notif) => {
-        const notifDateTime = DateTime.fromISO(notif.time, {
-          zone: "UTC",
-        }).setZone(calendarTimeZone);
-
         return {
-          date: notifDateTime.toISO().split("T")[0],
-          time: notifDateTime.toISO().split("T")[1].slice(0, 5),
-          repeatInterval: notif.repeatInterval || null,
-          repeatCount: notif.repeatCount || 0,
-          methods: notif.methods || ["browser"],
+          timeBefore: notif.timeBefore || 0,
+          methods: notif.methods || ["email"],
         };
       });
 
@@ -170,6 +163,7 @@ const EventHandler = ({
   };
 
   const handleEventFormSubmit = async (data) => {
+    console.log('BAU');
     const eventTimeZone = data.timeZone;
     const eventStartDateTime = `${data.startDate}T${data.startTime}:00`;
     const eventEndDateTime = `${data.endDate}T${data.endTime}:00`;
@@ -193,10 +187,8 @@ const EventHandler = ({
 
     const notificationData = data.notifications.map((notif) => {
       return {
-        time: utcStart,
-        repeatInterval: notif.repeatInterval || null,
-        repeatCount: notif.repeatCount || 0,
-        methods: notif.methods || ["browser"],
+        timeBefore: notif.timeBefore,
+        methods: notif.methods || ["email"],
         isSent: false,
       };
     });

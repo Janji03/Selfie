@@ -39,6 +39,7 @@ export const createEvent = async (req, res) => {
     });
 
     const savedEvent = await newEvent.save();
+
     res.status(201).json(savedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione dell'evento" });
@@ -81,3 +82,4 @@ export const deleteEvent = async (req, res) => {
     res.status(500).json({ error: "Errore nell'eliminazione dell'evento" });
   }
 };
+

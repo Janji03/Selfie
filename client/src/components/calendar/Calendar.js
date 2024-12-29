@@ -154,32 +154,6 @@ const Calendar = () => {
     setCalendarRenderKey((prevKey) => prevKey + 1);
   };
 
-  // boh non ho idea se funzioni
-  useEffect(() => {
-    let intervalId;
-
-    const checkForOverdueTasksAtMidnight = async () => {
-      await checkForOverdueTasks();
-    };
-
-    const now = new Date();
-    const millisTillMidnight =
-      new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) -
-      now;
-
-    const timeoutId = setTimeout(async () => {
-      await checkForOverdueTasksAtMidnight();
-
-      intervalId = setInterval(() => {
-        checkForOverdueTasksAtMidnight();
-      }, 24 * 60 * 60 * 1000);
-    }, millisTillMidnight);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, []);
 
   useEffect(() => {
     if (currentView === "eventList") {
@@ -297,7 +271,7 @@ const Calendar = () => {
         }));
       }
     } else {
-      baseDate.setHours(new Date().getHours());
+      baseDate.setHours(new Date(time).getHours());
       startDateTime = roundTime(baseDate).toISOString();
       initializeEventForm(startDateTime);
       initializeTaskForm(startDateTime);

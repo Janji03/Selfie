@@ -9,7 +9,9 @@ import notesRoutes from "./routes/notesRoutes.js";
 import pomodoroRoutes from "./routes/pomodoroRoutes.js";
 import config from "./config/config.js";
 import agenda from "./config/agenda.js"; 
-import scheduleNotifications from "../server/scheduler/notificationScheduler.js"; 
+import scheduleNotifications from './scheduler/periodicEventScheduler.js';
+import scheduleOverdueTasks  from './scheduler/overdueTaskScheduler.js';
+import scheduleCleanUpJobs from "./scheduler/cleanUpJobScheduler.js";
 
 const app = express();
 
@@ -27,10 +29,13 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/pomodoro", pomodoroRoutes);
 
+
 const startAgenda = async () => {
   try {
     await agenda.start();
-    await scheduleNotifications(); 
+    await scheduleNotifications()
+    await scheduleOverdueTasks();
+    await scheduleCleanUpJobs();
     console.log("Agenda workers started.");
   } catch (error) {
     console.error("Failed to start Agenda:", error.message);
@@ -38,10 +43,12 @@ const startAgenda = async () => {
 };
 
 connectDB().then(() => {
-  startAgenda(); 
-
-  const PORT = config.port;
-  app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  startAgenda().then(() => {
+    const PORT = config.port;
+    app.listen(PORT, () => {
+      console.log(`Server is running on http://localhost:${PORT}`);
+    });
+  }).catch(err => {
+    console.error("Error starting agenda:", err);
   });
 });

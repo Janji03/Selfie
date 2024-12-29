@@ -58,6 +58,7 @@ const TaskHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedTask.allDay,
+        notifications: selectedTask.notifications,
         timeZone: selectedTask.extendedProps.timeZone,
       });
       setIsEditMode(true);
@@ -117,6 +118,7 @@ const TaskHandler = ({
         isOverdue: isOverdue,
         deadline,
         wasAllDay: isAllDay,
+        notifications: data.notifications,
         timeZone: data.timeZone,
       },
     };
@@ -157,6 +159,7 @@ const TaskHandler = ({
       deadlineDate: startDateTime.split("T")[0],
       deadlineTime: startTime,
       allDay: false,
+      notifications: false,
       timeZone: calendarTimeZone,
     });
   };

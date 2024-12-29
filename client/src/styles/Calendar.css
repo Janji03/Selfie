@@ -82,8 +82,8 @@
 }
 
 .calendar .fc-toolbar-chunk {
-  display: flex;
-  align-items: center;
+  flex-grow: 1;
+  flex-basis: 50;
 }
 
 .calendar .fc-toolbar-title {
@@ -143,8 +143,7 @@
 }
 
 /* Middle section (Title) */
-.calendar .fc-toolbar-title {
-  flex-grow: 1; /* Allow title to expand and take space */
+.calendar .fc-toolbar-title { 
   text-align: center;
   font-size: 18px;
   font-weight: bold;

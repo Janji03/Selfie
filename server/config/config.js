@@ -6,6 +6,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || "your_secret_key",
   mailtrapUser: process.env.MAILTRAP_USER || "0a956a06d65cea",
   mailtrapPass: process.env.MAILTRAP_PASS || "32ed3e43615537",
+  EMAIL_USER: "tw.selfie.noreply@gmail.com",
+  EMAIL_PASS: "wttc cthn wagw iffe"
 };
 
 export default config;

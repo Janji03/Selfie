@@ -123,6 +123,18 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
             )}
           </div>
         )}
+        {/* Notifications */}
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="notifications"
+              checked={formData.notifications}
+              onChange={handleChange}
+            />
+            Notifications
+          </label>
+        </div>
         {/* Time Zone */}
         <div>
           <label>Time Zone:</label>

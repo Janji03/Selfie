@@ -3,26 +3,18 @@ const { Schema } = mongoose;
 
 const NotificationSchema = new Schema(
   {
-    time: {
-      type: Date, 
-      required: true,
-    },
-    repeatInterval: {
-      type: String, 
-      default: null,
-    },
-    repeatCount: {
+    timeBefore: {
       type: Number, 
-      default: 0,
+      required: true,
     },
     methods: {
       type: [String], 
-      default: ['browser'],
+      default: ['email'],
     },
     isSent: {
       type: Boolean, 
       default: false,
-    },
+    }
   },
   { _id: false }
 );
