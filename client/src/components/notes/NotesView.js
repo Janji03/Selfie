@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { deleteNote, duplicateNote } from "../../services/noteService";
 import markdownIcon from "../../assets/markdownIcon.png";
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const userID = localStorage.getItem("userID"); // Ottieni l'ID dell'utente corrente
+  const [visibilityFilter, setVisibilityFilter] = useState("all"); // Stato per il filtro della visibilità
 
   // Funzione per eliminare una nota
   const handleDelete = (noteID) => {
@@ -29,9 +30,33 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
     return /[#*_~`-]/.test(content);
   };
 
+  // Funzione per filtrare le note in base alla visibilità selezionata
+  const filterNotesByVisibility = (note) => {
+    if (visibilityFilter === "all") return true; // Mostra tutte le note
+    if (visibilityFilter === "public" && note.visibility === "open") return true; // Mostra solo le note pubbliche
+    if (visibilityFilter === "restricted" && note.visibility === "restricted") return true; // Mostra solo le note ristrette
+    if (visibilityFilter === "private" && note.userID === userID && note.visibility === "private") return true; // Mostra solo le note private dell'utente
+    return false;
+  };
+
   return (
     <div className="notes-list">
-      {notes.map((note) => (
+      
+      {/* Dropdown per scegliere il filtro di visibilità */}
+      <div className="visibility-filter">
+        <label>Filtra per visibilità: </label>
+        <select
+          value={visibilityFilter}
+          onChange={(e) => setVisibilityFilter(e.target.value)}
+        >
+          <option value="all">Tutte</option>
+          <option value="public">Pubbliche</option>
+          <option value="restricted">Ristrette</option>
+          <option value="private">Private (miei)</option>
+        </select>
+      </div>
+
+      {notes.filter(filterNotesByVisibility).map((note) => (
         <div key={note._id} className="note-card">
           <div className="note-header">
             <h3>{note.title}</h3>
@@ -54,11 +79,11 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
               Apri
             </button>
             <button
-                  className="note-button"
-                  onClick={() => handleDuplicate(note._id)}
-                >
-                  Duplica
-                </button>
+              className="note-button"
+              onClick={() => handleDuplicate(note._id)}
+            >
+              Duplica
+            </button>
 
             {/* Mostra i pulsanti Duplica ed Elimina solo se l'utente è il proprietario */}
             {note.userID === userID && (
