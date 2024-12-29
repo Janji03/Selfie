@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { deleteNote, duplicateNote } from "../../services/noteService";
 import markdownIcon from "../../assets/markdownIcon.png";
+import padlockIcon from "../../assets/padlockIcon.png"; // Icona del lucchetto
 import VisibilityFilter from "./NotesFilter"; // Importa il nuovo componente
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
@@ -54,11 +55,22 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
         <div key={note._id} className="note-card">
           <div className="note-header">
             <h3>{note.title}</h3>
+            
+            {/* Icona Markdown */}
             {isMarkdown(note.content) && (
               <img
                 src={markdownIcon}
                 alt="Markdown icon"
                 className="markdown-icon"
+              />
+            )}
+
+            {/* Icona del lucchetto per le note private */}
+            {note.visibility === "private" && (
+              <img
+                src={padlockIcon}
+                alt="Padlock icon"
+                className="padlock-icon"
               />
             )}
           </div>
