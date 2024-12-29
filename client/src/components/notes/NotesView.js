@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { deleteNote, duplicateNote } from "../../services/noteService";
 import markdownIcon from "../../assets/markdownIcon.png";
+import VisibilityFilter from "./NotesFilter"; // Importa il nuovo componente
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const userID = localStorage.getItem("userID"); // Ottieni l'ID dell'utente corrente
@@ -41,20 +42,13 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
 
   return (
     <div className="notes-list">
+      <p>Lista Note</p>
       
-      {/* Dropdown per scegliere il filtro di visibilità */}
-      <div className="visibility-filter">
-        <label>Filtra per visibilità: </label>
-        <select
-          value={visibilityFilter}
-          onChange={(e) => setVisibilityFilter(e.target.value)}
-        >
-          <option value="all">Tutte</option>
-          <option value="public">Pubbliche</option>
-          <option value="restricted">Ristrette</option>
-          <option value="private">Private (miei)</option>
-        </select>
-      </div>
+      {/* Componente per il filtro di visibilità */}
+      <VisibilityFilter
+        visibilityFilter={visibilityFilter}
+        setVisibilityFilter={setVisibilityFilter}
+      />
 
       {notes.filter(filterNotesByVisibility).map((note) => (
         <div key={note._id} className="note-card">
