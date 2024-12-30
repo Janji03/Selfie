@@ -1,4 +1,5 @@
 import React from "react";
+import shuffleIcon from "../../assets/shuffleIcon.png";
 
 const SortNotes = ({ notes, setNotes }) => {
   const handleSortChange = (event) => {
@@ -40,9 +41,6 @@ const SortNotes = ({ notes, setNotes }) => {
         defaultValue=""
         className="sort-select"
       >
-        <option value="" disabled>
-          Seleziona un'opzione
-        </option>
         <option value="alphabetical">Ordine Alfabetico</option>
         <option value="date">Data</option>
         <option value="length">Lunghezza Contenuto</option>
