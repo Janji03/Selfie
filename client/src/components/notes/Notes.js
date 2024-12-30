@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { createNote, getNotes } from "../../services/noteService";
-import { getAllUserIds } from "../../services/userService"; // Importa il servizio per ottenere gli ID utenti
+import { getAllUsersBasicInfo } from "../../services/userService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
@@ -42,11 +42,10 @@ const Notes = () => {
     setMarkdownPreview(marked(newNote.content || ""));
   }, [newNote.content]);
 
-  // Carica gli ID utenti quando la visibilità è "restricted"
   useEffect(() => {
     if (visibility === "restricted") {
-      getAllUserIds()
-        .then(setUserList)
+      getAllUsersBasicInfo()
+        .then(setUserList) // Salva la lista completa di utenti con id, name ed email
         .catch((err) => setError(err.message));
     }
   }, [visibility]);
@@ -173,20 +172,21 @@ const Notes = () => {
                   <h3>Seleziona gli utenti:</h3>
                   <ul>
                     {userList.map((user) => (
-                      <li key={user}>
+                      <li key={user._id}>
                         <label>
                           <input
                             type="checkbox"
-                            checked={selectedUsers.includes(user)}
-                            onChange={() => handleUserSelection(user)}
+                            checked={selectedUsers.includes(user._id)}
+                            onChange={() => handleUserSelection(user._id)}
                           />
-                          {user}
+                          {`${user.name} (${user.email})`} {/* Mostra nome ed email */}
                         </label>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
+
 
               <button className="create-note-button" type="submit">
                 Crea Nota

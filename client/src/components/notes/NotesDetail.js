@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
 import { updateNote } from "../../services/noteService";
-import { getAllUserIds } from "../../services/userService";
+import { getAllUsersBasicInfo } from "../../services/userService"; // Importato il nuovo servizio
 import { marked } from "marked";
-import { AuthContext } from "../../context/AuthContext"; // Importa il contesto
+
 
 const NotesDetail = ({ note, onClose, refreshNotes }) => {
   const userID = localStorage.getItem("userID");
@@ -13,8 +13,8 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     note?.categories.join(", ") || ""
   );
   const [visibility, setVisibility] = useState(note?.visibility || "open");
-  const [userList, setUserList] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState(note?.accessList || []);
+  const [userList, setUserList] = useState([]); // Lista utenti con nome ed email
+  const [selectedUsers, setSelectedUsers] = useState(note?.accessList || []); // ID degli utenti selezionati
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
   const [markdownPreview, setMarkdownPreview] = useState("");
 
@@ -41,32 +41,33 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
   // Carica gli utenti solo se la visibilità è "restricted"
   useEffect(() => {
     if (visibility === "restricted") {
-      getAllUserIds().then(setUserList).catch(console.error);
+      getAllUsersBasicInfo() // Carica la lista completa di utenti con nome e email
+        .then(setUserList)
+        .catch(console.error);
     }
   }, [visibility]);
 
-const handleSave = () => {
-  if (!note) return;
+  const handleSave = () => {
+    if (!note) return;
 
-  const updatedNote = {
-    title: editedTitle,
-    content: editedContent,
-    categories: editedCategories.split(",").map((cat) => cat.trim()),
-    visibility,
-    accessList: visibility === "restricted" ? selectedUsers : [],
+    const updatedNote = {
+      title: editedTitle,
+      content: editedContent,
+      categories: editedCategories.split(",").map((cat) => cat.trim()),
+      visibility,
+      accessList: visibility === "restricted" ? selectedUsers : [],
+    };
+
+    console.log("Updated note: ", updatedNote); // Aggiungi questa linea per il debug
+
+    updateNote(note._id, updatedNote)
+      .then(() => {
+        refreshNotes(); // Ricarica le note
+        setEditMode(false); // Disabilita la modalità di modifica
+        onClose(); // Chiudi il form di modifica
+      })
+      .catch(console.error);
   };
-
-  console.log("Updated note: ", updatedNote); // Aggiungi questa linea per il debug
-
-  updateNote(note._id, updatedNote)
-    .then(() => {
-      refreshNotes(); // Ricarica le note
-      setEditMode(false); // Disabilita la modalità di modifica
-      onClose(); // Chiudi il form di modifica
-    })
-    .catch(console.error);
-};
-
 
   const handleUserSelection = (id) => {
     if (selectedUsers.includes(id)) {
@@ -94,7 +95,6 @@ const handleSave = () => {
               onChange={(e) => setEditedTitle(e.target.value)}
               placeholder="Modifica Titolo"
               required
-              
             />
             <textarea
               value={editedContent}
@@ -108,9 +108,8 @@ const handleSave = () => {
               onChange={(e) => setEditedCategories(e.target.value)}
               placeholder="Modifica Categorie (separate da virgola)"
               required
-              
             />
-            
+
             {note.userID === userID && (  // Solo il proprietario può vedere le opzioni di visibilità
               <div className="visibility-options">
                 <label>
@@ -148,14 +147,14 @@ const handleSave = () => {
                 <h3>Seleziona gli utenti:</h3>
                 <ul>
                   {userList.map((user) => (
-                    <li key={user}>
+                    <li key={user._id}>
                       <label>
                         <input
                           type="checkbox"
-                          checked={selectedUsers.includes(user)}
-                          onChange={() => handleUserSelection(user)}
+                          checked={selectedUsers.includes(user._id)}
+                          onChange={() => handleUserSelection(user._id)}
                         />
-                        {user}
+                        {`${user.name} (${user.email})`} {/* Mostra nome ed email */}
                       </label>
                     </li>
                   ))}
@@ -203,11 +202,6 @@ const handleSave = () => {
             <p>
               <strong>Visibilità:</strong> {note.visibility}
             </p>
-            {note.visibility === "restricted" && (
-              <p>
-                <strong>Accesso:</strong> {note.accessList.join(", ")}
-              </p>
-            )}
             <div className="note-actions">
               <button
                 className="note-button"

@@ -53,13 +53,14 @@ export const deleteUser = async (id) => {
   }
 };
 
-export const getAllUserIds = async () => {
+export const getAllUsersBasicInfo = async () => {
   try {
     const response = await axiosInstance.get("users/");
-    return response.data;
+    return response.data; // Restituisce l'elenco di utenti con id, name e email
   } catch (error) {
     throw new Error(
-      error.response?.data?.message || "Errore durante il recupero degli ID utenti"
+      error.response?.data?.message || "Errore durante il recupero delle informazioni utenti"
     );
   }
 };
+
