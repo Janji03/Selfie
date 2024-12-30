@@ -11,7 +11,7 @@ const NotesFilter = ({ visibilityFilter, setVisibilityFilter }) => {
         <option value="all">Tutte</option>
         <option value="public">Pubbliche</option>
         <option value="restricted">Ristrette</option>
-        <option value="private">Private (miei)</option>
+        <option value="private">Private </option>
       </select>
     </div>
   );

@@ -198,9 +198,13 @@ const Notes = () => {
                 Annulla
               </button>
             </form>
-            <button onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}>
+            <button
+              className="preview-button"
+              onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}
+            >
               {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
             </button>
+
           </div>
 
           {showMarkdownPreview && (
