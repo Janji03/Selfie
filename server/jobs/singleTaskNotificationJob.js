@@ -29,64 +29,65 @@ const urgencyMessages = {
 };
 
 export default (agenda) => {
-  agenda.define("check-task-notifications", async () => {
+  agenda.define("check-task-notification-single", async (job) => {
+    const { taskID } = job.attrs.data; 
+
     try {
-      console.log("TASK NOTIFICATION JOB executing...");
+      console.log(`TASK NOTIFICATION JOB executing for taskID: ${taskID}`);
 
-      const tasks = await Task.find({
-        "extendedProps.status": "pending",
-        "extendedProps.notifications": true,
-      }).populate("userID", "email");
+      const task = await Task.findOne({ id: taskID }).populate("userID", "email");
 
-      if (tasks.length === 0) {
-        console.log("No task notifications found.");
+      if (!task) {
+        console.log(`Task not found for taskID: ${taskID}`);
+        return;
       }
 
-      for (const task of tasks) {
-        const deadline = new Date(task.extendedProps.deadline);
+      if (!task.extendedProps.notifications || task.extendedProps.status !== "pending") {
+        console.log(`Notifications are disabled or task is not pending: ${taskID}`);
+        return;
+      }
 
-        let now;
+      const deadline = new Date(task.extendedProps.deadline);
 
-        const userID = task.userID;
-        const timeMachine = await TimeMachine.findOne({ userID });
+      let now;
 
-        if (timeMachine && timeMachine.isActive) {
-          now = new Date(timeMachine.time.getTime());
-        } else {
-          now = new Date();
-        }
+      const userID = task.userID;
+      const timeMachine = await TimeMachine.findOne({ userID });
 
-        for (const { time, urgencyLevel } of notificationIntervals
-          .slice()
-          .reverse()) {
-          const notificationTime = new Date(deadline.getTime() + time);
+      if (timeMachine && timeMachine.isActive) {
+        now = new Date(timeMachine.time.getTime());
+      } else {
+        now = new Date();
+      }
 
-          if (now >= notificationTime) {
-            console.log(
-              `Sending notification for task: ${task.title} with urgency level ${urgencyLevel}`
-            );
+      for (const { time, urgencyLevel } of notificationIntervals.slice().reverse()) {
+        const notificationTime = new Date(deadline.getTime() + time);
 
-            const userEmail = task.userID.email;
+        if (now >= notificationTime) {
+          console.log(
+            `Sending notification for task: ${task.title} with urgency level ${urgencyLevel}`
+          );
 
-            const urgencyMessage =
-              urgencyMessages[urgencyLevel] ||
-              "This task is overdue and requires action.";
+          const userEmail = task.userID.email;
 
-            await sendEmailNotification(
-              userEmail,
-              `Overdue Task: ${task.title}`,
-              urgencyMessage
-            );
+          const urgencyMessage =
+            urgencyMessages[urgencyLevel] ||
+            "This task is overdue and requires action.";
 
-            console.log(`Notification sent for task: ${task.title}`);
-            break;
-          }
+          await sendEmailNotification(
+            userEmail,
+            `Overdue Task: ${task.title}`,
+            urgencyMessage
+          );
+
+          console.log(`Notification sent for task: ${task.title}`);
+          break; 
         }
       }
 
-      console.log("TASK NOTIFICATION JOB completed.");
+      console.log(`TASK NOTIFICATION JOB completed for taskID: ${taskID}`);
     } catch (err) {
-      console.error("Error running TASK NOTIFICATION JOB:", err);
+      console.error(`Error in TASK NOTIFICATION JOB for taskID: ${taskID}`, err);
     }
   });
 };

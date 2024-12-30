@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 
 // Estrai tutti gli eventi
 export const getEvents = async (req, res) => {
@@ -40,6 +41,8 @@ export const createEvent = async (req, res) => {
 
     const savedEvent = await newEvent.save();
 
+    await scheduleEventNotifications(newEvent.id);
+
     res.status(201).json(savedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione dell'evento" });
@@ -59,6 +62,8 @@ export const updateEvent = async (req, res) => {
     if (!updatedEvent) {
       return res.status(404).json({ error: "Evento non trovato" });
     }
+
+    await scheduleEventNotifications(updatedEvent.id);
 
     res.status(200).json(updatedEvent);
   } catch (error) {

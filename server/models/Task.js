@@ -26,7 +26,7 @@ const ExtendedPropsSchema = new Schema(
     },
     notifications: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     itemType: {
       type: String,

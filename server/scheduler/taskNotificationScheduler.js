@@ -1,62 +1,36 @@
 import agenda from "../config/agenda.js";
-import Task from "../models/Task.js";
+import defineTaskNotificationJob from "../jobs/taskNotificationJob.js";
+import defineSingleTaskNotificationJob from "../jobs/singleTaskNotificationJob.js";
 
-// Notification urgency intervals
-const notificationIntervals = [
-  { time: 0, urgencyLevel: 1 }, // Immediate deadline
-  { time: 1 * 60 * 60 * 1000, urgencyLevel: 2 }, // 1 hour overdue
-  { time: 12 * 60 * 60 * 1000, urgencyLevel: 3 }, // 12 hours overdue
-  { time: 24 * 60 * 60 * 1000, urgencyLevel: 4 }, // 1 day overdue
-  { time: 3 * 24 * 60 * 60 * 1000, urgencyLevel: 5 }, // 3 days overdue
-  { time: 7 * 24 * 60 * 60 * 1000, urgencyLevel: 6 }, // 1 week overdue
-];
+const scheduleTaskNotifications = async (taskID = null) => {
+  try {
+    if (taskID) {
+      defineSingleTaskNotificationJob(agenda); 
+      const jobName = `check-task-notification-single`;
+      const result = await agenda.cancel({ name: jobName });
+      console.log(`Removed ${result} old jobs for taskID: ${taskID}`);
 
-export default (agenda) => {
-  agenda.define("check-task-notifications", async () => {
-    try {
-      // Find tasks that need notifications
-      const tasks = await Task.find({
-        "extendedProps.status": "pending", // Task is still pending
-        "extendedProps.isOverdue": true, // Task is overdue
-        "extendedProps.notifications": true, // Notifications enabled
-      });
+      await agenda.now(jobName, { taskID });
+      console.log(`SINGLE TASK NOTIFICATION JOB scheduled for taskID: ${taskID}`);
+    } else {
+      defineTaskNotificationJob(agenda); 
 
-      const now = Date.now(); // Current time
+      await agenda.now("check-task-notifications");
 
-      for (const task of tasks) {
-        const deadline = new Date(task.extendedProps.deadline); // Task deadline
-        let notificationScheduled = false; // Track if notification is scheduled
+      const result = await agenda.cancel({ name: "check-task-notifications" });
+      console.log(`Removed ${result} old TASK NOTIFICATION JOBS.`);
 
-        // Check each urgency interval
-        for (const { time, urgencyLevel } of notificationIntervals) {
-          const notificationTime = new Date(deadline.getTime() + time); // Calculate notification time
-
-          // If the current time is >= notification time
-          if (now >= notificationTime.getTime()) {
-            if (!notificationScheduled) {
-              // Schedule the notification immediately
-              await agenda.schedule(new Date(), "send-overdue-notification", {
-                taskID: task._id,
-                urgencyLevel: urgencyLevel,
-              });
-
-              console.log(
-                `Notification sent for task: ${task.title} with urgency level ${urgencyLevel}`
-              );
-
-              notificationScheduled = true;
-
-              // Remove the job after sending notification
-              await agenda.cancel({ "data.taskID": task._id }); // Clean up jobs for this task
-
-              // Break after scheduling the most relevant notification
-              break;
-            }
-          }
-        }
+      const taskJob = await agenda.jobs({ name: "check-task-notifications" });
+      if (taskJob.length === 0) {
+        await agenda.every("1 day", "check-task-notifications");
+        console.log("TASK NOTIFICATION JOB scheduled.");
+      } else {
+        console.log("TASK NOTIFICATION JOB is already scheduled.");
       }
-    } catch (err) {
-      console.error("Error checking task notifications:", err);
     }
-  });
+  } catch (err) {
+    console.error("Error scheduling TASK NOTIFICATION JOB:", err);
+  }
 };
+
+export default scheduleTaskNotifications;

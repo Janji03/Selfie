@@ -3,17 +3,22 @@ import defineOverdueTaskJob from "../jobs/overdueTaskJob.js";
 
 const scheduleOverdueTasks = async () => {
   try {
-    console.log("Starting overdue tasks job...");
-    defineOverdueTaskJob(agenda)
+    defineOverdueTaskJob(agenda);
+
+    await agenda.now("check-overdue-tasks");
+
+    const result = await agenda.cancel({ name: "check-overdue-tasks" });
+    console.log(`Removed ${result} old OVERDUE TASK JOBS.`);
+
     const overdueJob = await agenda.jobs({ name: "check-overdue-tasks" });
     if (overdueJob.length === 0) {
       await agenda.every("1 minute", "check-overdue-tasks");
-      console.log("Scheduled overdue tasks job.");
+      console.log("OVERDUE TASK JOB scheduled");
     } else {
-      console.log("Overdue task job is already scheduled.");
+      console.log("OVERDUE TASK JOB is already scheduled.");
     }
   } catch (err) {
-    console.error("Error scheduling overdue tasks:", err);
+    console.error("Error scheduling OVERDUE TASK JOB:", err);
   }
 };
 

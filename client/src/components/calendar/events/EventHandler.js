@@ -163,7 +163,6 @@ const EventHandler = ({
   };
 
   const handleEventFormSubmit = async (data) => {
-    console.log('BAU');
     const eventTimeZone = data.timeZone;
     const eventStartDateTime = `${data.startDate}T${data.startTime}:00`;
     const eventEndDateTime = `${data.endDate}T${data.endTime}:00`;

@@ -1,4 +1,5 @@
 import Task from "../models/Task.js";
+import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js";
 
 // Estrai tutti le task
 export const getTasks = async (req, res) => {
@@ -39,6 +40,9 @@ export const createTask = async (req, res) => {
     });
 
     const savedTask = await newTask.save();
+    
+    await scheduleTaskNotifications(newTask.id);
+
     res.status(201).json(savedTask);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione della task" });
@@ -58,7 +62,9 @@ export const updateTask = async (req, res) => {
     if (!updatedTask) {
       return res.status(404).json({ error: "Task non trovata" });
     }
-
+    
+    await scheduleTaskNotifications(updatedTask.id);
+    
     res.status(200).json(updatedTask);
   } catch (error) {
     res.status(500).json({ error: "Errore nell'aggiornamento della task" });

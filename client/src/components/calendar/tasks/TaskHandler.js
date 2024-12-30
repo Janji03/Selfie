@@ -58,7 +58,7 @@ const TaskHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedTask.allDay,
-        notifications: selectedTask.notifications,
+        notifications: selectedTask.extendedProps.notifications,
         timeZone: selectedTask.extendedProps.timeZone,
       });
       setIsEditMode(true);

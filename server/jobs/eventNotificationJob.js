@@ -1,90 +1,89 @@
 import Event from "../models/Event.js";
-import nodemailer from "nodemailer";
-import config from "../config/config.js";
+import TimeMachine from "../models/TimeMachine.js";
+import sendEmailNotification from "../utils/sendEmailNotification.js";
+
+const timeOptions = {
+  0: "now!",
+  5: "in 5 minutes!",
+  10: "in 10 minutes!",
+  15: "in 15 minutes!",
+  30: "in 30 minutes!",
+  60: "in 1 hour!",
+  120: "in 2 hours!",
+  1440: "in 1 day!",
+  2880: "in 2 days!",
+  10080: "in 1 week!",
+};
 
 export default (agenda) => {
-  agenda.define("send-notification", async (job) => {
-    const { eventID, notificationIndex } = job.attrs.data;
-
+  agenda.define("check-event-notifications", async () => {
     try {
-      const event = await Event.findById(eventID).populate("userID");
-      if (!event) throw new Error("Event not found");
+      console.log("EVENT NOTIFICATION JOB executing...");
 
-      const notification = event.extendedProps.notifications[notificationIndex];
-      if (!notification) throw new Error("Notification not found");
+      const events = await Event.find({
+        "extendedProps.notifications": {
+          $elemMatch: { isSent: false},
+        },
+      }).populate("userID", "email");
 
-      const eventStartTime = new Date(event.start);
-      const notificationTime = new Date(
-        eventStartTime.getTime() - notification.timeBefore * 60 * 1000
-      );
+      if (events.length === 0) {
+        console.log("No event notifications found.");
+      }
 
-      console.log("Event Start Time:", eventStartTime);
-      console.log("Notification Time:", notificationTime);
+      for (const event of events) {
+        const eventStartTime = new Date(event.start);
 
-      if (Date.now() >= notificationTime.getTime()) {
-        // Email transporter (create once)
-        const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: config.EMAIL_USER,
-            pass: config.EMAIL_PASS,
-          },
-        });
+        let now;
 
-        for (const method of notification.methods) {
-          if (method === "email") {
-            console.log(`Sending email notification: ${event.title}`);
+        const userID = event.userID;
+        const timeMachine = await TimeMachine.findOne({ userID });
+
+        if (timeMachine && timeMachine.isActive) {
+          now = new Date(timeMachine.time.getTime());
+        } else {
+          now = new Date();
+        }
+
+        for (let i = 0; i < event.extendedProps.notifications.length; i++) {
+          const notification = event.extendedProps.notifications[i];
+
+          const notificationTime = new Date(eventStartTime.getTime() - notification.timeBefore * 60 * 1000);
+
+          if (now >= notificationTime && !notification.isSent) {
+            console.log(`Sending notification for event: ${event.title}`);
 
             const userEmail = event.userID.email;
 
-            const currentTime = Date.now();
-            const isEventStarted = currentTime >= eventStartTime.getTime();
+            const emailMessage = `The event - ${event.title} is happening ${timeOptions[notification.timeBefore]}`;
 
-            let emailHtmlContent = `
-              <html>
-                <body>
-                  <h1>${event.title}</h1>
-                  <p>${
-                    isEventStarted
-                      ? "The event is happening now!"
-                      : `The event will start in ${Math.ceil(
-                          (eventStartTime - currentTime) / 60000
-                        )} minutes.`
-                  }</p>
-                </body>
-              </html>
-            `;
-
-            await transporter.sendMail({
-              from: config.EMAIL_USER,
-              to: userEmail,
-              subject: `Reminder: ${event.title}`,
-              html: emailHtmlContent,
-            });
-
-            console.log(`Email sent to ${userEmail}`);
-          } else if (method === "whatsapp") {
-            console.log(`WhatsApp notification: ${event.title}`);
+            for (const method of notification.methods) {
+              if (method === "email") {
+                await sendEmailNotification(
+                  userEmail,
+                  `Reminder: ${event.title}`, 
+                  emailMessage 
+                );
+              } else if (method === "whatsapp") {
+                console.log(
+                  `Sending WhatsApp notification for: ${event.title}`
+                );
+                // Add WhatsApp notification logic here
+              }
+            }
+            if (!timeMachine.isActive) {
+              event.extendedProps.notifications[i].isSent = true;
+              await event.save();
+            }
+            
+            console.log(`Notification sent for event: ${event.title}`);
           }
         }
-
-        // Mark notification as sent
-        event.extendedProps.notifications[notificationIndex].isSent = true;
-        await event.save();
-        console.log(
-          `Notification marked as sent for event: ${event.title}`
-        );
-      } else {
-        console.log(
-          `Notification time not reached yet for event: ${event.title}`
-        );
       }
 
-      // Remove job after completion
-      await job.remove();
-      console.log(`Job removed for event: ${event.title}`);
+    console.log("EVENT NOTIFICATION JOB completed.");
+
     } catch (err) {
-      console.error("Error sending notification:", err);
+      console.error("Error running EVENT NOTIFICATION JOB:", err);
     }
   });
 };

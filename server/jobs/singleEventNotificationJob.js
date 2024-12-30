@@ -1,0 +1,97 @@
+import Event from "../models/Event.js";
+import TimeMachine from "../models/TimeMachine.js";
+import sendEmailNotification from "../utils/sendEmailNotification.js";
+
+const timeOptions = {
+  0: "now!",
+  5: "in 5 minutes!",
+  10: "in 10 minutes!",
+  15: "in 15 minutes!",
+  30: "in 30 minutes!",
+  60: "in 1 hour!",
+  120: "in 2 hours!",
+  1440: "in 1 day!",
+  2880: "in 2 days!",
+  10080: "in 1 week!",
+};
+
+export default (agenda) => {
+  agenda.define("check-event-notification-single", async (job) => {
+    const { eventID } = job.attrs.data;
+
+    try {
+      console.log(
+        `EVENT NOTIFICATION JOB executing for eventID: ${eventID}`
+      );
+
+      const event = await Event.findOne({ id: eventID }).populate(
+        "userID",
+        "email"
+      );
+
+      if (!event) {
+        console.log(`Event not found for eventID: ${eventID}`);
+        return;
+      }
+
+      if (event.extendedProps.notifications.length === 0) {
+        console.log(`Notifications are disabled for event: ${eventID}`);
+        return;
+      }
+
+      const eventStartTime = new Date(event.start);
+
+      let now;
+
+      const userID = event.userID;
+      const timeMachine = await TimeMachine.findOne({ userID });
+
+      if (timeMachine && timeMachine.isActive) {
+        now = new Date(timeMachine.time.getTime());
+      } else {
+        now = new Date();
+      }
+
+      for (let i = 0; i < event.extendedProps.notifications.length; i++) {
+        const notification = event.extendedProps.notifications[i];
+
+        const notificationTime = new Date(
+          eventStartTime.getTime() - notification.timeBefore * 60 * 1000
+        );
+
+        if (now >= notificationTime && !notification.isSent) {
+          console.log(`Sending notification for event: ${event.title}`);
+
+          const userEmail = event.userID.email;
+
+          const emailMessage = `The event - ${event.title} is happening ${
+            timeOptions[notification.timeBefore]
+          }`;
+
+          for (const method of notification.methods) {
+            if (method === "email") {
+              await sendEmailNotification(
+                userEmail,
+                `Reminder: ${event.title}`,
+                emailMessage
+              );
+            } else if (method === "whatsapp") {
+              console.log(`Sending WhatsApp notification for: ${event.title}`);
+              // Add WhatsApp notification logic here
+            }
+          }
+          if (!timeMachine.isActive) {
+            event.extendedProps.notifications[i].isSent = true;
+            await event.save();
+          }
+
+          console.log(`Notification sent for event: ${event.title}`);
+        }
+      }
+
+      console.log(`EVENT NOTIFICATION JOB completed for eventID: ${eventID}`);
+    } catch (err) {
+      console.error(`Error running EVENT NOTIFICATION JOB for eventID: ${eventID}`, err);
+    }
+  });
+};

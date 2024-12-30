@@ -13,8 +13,13 @@ const agenda = new Agenda({
 
 // Graceful Shutdown
 const gracefulShutdown = async () => {
-  await agenda.stop();
-  process.exit(0);
+  try {    
+    await agenda.stop();
+    process.exit(0);
+  } catch (err) {
+    console.error("Error during graceful shutdown:", err);
+    process.exit(1); 
+  }
 };
 
 process.on('SIGTERM', gracefulShutdown);

@@ -7,11 +7,12 @@ import eventRoutes from "./routes/eventRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
 import pomodoroRoutes from "./routes/pomodoroRoutes.js";
+import timeMachineRoutes from "./routes/timeMachineRoutes.js";
 import config from "./config/config.js";
 import agenda from "./config/agenda.js"; 
-import scheduleNotifications from './scheduler/periodicEventScheduler.js';
+import scheduleEventNotifications from './scheduler/eventNotificationScheduler.js';
+import scheduleTaskNotifications  from './scheduler/taskNotificationScheduler.js';
 import scheduleOverdueTasks  from './scheduler/overdueTaskScheduler.js';
-import scheduleCleanUpJobs from "./scheduler/cleanUpJobScheduler.js";
 
 const app = express();
 
@@ -28,14 +29,15 @@ app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/pomodoro", pomodoroRoutes);
+app.use("/api/time-machine", timeMachineRoutes);
 
 
 const startAgenda = async () => {
   try {
     await agenda.start();
-    await scheduleNotifications()
+    await scheduleEventNotifications();
+    await scheduleTaskNotifications();
     await scheduleOverdueTasks();
-    await scheduleCleanUpJobs();
     console.log("Agenda workers started.");
   } catch (error) {
     console.error("Failed to start Agenda:", error.message);
