@@ -95,6 +95,7 @@ const Notes = () => {
         <button className="new-note-button" onClick={() => setIsCreating(true)}>
           Nuova Nota
         </button>
+        <SortNotes notes={notes} setNotes={setNotes} />
         <button
           className="new-note-button"
           onClick={() => setShowMarkdownLegend(true)}
@@ -228,7 +229,6 @@ const Notes = () => {
         onClose={() => setSelectedNote(null)}
         refreshNotes={() => getNotes(userID).then(setNotes)}
       />
-      <SortNotes notes={notes} setNotes={setNotes} />
       <NotesView
         notes={notes}
         setSelectedNote={setSelectedNote}

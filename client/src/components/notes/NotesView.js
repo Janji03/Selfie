@@ -5,6 +5,8 @@ import padlockIcon from "../../assets/padlockIcon.png";
 import filterIcon from "../../assets/filterIcon.png"; // Icona del filtro
 import VisibilityFilter from "./NotesFilter";
 
+
+
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const userID = localStorage.getItem("userID");
   const [visibilityFilter, setVisibilityFilter] = useState("all");
@@ -59,7 +61,9 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
             visibilityFilter={visibilityFilter}
             setVisibilityFilter={setVisibilityFilter}
           />
+         
         </div>
+        
       )}
 
       {/* Lista di note */}

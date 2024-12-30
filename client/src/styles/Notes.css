@@ -114,6 +114,78 @@
     box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
   }
 
+  /* Lista utenti per visibilità ristretta */
+
+.user-selection {
+  margin-top: 10px;
+  padding: 8px; /* Padding ridotto */
+  background: #fff; /* Colore più neutro e sofisticato */
+  border: 1px solid #d6d9f2; /* Colore del bordo più chiaro */
+  border-radius: 6px; /* Curve leggermente più morbide */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.user-selection h3 {
+  font-size: 0.95rem; /* Testo leggermente più piccolo */
+  color: #002266; /* Tonalità di blu più elegante */
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 6px; /* Margine ridotto */
+}
+
+.user-selection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px; /* Altezza massima più compatta */
+  overflow-y: auto; /* Scroll per liste lunghe */
+  scrollbar-width: thin; /* Scrollbar sottile */
+  scrollbar-color: #ccd1ec #f9faff;
+}
+
+.user-selection ul::-webkit-scrollbar {
+  width: 8px;
+}
+
+.user-selection ul::-webkit-scrollbar-thumb {
+  background-color: #ccd1ec;
+  border-radius: 4px;
+}
+
+.user-selection li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px; /* Ridotto per maggiore compattezza */
+  border-bottom: 1px solid #eef1fc; /* Bordo più discreto */
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-selection li:hover {
+  background: #f1f5ff; /* Colore più chiaro al passaggio */
+  transform: scale(1.02); /* Leggero effetto di ingrandimento */
+}
+
+.user-selection label {
+  font-size: 0.85rem; /* Testo più piccolo per maggiore compattezza */
+  color: #002266; /* Tonalità coordinata al titolo */
+  font-family: 'Figtree', sans-serif;
+  cursor: pointer;
+  line-height: 1.2; /* Allineamento verticale migliore */
+}
+
+.user-selection input[type="checkbox"] {
+  accent-color: #284bff; /* Colore coerente con il tema */
+  transform: scale(1.1); /* Dimensione moderata */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.user-selection input[type="checkbox"]:hover {
+  transform: scale(1.2); /* Effetto hover sul checkbox */
+}
+
+
+
   /* Bottone "Crea", "Annulla" e "Mostra Anteprima" */
   .action-buttons {
     display: flex;
@@ -532,5 +604,117 @@
 
 
   /* Stile SortNotes.js */
-
+  .sort-notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
   
+  .shuffle-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(40, 75, 255, 0.3);
+  }
+  
+  .shuffle-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+  
+  .shuffle-icon {
+    width: 20px;
+    height: 20px;
+    animation: shuffle-animation 1s infinite;
+  }
+  
+  @keyframes shuffle-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .sort-menu {
+    background: #f9faff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .sort-label {
+    font-size: 1rem;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 10px;
+  }
+  
+  .sort-select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ccd1ec;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Figtree', sans-serif;
+    background: #f9faff;
+    transition: all 0.3s ease;
+  }
+  
+  .sort-select:focus {
+    outline: none;
+    border-color: #284bff;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(40, 75, 255, 0.2);
+  }
+  
+/* Stile responsive per dispositivi mobili */
+@media (max-width: 768px) {
+  .shuffle-button {
+    padding: 6px 10px; /* Riduce la dimensione del bottone */
+    font-size: 0.8rem; /* Testo più piccolo */
+    gap: 5px; /* Riduce lo spazio tra icona e testo */
+  }
+
+  .shuffle-icon {
+    width: 16px; /* Icona più piccola */
+    height: 16px;
+  }
+
+  .sort-menu {
+    width: 150px; /* Menu a tendina più stretto */
+    padding: 10px; /* Riduce il padding */
+    font-size: 0.8rem; /* Testo più piccolo nel menu */
+  }
+
+  .sort-select {
+    padding: 6px; /* Riduce il padding interno */
+    font-size: 0.8rem; /* Testo più piccolo */
+  }
+
+  .sort-label {
+    font-size: 0.9rem; /* Testo leggermente più piccolo */
+  }
+
+  .notes-list .note-card {
+    min-width: 250px; /* Riduce la larghezza minima delle card */
+    padding: 10px; /* Riduce il padding interno */
+    font-size: 0.9rem; /* Testo più piccolo */
+  }
+}
