@@ -6,7 +6,7 @@ import noteIcon from "../../assets/notepad.png"; // Import the note icon
 
 const NotesPreview = () => {
   const [recentNotes, setRecentNotes] = useState([]);
-  const [noteCount, setNoteCount] = useState(1); // Stato per il numero di note da visualizzare, parte da 1
+  const [noteCount, setNoteCount] = useState(3); // Stato per il numero di note da visualizzare, parte da 1
   const [visibility, setVisibility] = useState("all"); // Stato per la visibilità delle note
   const { isAuthenticated, loading } = useContext(AuthContext);
   const userID = localStorage.getItem("userID");
