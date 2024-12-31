@@ -1,17 +1,26 @@
 import agenda from "../config/agenda.js";
 import defineEventNotificationJob from "../jobs/eventNotificationJob.js";
 import defineSingleEventNotificationJob from "../jobs/singleEventNotificationJob.js";
+import defineUserEventNotificationJob from "../jobs/userEventNotificationJob.js";
 
-const scheduleEventNotifications = async (eventID = null) => {
+const scheduleEventNotifications = async (userID = null, eventID = null) => {
   try {
     if (eventID) {
       defineSingleEventNotificationJob(agenda);
       const jobName = `check-event-notification-single`;
-      const result = await agenda.cancel({ name: jobName });
-      console.log(`Removed ${result} old jobs for eventID: ${eventID}`);
-
       await agenda.now(jobName, { eventID });
       console.log(`SINGLE EVENT NOTIFICATION JOB scheduled for eventID: ${eventID}`);
+
+      const result = await agenda.cancel({ name: jobName });
+      console.log(`Removed ${result} old jobs for eventID: ${eventID}`);
+    } else if (userID) {
+      defineUserEventNotificationJob(agenda);
+      const jobName = `check-user-event-notification-single`;
+      await agenda.now(jobName, { userID });
+      console.log(`USER EVENT NOTIFICATION JOB scheduled for user: ${userID}`);
+
+      const result = await agenda.cancel({ name: jobName });
+      console.log(`Removed ${result} old jobs for user: ${userID}`);
     } else {
       defineEventNotificationJob(agenda);
       
@@ -27,7 +36,7 @@ const scheduleEventNotifications = async (eventID = null) => {
       } else {
         console.log("EVENT NOTIFICATION JOB is already scheduled.");
       }
-    }
+    } 
 
   } catch (err) {
     console.error("Error scheduling EVENT NOTIFICATION JOB:", err);

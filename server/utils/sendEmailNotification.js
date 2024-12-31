@@ -9,7 +9,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-
 const sendEmailNotification = async (to, subject, message) => {
   try {
     await transporter.sendMail({
@@ -20,7 +19,7 @@ const sendEmailNotification = async (to, subject, message) => {
         <html>
           <body>
             <h1>${subject}</h1>
-            <p>${message}</p>
+            <div>${message}</div>
           </body>
         </html>
       `,

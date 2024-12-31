@@ -1,7 +1,6 @@
 import TimeMachine from "../models/TimeMachine.js";
 import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js";
-import scheduleOverdueTasks from "../scheduler/overdueTaskScheduler.js";
 
 export const updateTimeMachine = async (req, res) => {
   const { userID, time } = req.body;
@@ -17,9 +16,8 @@ export const updateTimeMachine = async (req, res) => {
     timeMachine.isActive = true;
     await timeMachine.save();
 
-    // await scheduleOverdueTasks();
-    // await scheduleEventNotifications();
-    // await scheduleTaskNotifications();
+    await scheduleEventNotifications();
+    await scheduleTaskNotifications();
 
     return res.status(200).json(timeMachine);  
   } catch (error) {

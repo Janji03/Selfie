@@ -1,17 +1,26 @@
 import agenda from "../config/agenda.js";
 import defineTaskNotificationJob from "../jobs/taskNotificationJob.js";
 import defineSingleTaskNotificationJob from "../jobs/singleTaskNotificationJob.js";
+import defineTaskEventNotificationJob from "../jobs/userTaskNotificationJob.js";
 
-const scheduleTaskNotifications = async (taskID = null) => {
+const scheduleTaskNotifications = async (userID = null, taskID = null) => {
   try {
     if (taskID) {
       defineSingleTaskNotificationJob(agenda); 
       const jobName = `check-task-notification-single`;
-      const result = await agenda.cancel({ name: jobName });
-      console.log(`Removed ${result} old jobs for taskID: ${taskID}`);
-
       await agenda.now(jobName, { taskID });
       console.log(`SINGLE TASK NOTIFICATION JOB scheduled for taskID: ${taskID}`);
+
+      const result = await agenda.cancel({ name: jobName });
+      console.log(`Removed ${result} old jobs for taskID: ${taskID}`);
+    } else if (userID) {
+      defineTaskEventNotificationJob(agenda);
+      const jobName = `check-task-event-notification-single`;
+      await agenda.now(jobName, { userID });
+      console.log(`USER TASK NOTIFICATION JOB scheduled for user: ${userID}`);
+
+      const result = await agenda.cancel({ name: jobName });
+      console.log(`Removed ${result} old jobs for user: ${userID}`);
     } else {
       defineTaskNotificationJob(agenda); 
 
