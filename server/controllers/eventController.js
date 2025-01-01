@@ -41,7 +41,7 @@ export const createEvent = async (req, res) => {
 
     const savedEvent = await newEvent.save();
 
-    await scheduleEventNotifications(newEvent.id);
+    await scheduleEventNotifications(null, newEvent.id);
 
     res.status(201).json(savedEvent);
   } catch (error) {
@@ -63,7 +63,7 @@ export const updateEvent = async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
-    await scheduleEventNotifications(updatedEvent.id);
+    await scheduleEventNotifications(null, updatedEvent.id);
 
     res.status(200).json(updatedEvent);
   } catch (error) {

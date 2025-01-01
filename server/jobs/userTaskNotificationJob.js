@@ -34,11 +34,9 @@ export default (agenda) => {
     const { userID } = job.attrs.data;
 
     try {
-      console.log("USER TASK NOTIFICATION JOB executing...");
-
+      
       const user = await User.findById(userID).select("-password");
       if (!user) {
-        console.log(`User with ID ${userID} not found.`);
         return;
       }
 
@@ -49,7 +47,7 @@ export default (agenda) => {
       })
 
       if (tasks.length === 0) {
-        console.log("No task notifications found.");
+        return;
       }
 
       for (const task of tasks) {
@@ -71,10 +69,7 @@ export default (agenda) => {
           const notificationTime = new Date(deadline.getTime() + time);
 
           if (now >= notificationTime) {
-            console.log(
-              `Sending notification for task: ${task.title} with urgency level ${urgencyLevel}`
-            );
-
+            
             const userEmail = user.email;
 
             const urgencyMessage =
@@ -87,13 +82,11 @@ export default (agenda) => {
               urgencyMessage
             );
 
-            console.log(`Notification sent for task: ${task.title}`);
             break;
           }
         }
       }
 
-      console.log("USER TASK NOTIFICATION JOB completed.");
     } catch (err) {
       console.error("Error running USER TASK NOTIFICATION JOB:", err);
     }

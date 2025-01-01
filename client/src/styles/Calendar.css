@@ -251,3 +251,7 @@
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
 }
+
+.calendar .fc-day-today {
+  background-color: #a6caf1 !important;
+}

@@ -31,7 +31,6 @@ const urgencyMessages = {
 export default (agenda) => {
   agenda.define("check-task-notifications", async () => {
     try {
-      console.log("TASK NOTIFICATION JOB executing...");
 
       const tasks = await Task.find({
         "extendedProps.status": "pending",
@@ -39,7 +38,7 @@ export default (agenda) => {
       }).populate("userID", "email");
 
       if (tasks.length === 0) {
-        console.log("No task notifications found.");
+        return;
       }
 
       for (const task of tasks) {
@@ -62,10 +61,7 @@ export default (agenda) => {
           const notificationTime = new Date(deadline.getTime() + time);
 
           if (now >= notificationTime) {
-            console.log(
-              `Sending notification for task: ${task.title} with urgency level ${urgencyLevel}`
-            );
-
+           
             const userEmail = task.userID.email;
 
             const urgencyMessage =
@@ -78,13 +74,12 @@ export default (agenda) => {
               urgencyMessage
             );
 
-            console.log(`Notification sent for task: ${task.title}`);
+            
             break;
           }
         }
       }
 
-      console.log("TASK NOTIFICATION JOB completed.");
     } catch (err) {
       console.error("Error running TASK NOTIFICATION JOB:", err);
     }

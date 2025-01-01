@@ -1,0 +1,209 @@
+.tab-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.tab-container button {
+  font-family: "Poppins", sans-serif;
+  padding: 5px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-grow: 1;
+}
+
+.tab-container button:disabled {
+  cursor: not-allowed;
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+.tab-container button.active {
+  background-color: #001789;
+  color: #fff;
+}
+
+.tab-container button:hover:not(:disabled) {
+  background-color: #0066cc;
+  color: #fff;
+}
+
+.form-container {
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 600px;
+  margin: auto;
+  background-color: #f9f9f9;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.checkbox-label {
+  margin-left: 5px;
+  margin-bottom: 10px;
+  display: inline;
+  font-size: 1.2rem;
+}
+
+.checkbox-label-small {
+    font-size: 1rem;
+}
+
+.checkbox-input {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  resize: none;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.form-button {
+  background-color: #001789;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin-top: 20px;
+}
+
+/* .form-button:hover {
+  background-color: #0066cc;
+  color: #fff;
+}
+
+.form-submit {
+  background-color: #007bff;
+  margin-right: 10px;
+} */
+
+.form-submit:hover {
+  background-color: #0056b3;
+}
+
+.form-reset {
+  background-color: #dc3545;
+  margin-left: 10px;
+}
+
+.form-reset:hover {
+  background-color: #990615;
+}
+
+.form-input:invalid {
+  border-color: red;
+}
+
+.recurrence-container {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.form-month-days-container {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.form-month-day {
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.form-month-day.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.form-month-day.default {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.form-year-months-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.form-year-month {
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.form-year-month.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.form-year-month.default {
+  background-color: #f0f0f0;
+  color: #000;
+}
+
+.add-notification {
+  background-color: #007bff;
+  margin-top: 0px;
+  margin-bottom: 15px;
+}
+
+.add-notification:hover {
+  background-color: #0056b3;
+}
+
+.remove-notification {
+  background-color: #dc3545;
+  margin-top: 0px;
+}
+
+.remove-notification:hover {
+  background-color: #990615;
+}
+
+.notification-container {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.notification-methods {
+  display: flex;
+  gap: 10px;
+}

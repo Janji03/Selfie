@@ -33,17 +33,14 @@ export default (agenda) => {
     const { taskID } = job.attrs.data; 
 
     try {
-      console.log(`TASK NOTIFICATION JOB executing for taskID: ${taskID}`);
-
+      
       const task = await Task.findOne({ id: taskID }).populate("userID", "email");
 
       if (!task) {
-        console.log(`Task not found for taskID: ${taskID}`);
         return;
       }
 
       if (!task.extendedProps.notifications || task.extendedProps.status !== "pending") {
-        console.log(`Notifications are disabled or task is not pending: ${taskID}`);
         return;
       }
 
@@ -64,10 +61,7 @@ export default (agenda) => {
         const notificationTime = new Date(deadline.getTime() + time);
 
         if (now >= notificationTime) {
-          console.log(
-            `Sending notification for task: ${task.title} with urgency level ${urgencyLevel}`
-          );
-
+          
           const userEmail = task.userID.email;
 
           const urgencyMessage =
@@ -80,12 +74,10 @@ export default (agenda) => {
             urgencyMessage
           );
 
-          console.log(`Notification sent for task: ${task.title}`);
           break; 
         }
       }
-
-      console.log(`TASK NOTIFICATION JOB completed for taskID: ${taskID}`);
+      
     } catch (err) {
       console.error(`Error in TASK NOTIFICATION JOB for taskID: ${taskID}`, err);
     }

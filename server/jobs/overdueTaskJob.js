@@ -3,7 +3,6 @@ import Task from "../models/Task.js";
 export default (agenda) => {
   agenda.define("check-overdue-tasks", async () => {
     try {
-      console.log("OVERDUE TASK JOB executing...");
 
       const now = new Date();
       const nowDate = now.toISOString().split("T")[0];  
@@ -14,7 +13,7 @@ export default (agenda) => {
       });
 
       if (tasks.length === 0) {
-        console.log("No overdue tasks found.");
+        return;
       }
 
       for (const task of tasks) {
@@ -24,10 +23,8 @@ export default (agenda) => {
         task.end = nowDate;
 
         await task.save();
-        console.log(`Task marked as overdue: ${task.title}`);
       }
 
-      console.log("OVERDUE TASK JOB completed.");
     } catch (err) {
       console.error("Error executing OVERDUE TASK JOB:", err);
     }

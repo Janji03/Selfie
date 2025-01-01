@@ -25,7 +25,6 @@ const sendEmailNotification = async (to, subject, message) => {
       `,
     });
 
-    console.log(`Email sent to ${to}`);
   } catch (err) {
     console.error(`Error sending email to ${to}:`, err);
   }

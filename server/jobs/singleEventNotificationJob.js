@@ -20,9 +20,6 @@ export default (agenda) => {
     const { eventID } = job.attrs.data;
 
     try {
-      console.log(
-        `EVENT NOTIFICATION JOB executing for eventID: ${eventID}`
-      );
 
       const event = await Event.findOne({ id: eventID }).populate(
         "userID",
@@ -30,12 +27,10 @@ export default (agenda) => {
       );
 
       if (!event) {
-        console.log(`Event not found for eventID: ${eventID}`);
         return;
       }
 
       if (event.extendedProps.notifications.length === 0) {
-        console.log(`Notifications are disabled for event: ${eventID}`);
         return;
       }
 
@@ -60,7 +55,6 @@ export default (agenda) => {
         );
 
         if (now >= notificationTime && !notification.isSent) {
-          console.log(`Sending notification for event: ${event.title}`);
 
           const userEmail = event.userID.email;
 
@@ -76,7 +70,6 @@ export default (agenda) => {
                 emailMessage
               );
             } else if (method === "whatsapp") {
-              console.log(`Sending WhatsApp notification for: ${event.title}`);
               // Add WhatsApp notification logic here
             }
           }
@@ -85,11 +78,9 @@ export default (agenda) => {
             await event.save();
           }
 
-          console.log(`Notification sent for event: ${event.title}`);
         }
       }
 
-      console.log(`EVENT NOTIFICATION JOB completed for eventID: ${eventID}`);
     } catch (err) {
       console.error(`Error running EVENT NOTIFICATION JOB for eventID: ${eventID}`, err);
     }

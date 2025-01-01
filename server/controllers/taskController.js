@@ -41,7 +41,7 @@ export const createTask = async (req, res) => {
 
     const savedTask = await newTask.save();
     
-    await scheduleTaskNotifications(newTask.id);
+    await scheduleTaskNotifications(null, newTask.id);
 
     res.status(201).json(savedTask);
   } catch (error) {
@@ -63,7 +63,7 @@ export const updateTask = async (req, res) => {
       return res.status(404).json({ error: "Task non trovata" });
     }
     
-    await scheduleTaskNotifications(updatedTask.id);
+    await scheduleTaskNotifications(null, updatedTask.id);
     
     res.status(200).json(updatedTask);
   } catch (error) {

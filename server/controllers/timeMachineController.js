@@ -16,8 +16,8 @@ export const updateTimeMachine = async (req, res) => {
     timeMachine.isActive = true;
     await timeMachine.save();
 
-    await scheduleEventNotifications();
-    await scheduleTaskNotifications();
+    await scheduleEventNotifications(userID);
+    await scheduleTaskNotifications(userID);
 
     return res.status(200).json(timeMachine);  
   } catch (error) {

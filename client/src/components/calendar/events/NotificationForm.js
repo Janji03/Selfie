@@ -31,6 +31,10 @@ const NotificationForm = ({ formData, setFormData }) => {
     const updatedNotifications = [...formData.notifications];
     const methods = updatedNotifications[index].methods;
 
+    if (!checked && methods.length === 1) {
+      return;
+    }
+
     updatedNotifications[index].methods = checked
       ? [...methods, method] 
       : methods.filter((m) => m !== method); 
@@ -50,14 +54,13 @@ const NotificationForm = ({ formData, setFormData }) => {
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      notifications: [...(prevFormData.notifications || []), newNotification],
+      notifications: [newNotification, ...(prevFormData.notifications || [])],
     }));
   };
 
   const removeNotification = (index) => {
-    const updatedNotifications = formData.notifications.filter(
-      (_, i) => i !== index
-    );
+    const updatedNotifications = formData.notifications.filter((_, i) => i !== index);
+
     setFormData((prevFormData) => ({
       ...prevFormData,
       notifications: updatedNotifications,
@@ -66,24 +69,20 @@ const NotificationForm = ({ formData, setFormData }) => {
 
   return (
     <div>
-      <button type="button" onClick={addNotification}>
-        Add Notification
+      <button type="button" className="form-button add-notification" onClick={addNotification}>
+        Add
       </button>
       {/* Notification List */}
       {formData.notifications?.map((notif, index) => (
         <div
           key={index}
-          style={{
-            marginBottom: "15px",
-            border: "1px solid #ddd",
-            padding: "10px",
-            borderRadius: "5px",
-          }}
+          className="notification-container"
         >
           {/* Time Before Event */}
           <div>
-            <label>Time Before Event:</label>
+            <label className="form-label">Time Before Event:</label>
             <select
+              className="form-input"
               value={notif.timeBefore}
               onChange={(e) =>
                 handleNotificationChange(index, "timeBefore", e.target.value)
@@ -99,10 +98,10 @@ const NotificationForm = ({ formData, setFormData }) => {
 
           {/* Notification Methods */}
           <div>
-            <label>Methods:</label>
-            <div>
+            <label className="form-label">Methods:</label>
+            <div className="notification-methods">
               {["email", "whatsapp"].map((method) => (
-                <label key={method} style={{ marginRight: "10px" }}>
+                <label className="checkbox-label checkbox-label-small" key={method} >
                   <input
                     type="checkbox"
                     checked={notif.methods.includes(method)}
@@ -113,11 +112,11 @@ const NotificationForm = ({ formData, setFormData }) => {
                   {method.charAt(0).toUpperCase() + method.slice(1)}
                 </label>
               ))}
-            </div>
+          </div>
           </div>
 
           {/* Remove Notification */}
-          <button type="button" onClick={() => removeNotification(index)}>
+          <button type="button" className="form-button remove-notification" onClick={() => removeNotification(index)}>
             Remove
           </button>
         </div>

@@ -154,7 +154,6 @@ const Calendar = () => {
     setCalendarRenderKey((prevKey) => prevKey + 1);
   };
 
-
   useEffect(() => {
     if (currentView === "eventList") {
       setCombinedEvents(events);
@@ -164,7 +163,8 @@ const Calendar = () => {
       const combined = [...events, ...tasks];
       setCombinedEvents(combined);
     }
-    handleTriggerReRender();
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.refetchEvents();
   }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
@@ -446,6 +446,8 @@ const Calendar = () => {
           stickyHeaderDates={true}
           handleWindowResize={true}
           height={"100%"}
+          scrollTime={"08:00:00"}
+          scrollTimeReset={false}
         />
       </div>
     </div>

@@ -18,7 +18,6 @@ const timeOptions = {
 export default (agenda) => {
   agenda.define("check-event-notifications", async () => {
     try {
-      console.log("EVENT NOTIFICATION JOB executing...");
 
       const events = await Event.find({
         "extendedProps.notifications": {
@@ -27,7 +26,7 @@ export default (agenda) => {
       }).populate("userID", "email");
 
       if (events.length === 0) {
-        console.log("No event notifications found.");
+        return;
       }
 
       for (const event of events) {
@@ -50,7 +49,6 @@ export default (agenda) => {
           const notificationTime = new Date(eventStartTime.getTime() - notification.timeBefore * 60 * 1000);
 
           if (now >= notificationTime && !notification.isSent) {
-            console.log(`Sending notification for event: ${event.title}`);
 
             const userEmail = event.userID.email;
 
@@ -65,7 +63,6 @@ export default (agenda) => {
                 );
               } else if (method === "whatsapp") {
                 console.log(
-                  `Sending WhatsApp notification for: ${event.title}`
                 );
                 // Add WhatsApp notification logic here
               }
@@ -75,12 +72,9 @@ export default (agenda) => {
               await event.save();
             }
             
-            console.log(`Notification sent for event: ${event.title}`);
           }
         }
       }
-
-    console.log("EVENT NOTIFICATION JOB completed.");
 
     } catch (err) {
       console.error("Error running EVENT NOTIFICATION JOB:", err);

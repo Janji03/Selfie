@@ -21,11 +21,9 @@ export default (agenda) => {
     const { userID } = job.attrs.data;
 
     try {
-      console.log("USER EVENT NOTIFICATION JOB executing...");
 
       const user = await User.findById(userID).select("-password");
       if (!user) {
-        console.log(`User with ID ${userID} not found.`);
         return;
       }
 
@@ -37,7 +35,7 @@ export default (agenda) => {
       });
 
       if (events.length === 0) {
-        console.log("No event notifications found.");
+        return;
       }
 
       for (const event of events) {
@@ -59,8 +57,7 @@ export default (agenda) => {
           const notificationTime = new Date(eventStartTime.getTime() - notification.timeBefore * 60 * 1000);
 
           if (now >= notificationTime && !notification.isSent) {
-            console.log(`Sending notification for event: ${event.title}`);
-
+            
             const userEmail = user.email;
 
             const emailMessage = `The event - ${event.title} is happening ${timeOptions[notification.timeBefore]}`;
@@ -73,9 +70,6 @@ export default (agenda) => {
                   emailMessage 
                 );
               } else if (method === "whatsapp") {
-                console.log(
-                  `Sending WhatsApp notification for: ${event.title}`
-                );
                 // Add WhatsApp notification logic here
               }
             }
@@ -84,12 +78,9 @@ export default (agenda) => {
               await event.save();
             }
             
-            console.log(`Notification sent for event: ${event.title}`);
           }
         }
       }
-
-    console.log("USER EVENT NOTIFICATION JOB completed.");
 
     } catch (err) {
       console.error("Error running USER EVENT NOTIFICATION JOB:", err);
