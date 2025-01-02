@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Event from "../models/Event.js";
+import Task from "../models/Task.js";
 import sendEmailNotification from "../utils/sendEmailNotification.js";
 
 const timeOptions = {
@@ -14,6 +15,32 @@ const timeOptions = {
   2880: "in 2 days!",
   10080: "in 1 week!",
 };
+
+const urgencyMessages = {
+  0: `<p></p>
+  <p>You will receive another notification in a week...</p>
+  <p>To stop getting notifications either mark the task as completed or disable the notifications</p>`,
+  1: `<p></p>
+  <p>You will receive another notification in 3 days...</p>
+  <p>To stop getting notifications either mark the task as completed or disable the notifications</p>`,
+  2: `<p></p>
+  <p>You will receive another notification tomorrow...</p>
+  <p>To stop getting notifications either mark the task as completed or disable the notifications</p>`,
+  3: `<p></p>
+  <p>You will receive another notification in 12 hours...</p>
+  <p>To stop getting notifications either mark the task as completed or disable the notifications</p>`,
+  4: `<p></p>
+  <p>You will receive a notification every 12 hours from now on...</p>
+  <p>To stop getting notifications either mark the task as completed or disable the notifications</p>`,
+};
+
+const urgencyIntervals = [
+  0,                              // Level 0
+  7 * 24 * 60 * 60 * 1000,        // Level 1 (+ 1 week)
+  10 * 24 * 60 * 60 * 1000,       // Level 2 (+ 3 days)
+  11 * 24 * 60 * 60 * 1000,       // Level 3 (+ 1 day)
+  11.5 * 24 * 60 * 60 * 1000,     // Level 4 (+ 12 hours)
+];
 
 const triggerTimeMachineNotifications = async (userID, timeMachine) => {
   try {
@@ -43,6 +70,18 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
       },
     });
 
+    const tasks = await Task.find({
+      userID: userID,
+      start: {
+        $gte: startOfDay,
+        $lt: endOfDay,
+      },
+      "extendedProps.status": "pending",
+      "extendedProps.temporary": true,
+      "extendedProps.notifications": true,
+      "extendedProps.isOverdue": true,
+    });
+
     for (const event of events) {
       const eventStartTime = new Date(event.start);
 
@@ -53,7 +92,7 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
           eventStartTime.getTime() - notification.timeBefore * 60 * 1000
         );
 
-        if (!notification.isSent && (notificationTime.getTime() === timeMachineValue.getTime() || allDayEvent)) {
+        if (!notification.isSent && (Math.abs(notificationTime.getTime() - timeMachineValue.getTime()) <= 30000 || allDayEvent)) {
 
           let emailMessage;
 
@@ -86,6 +125,43 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
         }
       }
     }
+
+    for (const task of tasks) {
+      const taskDeadline = new Date(task.extendedProps.deadline);
+      const overdueTime = timeMachineValue - taskDeadline;
+
+      console.log("TaskDeadline: ", taskDeadline);
+      console.log("Overdue Time: ", overdueTime);
+
+      let urgencyLevel = 0;
+      if (overdueTime > 0) {
+        for (let i = 0; i < urgencyIntervals.length; i++) {
+          if (overdueTime >= urgencyIntervals[i]) {
+            urgencyLevel = i;
+          }
+        }
+      }
+        
+      const emailMessage = urgencyMessages[urgencyLevel];
+        
+      const notificationMethods = task.extendedProps.notificationMethods;
+      for (const method of notificationMethods) {
+        try {
+          if (method === "email") {
+            await sendEmailNotification(
+              user.email,
+              `Overdue Task: ${task.title}`,              
+              emailMessage
+            );
+          } else if (method === "whatsapp") {
+            // Add WhatsApp notification logic here
+          }
+        } catch (error) {
+          console.error(`Failed to send ${method} notification:`, error);
+        }
+      }
+    }
+
   } catch (err) {
     console.error("Error scheduling time machine notifications:", err);
   }

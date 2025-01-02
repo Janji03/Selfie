@@ -1,12 +1,12 @@
 import User from "../models/User.js";
 
-const urgencyIntervals = {
-  0: 0,                                               // Deadline reached (level 0)
-  1: 7 * 24 * 60 * 60 * 1000,                         // Previous + 1 week (level 1)
-  2: 10 * 24 * 60 * 60 * 1000,                        // Previous + 3 days (level 2)
-  3: 11 * 24 * 60 * 60 * 1000,                        // Previous + 1 day (level 3)
-  4: 11.5 * 24 * 60 * 60 * 1000,                      // Previous + 12 hours (level 4)
-};
+const urgencyIntervals = [
+  0,                              // Level 0
+  7 * 24 * 60 * 60 * 1000,        // Level 1 (+ 1 week)
+  10 * 24 * 60 * 60 * 1000,       // Level 2 (+ 3 days)
+  11 * 24 * 60 * 60 * 1000,       // Level 3 (+ 1 day)
+  11.5 * 24 * 60 * 60 * 1000,     // Level 4 (+ 12 hours)
+];
 
 const scheduleTaskNotifications = async (agenda, userID, task) => {
   try {

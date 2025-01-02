@@ -15,17 +15,7 @@ import ForgotPassword from "./components/loginsignup/ForgotPassword";
 import ResetPassword from "./components/loginsignup/ResetPassword";
 
 const App = () => {
-  const globalTextStyle = {
-    position: "fixed",
-    top: "10px",
-    left: "50%",
-    transform: "translateX(-50%)",
-    fontSize: "2rem",
-    color: "#001789",
-    fontWeight: "bold",
-    zIndex: 9999,
-  };
-
+  
   return (
     <AuthProvider>
       <TimeMachineProvider>

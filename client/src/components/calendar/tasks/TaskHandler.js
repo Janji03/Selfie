@@ -256,8 +256,11 @@ const TaskHandler = ({
     });
 
     setTasks(updatedTasks);
-    if (!isTimeMachineActive) {
-      await Promise.all(updatedTasks.map((task) => updateTask(task.id, task)));
+    if (isTimeMachineActive) {
+      await Promise.all(
+        updatedTasks.map((task) =>
+          createTask({ ...task, extendedProps: { ...task.extendedProps, temporary: true }, _id: undefined, id: uuidv4() }, userID)
+        ));  
     }
   };
 

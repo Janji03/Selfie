@@ -1,5 +1,6 @@
 import TimeMachine from "../models/TimeMachine.js";
 import triggerTimeMachineNotifications from "../utils/timeMachineNotifications.js";
+import removeTemporaryTasks from "../utils/removeTemporaryTasks.js";
 
 export const updateTimeMachine = async (req, res) => {
   const { userID, time } = req.body;
@@ -37,6 +38,8 @@ export const resetTimeMachine = async (req, res) => {
     timeMachine.time = new Date();
     timeMachine.isActive = false;
     await timeMachine.save();
+
+    removeTemporaryTasks(userID);
 
     return res.status(200).json(timeMachine);  
   } catch (error) {

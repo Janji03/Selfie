@@ -32,6 +32,10 @@ const ExtendedPropsSchema = new Schema(
       type: [String], 
       default: ['email'],
     },
+    temporary: {
+      type: Boolean,
+      default: false,
+    },
     itemType: {
       type: String,
       default: "task",

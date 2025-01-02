@@ -6,7 +6,7 @@ import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js
 export const getTasks = async (req, res) => {
   const { userID } = req.query;
   try {
-    const tasks = await Task.find({ userID });
+    const tasks = await Task.find({ userID, "extendedProps.temporary": false });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ error: "Errore nel recupero delle task" });
@@ -33,7 +33,6 @@ export const getTaskById = async (req, res) => {
 // Crea una task
 export const createTask = async (req, res) => {
   const { taskData, userID } = req.body;
-
   try {
     const newTask = new Task({
       ...taskData,
@@ -41,8 +40,10 @@ export const createTask = async (req, res) => {
     });
 
     const savedTask = await newTask.save();
-    
-    await scheduleTaskNotifications(agenda, userID, savedTask);
+
+    if (!savedTask.extendedProps.temporary) {
+      await scheduleTaskNotifications(agenda, userID, savedTask);
+    }
 
     res.status(201).json(savedTask);
   } catch (error) {
