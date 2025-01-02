@@ -59,6 +59,7 @@ const TaskHandler = ({
           .slice(0, 5),
         allDay: selectedTask.allDay,
         notifications: selectedTask.extendedProps.notifications,
+        notificationMethods: selectedTask.extendedProps.notificationMethods,
         timeZone: selectedTask.extendedProps.timeZone,
       });
       setIsEditMode(true);
@@ -119,6 +120,7 @@ const TaskHandler = ({
         deadline,
         wasAllDay: isAllDay,
         notifications: data.notifications,
+        notificationMethods: data.notificationMethods,
         timeZone: data.timeZone,
       },
     };
@@ -160,6 +162,7 @@ const TaskHandler = ({
       deadlineTime: startTime,
       allDay: false,
       notifications: false,
+      notificationMethods: ["email"],
       timeZone: calendarTimeZone,
     });
   };

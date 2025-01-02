@@ -1,4 +1,5 @@
 import Task from "../models/Task.js";
+import agenda from "../config/agenda.js";
 import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js";
 
 // Estrai tutti le task
@@ -41,7 +42,7 @@ export const createTask = async (req, res) => {
 
     const savedTask = await newTask.save();
     
-    await scheduleTaskNotifications(null, newTask.id);
+    await scheduleTaskNotifications(agenda, userID, savedTask);
 
     res.status(201).json(savedTask);
   } catch (error) {
@@ -63,7 +64,11 @@ export const updateTask = async (req, res) => {
       return res.status(404).json({ error: "Task non trovata" });
     }
     
-    await scheduleTaskNotifications(null, updatedTask.id);
+    await agenda.cancel({
+      "data.task.id": id,
+      "data.task.userID": updatedTask.userID,
+    });    
+    await scheduleTaskNotifications(agenda, updatedTask.userID, updatedTask);
     
     res.status(200).json(updatedTask);
   } catch (error) {
@@ -81,6 +86,11 @@ export const deleteTask = async (req, res) => {
     if (!deletedTask) {
       return res.status(404).json({ error: "Task non trovata" });
     }
+
+    await agenda.cancel({
+      "data.task.id": id,
+      "data.task.userID": deletedTask.userID,
+    }); 
 
     res.status(200).json({ message: "Task eliminata con successo" });
   } catch (error) {

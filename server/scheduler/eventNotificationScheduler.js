@@ -1,32 +1,37 @@
-import agenda from "../config/agenda.js";
-import defineEventNotificationJob from "../jobs/eventNotificationJob.js";
-import defineSingleEventNotificationJob from "../jobs/singleEventNotificationJob.js";
-import defineUserEventNotificationJob from "../jobs/userEventNotificationJob.js";
+import User from "../models/User.js";
 
-const scheduleEventNotifications = async (userID = null, eventID = null) => {
+const scheduleEventNotifications = async (agenda, userID, event) => {
   try {
-    if (eventID) {
-      defineSingleEventNotificationJob(agenda);
-      const jobName = `check-event-notification-single`;
-      await agenda.now(jobName, { eventID });
-      await agenda.cancel({ name: jobName });
-    } else if (userID) {
-      defineUserEventNotificationJob(agenda);
-      const jobName = `check-user-event-notifications`;
-      await agenda.now(jobName, { userID });
-      await agenda.cancel({ name: jobName });
-    } else {
-      defineEventNotificationJob(agenda);
-      await agenda.now("check-event-notifications");
-      await agenda.cancel({ name: "check-event-notifications" });
-      const eventJob = await agenda.jobs({ name: "check-event-notifications" });
-      if (eventJob.length === 0) {
-        await agenda.every("1 minute", "check-event-notifications");
-      } 
-    } 
 
+    if (!userID || !event || !event.extendedProps.notifications.length) {
+      return;
+    }
+
+    const user = await User.findById(userID).select("-password");
+
+    if (!user) {
+      return;
+    }
+
+    const eventStartTime = new Date(event.start);
+
+    for (let i = 0; i < event.extendedProps.notifications.length; i++) {
+      const notification = event.extendedProps.notifications[i];
+      const notificationTime = new Date(
+        eventStartTime.getTime() - notification.timeBefore * 60 * 1000
+      );
+
+      if (!notification.isSent) {
+        await agenda.schedule(notificationTime, "event-notification", {
+          event,
+          notificationIndex: i,
+          userEmail: user.email,
+          // phoneNumber: user.phoneNumber,
+        });
+      }
+    }
   } catch (err) {
-    console.error("Error scheduling EVENT NOTIFICATION JOB:", err);
+    console.error("Error scheduling event notifications:", err);
   }
 };
 

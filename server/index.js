@@ -10,8 +10,6 @@ import pomodoroRoutes from "./routes/pomodoroRoutes.js";
 import timeMachineRoutes from "./routes/timeMachineRoutes.js";
 import config from "./config/config.js";
 import agenda from "./config/agenda.js"; 
-import scheduleEventNotifications from './scheduler/eventNotificationScheduler.js';
-import scheduleTaskNotifications  from './scheduler/taskNotificationScheduler.js';
 import scheduleOverdueTasks  from './scheduler/overdueTaskScheduler.js';
 
 const app = express();
@@ -35,8 +33,6 @@ app.use("/api/time-machine", timeMachineRoutes);
 const startAgenda = async () => {
   try {
     await agenda.start();
-    await scheduleEventNotifications();
-    await scheduleTaskNotifications();
     await scheduleOverdueTasks();
     console.log("Agenda workers started.");
   } catch (error) {

@@ -1,6 +1,5 @@
 import TimeMachine from "../models/TimeMachine.js";
-import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
-import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js";
+import triggerTimeMachineNotifications from "../utils/timeMachineNotifications.js";
 
 export const updateTimeMachine = async (req, res) => {
   const { userID, time } = req.body;
@@ -16,8 +15,7 @@ export const updateTimeMachine = async (req, res) => {
     timeMachine.isActive = true;
     await timeMachine.save();
 
-    await scheduleEventNotifications(userID);
-    await scheduleTaskNotifications(userID);
+    triggerTimeMachineNotifications(userID, timeMachine);
 
     return res.status(200).json(timeMachine);  
   } catch (error) {

@@ -1,6 +1,9 @@
 import Agenda from 'agenda';
 import dotenv from 'dotenv';
 import config from './config.js';
+import defineNotificationJob from "../jobs/eventNotificationJob.js";
+import defineTaskNotificationJob from "../jobs/taskNotificationJob.js";
+import defineOverdueTaskJob from "../jobs/overdueTaskJob.js";
 
 dotenv.config();
 
@@ -10,6 +13,10 @@ const agenda = new Agenda({
   processEvery: '1 minute', 
   useUnifiedTopology: true,
 });
+
+defineNotificationJob(agenda);
+defineTaskNotificationJob(agenda);
+defineOverdueTaskJob(agenda);
 
 // Graceful Shutdown
 const gracefulShutdown = async () => {

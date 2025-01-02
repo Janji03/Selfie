@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import agenda from "../config/agenda.js";
 import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 
 // Estrai tutti gli eventi
@@ -41,7 +42,7 @@ export const createEvent = async (req, res) => {
 
     const savedEvent = await newEvent.save();
 
-    await scheduleEventNotifications(null, newEvent.id);
+    await scheduleEventNotifications(agenda, userID, savedEvent);
 
     res.status(201).json(savedEvent);
   } catch (error) {
@@ -63,7 +64,11 @@ export const updateEvent = async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
-    await scheduleEventNotifications(null, updatedEvent.id);
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": updatedEvent.userID,
+    });    
+    await scheduleEventNotifications(agenda, updatedEvent.userID, updatedEvent);
 
     res.status(200).json(updatedEvent);
   } catch (error) {
@@ -81,6 +86,11 @@ export const deleteEvent = async (req, res) => {
     if (!deletedEvent) {
       return res.status(404).json({ error: "Evento non trovato" });
     }
+
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": deletedEvent.userID,
+    });    
 
     res.status(200).json({ message: "Evento eliminato con successo" });
   } catch (error) {

@@ -1,31 +1,54 @@
-import agenda from "../config/agenda.js";
-import defineTaskNotificationJob from "../jobs/taskNotificationJob.js";
-import defineSingleTaskNotificationJob from "../jobs/singleTaskNotificationJob.js";
-import defineUserTaskNotificationJob from "../jobs/userTaskNotificationJob.js";
+import User from "../models/User.js";
 
-const scheduleTaskNotifications = async (userID = null, taskID = null) => {
+const urgencyIntervals = {
+  0: 0,                                               // Deadline reached (level 0)
+  1: 7 * 24 * 60 * 60 * 1000,                         // Previous + 1 week (level 1)
+  2: 10 * 24 * 60 * 60 * 1000,                        // Previous + 3 days (level 2)
+  3: 11 * 24 * 60 * 60 * 1000,                        // Previous + 1 day (level 3)
+  4: 11.5 * 24 * 60 * 60 * 1000,                      // Previous + 12 hours (level 4)
+};
+
+const scheduleTaskNotifications = async (agenda, userID, task) => {
   try {
-    if (taskID) {
-      defineSingleTaskNotificationJob(agenda); 
-      const jobName = `check-task-notification-single`;
-      await agenda.now(jobName, { taskID });
-      await agenda.cancel({ name: jobName });
-    } else if (userID) {
-      defineUserTaskNotificationJob(agenda);
-      const jobName = `check-user-task-notifications`;
-      await agenda.now(jobName, { userID });
-      await agenda.cancel({ name: jobName });
-    } else {
-      defineTaskNotificationJob(agenda); 
-      await agenda.now("check-task-notifications");
-      await agenda.cancel({ name: "check-task-notifications" });
-      const taskJob =await agenda.jobs({ name: "check-task-notifications" });
-      if (taskJob.length === 0) {
-        await agenda.every("1 day", "check-task-notifications");
-      } 
+
+    if (!userID || !task || !task.extendedProps.notifications || task.extendedProps.status === "completed") {
+      return;
     }
+
+    const user = await User.findById(userID).select("-password");
+
+    if (!user) {
+      return;
+    }
+
+    const taskDeadline = new Date(task.extendedProps.deadline);
+    
+    for (let level = 0; level <= 4; level++) {
+      if (level !== 4) {
+        const nextNotificationTime = new Date(taskDeadline.getTime() + urgencyIntervals[level]);
+        await agenda.schedule(nextNotificationTime, "task-notification", {
+          task,
+          urgencyLevel: level,
+          userEmail: user.email,
+          // phoneNumber: user.phoneNumber,
+        });
+      
+      } else {
+        const recurringNotificationJob = agenda.create("task-notification", {
+          task,
+          urgencyLevel: level,
+          userEmail: user.email,
+          // phoneNumber: user.phoneNumber,
+        });
+        const firstRunTime = new Date(taskDeadline.getTime() + urgencyIntervals[level - 1]);
+        recurringNotificationJob.schedule(firstRunTime);
+        recurringNotificationJob.repeatEvery('12 hours', { skipImmediate: true });
+        await recurringNotificationJob.save();
+      }
+    }
+    
   } catch (err) {
-    console.error("Error scheduling TASK NOTIFICATION JOB:", err);
+    console.error("Error scheduling task notification:", err);
   }
 };
 

@@ -36,8 +36,8 @@ const NotificationForm = ({ formData, setFormData }) => {
     }
 
     updatedNotifications[index].methods = checked
-      ? [...methods, method] 
-      : methods.filter((m) => m !== method); 
+      ? [...methods, method]
+      : methods.filter((m) => m !== method);
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -47,9 +47,9 @@ const NotificationForm = ({ formData, setFormData }) => {
 
   const addNotification = () => {
     const newNotification = {
-      timeBefore: 0, 
+      timeBefore: 0,
       methods: ["email"],
-      isSent: false, 
+      isSent: false,
     };
 
     setFormData((prevFormData) => ({
@@ -59,7 +59,9 @@ const NotificationForm = ({ formData, setFormData }) => {
   };
 
   const removeNotification = (index) => {
-    const updatedNotifications = formData.notifications.filter((_, i) => i !== index);
+    const updatedNotifications = formData.notifications.filter(
+      (_, i) => i !== index
+    );
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -69,15 +71,16 @@ const NotificationForm = ({ formData, setFormData }) => {
 
   return (
     <div>
-      <button type="button" className="form-button add-notification" onClick={addNotification}>
+      <button
+        type="button"
+        className="form-button add-notification"
+        onClick={addNotification}
+      >
         Add
       </button>
       {/* Notification List */}
       {formData.notifications?.map((notif, index) => (
-        <div
-          key={index}
-          className="notification-container"
-        >
+        <div key={index} className="notification-container">
           {/* Time Before Event */}
           <div>
             <label className="form-label">Time Before Event:</label>
@@ -101,7 +104,10 @@ const NotificationForm = ({ formData, setFormData }) => {
             <label className="form-label">Methods:</label>
             <div className="notification-methods">
               {["email", "whatsapp"].map((method) => (
-                <label className="checkbox-label checkbox-label-small" key={method} >
+                <label
+                  className="checkbox-label checkbox-label-small"
+                  key={method}
+                >
                   <input
                     type="checkbox"
                     checked={notif.methods.includes(method)}
@@ -112,11 +118,15 @@ const NotificationForm = ({ formData, setFormData }) => {
                   {method.charAt(0).toUpperCase() + method.slice(1)}
                 </label>
               ))}
-          </div>
+            </div>
           </div>
 
           {/* Remove Notification */}
-          <button type="button" className="form-button remove-notification" onClick={() => removeNotification(index)}>
+          <button
+            type="button"
+            className="form-button remove-notification"
+            onClick={() => removeNotification(index)}
+          >
             Remove
           </button>
         </div>

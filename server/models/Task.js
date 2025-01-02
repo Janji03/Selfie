@@ -28,6 +28,10 @@ const ExtendedPropsSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    notificationMethods: {
+      type: [String], 
+      default: ['email'],
+    },
     itemType: {
       type: String,
       default: "task",

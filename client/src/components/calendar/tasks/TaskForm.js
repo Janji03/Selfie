@@ -66,6 +66,23 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
     });
   };
 
+  const handleMethodChange = (method, checked) => {
+    const methods = formData.notificationMethods;
+
+    if (!checked && methods.length === 1) {
+      return;
+    }
+
+    const updatedMethods = checked
+    ? [...methods, method]
+    : methods.filter((m) => m !== method);
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      notificationMethods: updatedMethods,
+    }));
+  };
+
   const handleResetChanges = () => {
     setFormData({ ...initialData });
   };
@@ -143,6 +160,29 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
             <span className="checkbox-label">Notifications</span>
           </label>
         </div>
+        {formData.notifications && (
+          <div>
+            <label className="form-label">Methods:</label>
+            <div className="notification-methods">
+              {["email", "whatsapp"].map((method) => (
+                <label
+                  className="checkbox-label checkbox-label-small"
+                  key={method}
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.notificationMethods.includes(method)}
+                    onChange={(e) =>
+                      handleMethodChange(method, e.target.checked)
+                    }
+                  />
+                  {method.charAt(0).toUpperCase() + method.slice(1)}
+                </label>
+              ))}
+          </div>
+          </div>
+        )}
+
         {/* Time Zone */}
         <div>
           <label className="form-label">Time Zone:</label>
