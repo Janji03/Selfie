@@ -7,10 +7,6 @@ const NotificationSchema = new Schema(
       type: Number, 
       required: true,
     },
-    methods: {
-      type: [String], 
-      default: ['email'],
-    },
     isSent: {
       type: Boolean, 
       default: false,

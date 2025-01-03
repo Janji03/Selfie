@@ -402,7 +402,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
             name="recurrence.endOccurrences"
             value={formData.recurrence.endOccurrences}
             onChange={handleChange}
-            min="1"
+            min="2"
           />
         </div>
       )}

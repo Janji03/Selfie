@@ -20,27 +20,18 @@ const urgencyMessages = {
 
 export default (agenda) => {
   agenda.define("task-notification", async (job) => {
-    const { task, urgencyLevel, userEmail, phoneNumber } = job.attrs.data;
-
-    const methods = task.extendedProps.notificationMethods;
+    const { task, urgencyLevel, userEmail } = job.attrs.data;
 
     const emailMessage = urgencyMessages[urgencyLevel];
 
-    for (const method of methods) {
-      try {
-        if (method === "email") {
-          await sendEmailNotification(
-            userEmail,
-            `Overdue Task: ${task.title}`,
-            emailMessage
-          );
-        } else if (method === "whatsapp") {
-          console.log("Sending WhatsApp notification to:", phoneNumber);
-          // Add WhatsApp notification logic here
-        }
-      } catch (error) {
-        console.error(`Failed to send ${method} notification:`, error);
-      }
+    try {
+      await sendEmailNotification(
+        userEmail,
+        `Overdue Task: ${task.title}`,
+        emailMessage
+      );
+    } catch (error) {
+      console.error(`Failed to send email notification:`, error);
     }
 
     if (urgencyLevel !== 4) {

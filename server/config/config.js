@@ -5,7 +5,7 @@ const config = {
     "mongodb+srv://root:root@selfie-mern.vukiuom.mongodb.net/?retryWrites=true&w=majority&appName=selfie-MERN",
   jwtSecret: process.env.JWT_SECRET || "your_secret_key",
   EMAIL_USER: "tw.selfie.noreply@gmail.com",
-  EMAIL_PASS: "wttc cthn wagw iffe"
+  EMAIL_PASS: "wttc cthn wagw iffe",
 };
 
 export default config;

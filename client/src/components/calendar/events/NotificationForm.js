@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const NotificationForm = ({ formData, setFormData }) => {
+  const [error, setError] = useState('');
+
+  const MAX_NOTIFICATIONS = 5;
+
   const timeOptions = {
     0: "At the time of the event",
     5: "5 minutes before",
@@ -27,30 +31,16 @@ const NotificationForm = ({ formData, setFormData }) => {
     }));
   };
 
-  const handleMethodChange = (index, method, checked) => {
-    const updatedNotifications = [...formData.notifications];
-    const methods = updatedNotifications[index].methods;
-
-    if (!checked && methods.length === 1) {
-      return;
-    }
-
-    updatedNotifications[index].methods = checked
-      ? [...methods, method]
-      : methods.filter((m) => m !== method);
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      notifications: updatedNotifications,
-    }));
-  };
-
   const addNotification = () => {
     const newNotification = {
       timeBefore: 0,
-      methods: ["email"],
       isSent: false,
     };
+
+    if (formData.notifications.length >= MAX_NOTIFICATIONS) {
+      setError('You can add only up to 5 notifications.');
+      return;
+    }
 
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -69,6 +59,12 @@ const NotificationForm = ({ formData, setFormData }) => {
     }));
   };
 
+  useEffect(() => {
+    if (error) {
+      setError('');
+    }
+  }, [formData]);
+
   return (
     <div>
       <button
@@ -78,6 +74,10 @@ const NotificationForm = ({ formData, setFormData }) => {
       >
         Add
       </button>
+      <br />
+      {error && (
+        <span className="error-message">{error}</span>
+      )}
       {/* Notification List */}
       {formData.notifications?.map((notif, index) => (
         <div key={index} className="notification-container">
@@ -97,28 +97,6 @@ const NotificationForm = ({ formData, setFormData }) => {
                 </option>
               ))}
             </select>
-          </div>
-
-          {/* Notification Methods */}
-          <div>
-            <label className="form-label">Methods:</label>
-            <div className="notification-methods">
-              {["email", "whatsapp"].map((method) => (
-                <label
-                  className="checkbox-label checkbox-label-small"
-                  key={method}
-                >
-                  <input
-                    type="checkbox"
-                    checked={notif.methods.includes(method)}
-                    onChange={(e) =>
-                      handleMethodChange(index, method, e.target.checked)
-                    }
-                  />
-                  {method.charAt(0).toUpperCase() + method.slice(1)}
-                </label>
-              ))}
-            </div>
           </div>
 
           {/* Remove Notification */}

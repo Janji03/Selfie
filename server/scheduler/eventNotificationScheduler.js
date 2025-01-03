@@ -26,7 +26,6 @@ const scheduleEventNotifications = async (agenda, userID, event) => {
           event,
           notificationIndex: i,
           userEmail: user.email,
-          // phoneNumber: user.phoneNumber,
         });
       }
     }

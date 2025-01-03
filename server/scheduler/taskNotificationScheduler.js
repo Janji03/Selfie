@@ -30,7 +30,6 @@ const scheduleTaskNotifications = async (agenda, userID, task) => {
           task,
           urgencyLevel: level,
           userEmail: user.email,
-          // phoneNumber: user.phoneNumber,
         });
       
       } else {
@@ -38,7 +37,6 @@ const scheduleTaskNotifications = async (agenda, userID, task) => {
           task,
           urgencyLevel: level,
           userEmail: user.email,
-          // phoneNumber: user.phoneNumber,
         });
         const firstRunTime = new Date(taskDeadline.getTime() + urgencyIntervals[level - 1]);
         recurringNotificationJob.schedule(firstRunTime);

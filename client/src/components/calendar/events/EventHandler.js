@@ -62,7 +62,6 @@ const EventHandler = ({
       const formattedNotifications = notifications.map((notif) => {
         return {
           timeBefore: notif.timeBefore || 0,
-          methods: notif.methods || ["email"],
         };
       });
 
@@ -125,7 +124,7 @@ const EventHandler = ({
                 selectedEvent.start.split("T")[0],
                 "DAILY"
               ),
-              endOccurrences: 1,
+              endOccurrences: 2,
             },
         notifications: formattedNotifications,
       });
@@ -187,7 +186,6 @@ const EventHandler = ({
     const notificationData = data.notifications.map((notif) => {
       return {
         timeBefore: notif.timeBefore,
-        methods: notif.methods || ["email"],
         isSent: false,
       };
     });
@@ -277,7 +275,7 @@ const EventHandler = ({
         triggerDaysOfWeek: false,
         endCondition: "never",
         endDate: calculateEndDateRecurrence(startDateTime, "DAILY"),
-        endOccurrences: 1,
+        endOccurrences: 2,
       },
       notifications: [],
     });

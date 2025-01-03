@@ -102,21 +102,19 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
             emailMessage = `The event - ${event.title} is happening ${timeOptions[notification.timeBefore]}`;
           }
 
-          for (const method of notification.methods) {
+
             try {
-              if (method === "email") {
+
                 await sendEmailNotification(
                   user.email,
                   `Reminder: ${event.title}`,
                   emailMessage
                 );
-              } else if (method === "whatsapp") {
-                // Add WhatsApp notification logic here
-              }
+              
             } catch (error) {
-              console.error(`Failed to send ${method} notification:`, error);
+              console.error(`Failed to send email notification:`, error);
             }
-          }
+          
 
           if (allDayEvent) {
             break;
@@ -144,22 +142,16 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
         
       const emailMessage = urgencyMessages[urgencyLevel];
         
-      const notificationMethods = task.extendedProps.notificationMethods;
-      for (const method of notificationMethods) {
+      
         try {
-          if (method === "email") {
             await sendEmailNotification(
               user.email,
               `Overdue Task: ${task.title}`,              
               emailMessage
             );
-          } else if (method === "whatsapp") {
-            // Add WhatsApp notification logic here
-          }
         } catch (error) {
-          console.error(`Failed to send ${method} notification:`, error);
+          console.error(`Failed to send email notification:`, error);
         }
-      }
     }
 
   } catch (err) {

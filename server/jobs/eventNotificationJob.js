@@ -16,29 +16,23 @@ const timeOptions = {
 
 export default (agenda) => {
   agenda.define("event-notification", async (job) => {
-    const { event, notificationIndex, userEmail, phoneNumber } = job.attrs.data;
+    const { event, notificationIndex, userEmail } = job.attrs.data;
 
     const timeBefore = event.extendedProps.notifications[notificationIndex].timeBefore;
-    const methods = event.extendedProps.notifications[notificationIndex].methods;
 
     const emailMessage = `The event - ${event.title} is happening ${timeOptions[timeBefore]}`;
 
-    for (const method of methods) {
+
       try {
-        if (method === "email") {
           await sendEmailNotification(
             userEmail,
             `Reminder: ${event.title}`,
             emailMessage
           );
-        } else if (method === "whatsapp") {
-          console.log("Sending WhatsApp notification to:", phoneNumber);
-          // Add WhatsApp notification logic here
-        }
       } catch (error) {
-        console.error(`Failed to send ${method} notification:`, error);
+        console.error(`Failed to send email notification:`, error);
       }
-    }
+    
 
     try {
       await Event.findOneAndUpdate( { id: event.id },

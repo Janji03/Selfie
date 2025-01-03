@@ -20,6 +20,10 @@ const ExtendedPropsSchema = new Schema(
       type: Date,
       required: true,
     },
+    completedAt: {
+      type: Date,
+      default: null,
+    },
     wasAllDay: {
       type: Boolean,
       required: true,
@@ -27,10 +31,6 @@ const ExtendedPropsSchema = new Schema(
     notifications: {
       type: Boolean,
       default: false,
-    },
-    notificationMethods: {
-      type: [String], 
-      default: ['email'],
     },
     temporary: {
       type: Boolean,
