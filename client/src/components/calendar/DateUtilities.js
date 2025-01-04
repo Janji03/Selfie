@@ -20,14 +20,10 @@ const DateUtilities = ({ calendarTimeZone }) => {
       .padStart(2, "0")}`;
   };
 
-  const addThirtyMinutes = (timeStr) => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
-    const totalMinutes = hours * 60 + minutes + 30;
-    const newHours = Math.floor(totalMinutes / 60) % 24;
-    const newMinutes = totalMinutes % 60;
-    return `${newHours.toString().padStart(2, "0")}:${newMinutes
-      .toString()
-      .padStart(2, "0")}`;
+  const addThirtyMinutes = (dateTimeStr) => {
+    const date = new Date(dateTimeStr);
+    date.setMinutes(date.getMinutes() + 30);
+    return date.toISOString();
   };
 
   const convertEventTimes = (event) => {

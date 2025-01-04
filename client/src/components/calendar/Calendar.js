@@ -6,6 +6,7 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
+import { DateTime } from "luxon";
 
 import { AuthContext } from "../../context/AuthContext";
 
@@ -79,8 +80,14 @@ const Calendar = () => {
           const fetchedTasks = await getTasks(userID);
 
           // Convert the events and tasks to calendar timezone
-          const convertedEvents = fetchedEvents.map((event) => convertEventTimes(event));
-          const convertedTasks = fetchedTasks.map((task) => convertEventTimes(task));
+          const convertedEvents = fetchedEvents.map((event) => ({
+            ...convertEventTimes(event),
+            classNames: ["event"], 
+          }));
+          const convertedTasks = fetchedTasks.map((task) => ({
+            ...convertEventTimes(task),
+            classNames: getClassNamesForTask(task), 
+          }));
           
           setEvents(convertedEvents);
           setTasks(convertedTasks);
@@ -94,6 +101,31 @@ const Calendar = () => {
       fetchEventsAndTasks();
     }
   }, [isAuthenticated, userID]);
+
+  const getClassNamesForTask = (task) => {
+    const classNames = ["task"]; 
+
+    const isOverdue = task.extendedProps.isOverdue;
+    const isCompleted = task.extendedProps.status === "completed";
+    const completedAt = task.extendedProps.completedAt
+      ? DateTime.fromISO(task.extendedProps.completedAt)
+      : null;
+    const deadline = DateTime.fromISO(task.extendedProps.deadline);
+    const completedLate = isCompleted && completedAt && completedAt >= deadline;
+  
+    if (completedLate) {
+      classNames.push("task-late");
+    } else if (isCompleted) {
+      classNames.push("task-completed");
+    } else if (isOverdue) {
+      classNames.push("task-overdue");
+    } else {
+      classNames.push("task-pending");
+    }
+    
+    return classNames;
+  };
+  
 
   const {
     handleEventClick,
@@ -139,6 +171,28 @@ const Calendar = () => {
     calendarTimeZone,
   });
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (isAuthenticated) {
+        try {
+          const updatedTasks = await getTasks(userID);
+          const tasksWithClasses = updatedTasks.map((task) => ({
+            ...task,
+            classNames: getClassNamesForTask(task),
+          }));
+          setTasks(tasksWithClasses);
+
+          const combined = [...events, ...tasksWithClasses];
+          setCombinedEvents(combined);
+
+        } catch (error) {
+          console.error("Error fetching updated tasks:", error);
+        }
+      }
+    }, 60000); 
+
+    return () => clearInterval(interval); 
+  }, [isAuthenticated, userID, events]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -408,13 +462,13 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "today addEvent calendarTimeZone",
-            center: "prev title next",
-            right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
+            left: "title",
+            center: "dayGridMonth,timeGridWeek,timeGridDay,eventList,taskList",
+            right: "calendarTimeZone addEvent prev,today,next",
           }}
           customButtons={{
             addEvent: {
-              text: "",
+              text: " Add",
               click: handleAddItem,
             },
             calendarTimeZone: {

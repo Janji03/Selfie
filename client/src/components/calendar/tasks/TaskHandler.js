@@ -84,17 +84,18 @@ const TaskHandler = ({
   const handleTaskFormSubmit = async (data) => {
     const taskTimeZone = data.timeZone;
 
+    
     const now = new Date(time);
     const nowDate = now.toISOString().split("T")[0];
     const nowTime = now.toISOString().split("T")[1].slice(0, 5);
-    const nowDateTime = `${nowDate}T${nowTime}`;
-
+    const nowDateTime = `${nowDate}T${nowTime}:00Z`;
+    
     const isAllDay = data.allDay;
-
+    
     const deadlineDate = data.deadlineDate;
     const deadlineTime = data.deadlineTime;
     const deadlineDateTime = `${deadlineDate}T${deadlineTime}:00`;
-    const deadlineEndDateTime = `${data.deadlineDate}T${addThirtyMinutes(data.deadlineTime)}:00`;
+    const deadlineEndDateTime = `${addThirtyMinutes(deadlineDateTime)}`;
 
     const deadline = isAllDay ? deadlineDate : deadlineDateTime;
     const endDeadline = isAllDay ? deadlineDate : deadlineEndDateTime;
@@ -106,18 +107,18 @@ const TaskHandler = ({
     const utcDeadline = DateTime.fromISO(deadline, { zone: taskTimeZone }).toUTC().toISO();
     const utcEndDeadline = DateTime.fromISO(endDeadline, { zone: taskTimeZone }).toUTC().toISO();
     const utcCurrent = DateTime.fromISO(current, { zone: taskTimeZone }).toUTC().toISO();
+    const utcEndCurrent = DateTime.fromISO(addThirtyMinutes(current), { zone: taskTimeZone }).toUTC().toISO();
 
     const newTask = {
       id: uuidv4(),
       title: data.title,
       start: isOverdue ? utcCurrent  : utcDeadline,
-      end: isOverdue ? utcCurrent  : utcEndDeadline,
-      allDay: isOverdue ? true : isAllDay,
+      end: isOverdue ? utcEndCurrent  : utcEndDeadline,
+      allDay: isAllDay,
       extendedProps: {
         status: "pending",
         isOverdue: isOverdue,
         deadline,
-        wasAllDay: isAllDay,
         notifications: data.notifications,
         timeZone: data.timeZone,
       },
@@ -214,13 +215,14 @@ const TaskHandler = ({
     const now = new Date(time);
     const nowDate = now.toISOString().split("T")[0];
     const nowTime = now.toISOString().split("T")[1].slice(0, 5);
-    const nowDateTime = `${nowDate}T${nowTime}`;
+    const nowDateTime = `${nowDate}T${nowTime}:00Z`;
 
     const updatedTasks = tasks.map((task) => {
       const taskDeadline = task.extendedProps.deadline.slice(0, 16);
-      const isAllDay = task.extendedProps.isAllDay;
+      const isAllDay = task.isAllDay;
 
       const current = isAllDay ? nowDate : nowDateTime;
+      const currentEnd = isAllDay ? nowDate : `${addThirtyMinutes(nowDateTime)}`;
 
       const isOverdue = taskDeadline <= current;
 
@@ -231,12 +233,10 @@ const TaskHandler = ({
             ...task.extendedProps,
             isOverdue: true,
           },
-          start: nowDate,
-          end: nowDate,
-          allDay: true,
+          start: current,
+          end: currentEnd,
         };
       } else if (!isOverdue && task.extendedProps.isOverdue) {
-        const wasAllDay = task.extendedProps.wasAllDay;
         const startDeadline = new Date(taskDeadline);
         const endDeadline = new Date(startDeadline.getTime() + 30 * 60 * 1000);
 
@@ -249,9 +249,8 @@ const TaskHandler = ({
             ...task.extendedProps,
             isOverdue: false,
           },
-          start: wasAllDay ? taskDeadline.split("T")[0] : taskStartDeadline,
-          end: wasAllDay ? taskDeadline.split("T")[0] : taskEndDeadline,
-          allDay: wasAllDay,
+          start: isAllDay ? taskDeadline.split("T")[0] : taskStartDeadline,
+          end: isAllDay ? taskDeadline.split("T")[0] : taskEndDeadline,
         };
       }
 

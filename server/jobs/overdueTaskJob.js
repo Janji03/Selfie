@@ -1,11 +1,19 @@
 import Task from "../models/Task.js";
 
+const addThirtyMinutes = (dateTimeStr) => {
+  const date = new Date(dateTimeStr);
+  date.setMinutes(date.getMinutes() + 30);
+  return date.toISOString();
+};
+
 export default (agenda) => {
   agenda.define("check-overdue-tasks", async () => {
     try {
 
       const now = new Date();
-      const nowDate = now.toISOString().split("T")[0];  
+      const nowDate = now.toISOString().split("T")[0];
+      const nowTime = now.toISOString().split("T")[1].slice(0, 5);
+      const nowDateTime = `${nowDate}T${nowTime}:00Z`; 
 
       const tasks = await Task.find({
         "extendedProps.status": "pending",
@@ -16,11 +24,14 @@ export default (agenda) => {
         return;
       }
 
+
       for (const task of tasks) {
+        const current = task.allDay ? nowDate : nowDateTime;
+        const currentEnd = task.allDay ? nowDate : `${addThirtyMinutes(nowDateTime)}`;
+
         task.extendedProps.isOverdue = true;
-        task.allDay = true;
-        task.start = nowDate;
-        task.end = nowDate;
+        task.start = current;
+        task.end = currentEnd;
 
         await task.save();
       }
