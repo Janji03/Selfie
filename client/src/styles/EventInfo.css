@@ -11,9 +11,13 @@
 
 .event-info h2 {
   font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: #333;
+  margin-top: 0;
+  margin-bottom: 25px;
   text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  background-color: #007bff;
 }
 
 .event-info p {
@@ -85,8 +89,8 @@
 
 /* Notifications Section */
 .notifications-container {
-  margin-top: 20px;
-  padding: 15px;
+  /* margin-top: 20px; */
+  padding: 0 15px 0 15px; 
   border: 1px solid #eee;
   border-radius: 8px;
   background-color: #f9f9f9;
@@ -115,14 +119,9 @@
   background-color: #f1f1f1;
 }
 
-.notification.sent {
-  border-left: 5px solid #28a745;
-  background-color: #eaf6ea;
-}
-
-.notification.pending {
-  border-left: 5px solid #ffc107;
-  background-color: #fff8e1;
+.notification {
+  border-left: 5px solid #65a9fd;
+  background-color: #b0d3ea;
 }
 
 .notification .status {

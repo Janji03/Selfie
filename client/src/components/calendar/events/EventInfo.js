@@ -1,6 +1,7 @@
 import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
 import "../../../styles/EventInfo.css";
+
 const EventInfo = ({
   selectedEvent,
   selectedOccurrence,
@@ -227,9 +228,7 @@ const EventInfo = ({
               (notification, index) => (
                 <li
                   key={index}
-                  className={`notification ${
-                    notification.isSent ? "sent" : "pending"
-                  }`}
+                  className="notification"
                 >
                   <strong>{timeOptions[notification.timeBefore]}</strong>
                 </li>
