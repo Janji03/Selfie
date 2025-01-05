@@ -1,30 +1,102 @@
-.event {
-  background-color: #d8ebf9; /* Light Blue */
-  color: #002aff; /* Dark Blue */
+/* General Button Styles */
+.calendar .fc-button {
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #001789;
+  padding: 10px 15px;
+  height: 45px; /* Fixed height for all buttons */
+  box-sizing: border-box;
 }
 
-.task-pending {
-  background-color: #4ea6ee; /* Light Blue */
+/* Specific Button Backgrounds */
+.calendar .fc-button,
+.calendar .fc-prev-button,
+.calendar .fc-next-button,
+.calendar .fc-addEvent-button {
+  background-color: #001789;
   color: white;
 }
 
-.task-completed {
-  background-color: #36c73b; /* Green */
-  color: white;
+.calendar .fc-today-button,
+.calendar .fc-calendarTimeZone-button,
+.calendar .fc-dayGridMonth-button,
+.calendar .fc-timeGridWeek-button,
+.calendar .fc-timeGridDay-button,
+.calendar .fc-eventList-button,
+.calendar .fc-taskList-button {
+  background-color: #ffffff;
+  color: #001789;
 }
 
-.task-overdue {
-  background-color: #f74141; /* Red */
-  color: white;
+/* Button Icons */
+.calendar .fc-button::before {
+  font-size: 18px;
 }
 
-.task-pending:hover,
-.task-completed:hover,
-.task-overdue:hover,
-.event:hover {
-  filter: brightness(0.9); 
+.calendar .fc-today-button::before {
+  content: '\1F4C5'; /* Calendar Icon */
 }
 
+.calendar .fc-addEvent-button::before {
+  content: '\2795'; /* Plus Icon */
+}
+
+.calendar .fc-calendarTimeZone-button::before {
+  content: '\1F310'; /* Globe Icon */
+}
+
+/* Hover State */
+.calendar .fc-button:hover {
+  background-color: #f5f6fd;
+  color: #001789;
+  transform: scale(1.05);
+}
+
+/* Active State */
+.calendar .fc-button:active {
+  background-color: #e8efff;
+  color: #001789;
+  transform: scale(1);
+}
+
+/* Focus State */
+.calendar .fc-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
+}
+
+/* Toolbar-Specific Styles */
+.calendar .fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+  gap: 10px; /* Spacing between elements */
+  padding: 10px;
+}
+
+.calendar .fc-toolbar-chunk {
+  flex-grow: 1;
+  flex-basis: 50;
+}
+
+.calendar .fc-toolbar-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #001789;
+  text-align: center;
+  margin: 0;
+  padding: 10px 0;
+  letter-spacing: 1px;
+}
+
+/* Time Machine Button */
 .time-machine-button {
   position: fixed;
   bottom: 20px;
@@ -40,29 +112,146 @@
   z-index: 100;
 }
 
-.time-machine-button i{
-color: #fff;
-font-size: 22px;
-cursor: pointer;
+.time-machine-button i {
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
 }
 
+/* Calendar Styles */
+.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  background: linear-gradient(to bottom, #f5f6fd, #e8efff);
+  font-family: "Poppins", sans-serif;
+  color: #001789;
+  height: 97vh;
+}
 
-/* General button styles */
-.calendar .fc-button {
+.calendar .fc {
+  flex-grow: 1;
+  width: 100%;
+}
+
+/* Left section */
+.calendar .fc-toolbar-left {
+  display: flex;
+  gap: 10px; /* Add spacing between buttons */
+  flex-wrap: wrap; /* Wrap buttons if needed */
+}
+
+/* Middle section (Title) */
+.calendar .fc-toolbar-title { 
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Right section */
+.calendar .fc-toolbar-right {
+  display: flex;
+  gap: 10px; /* Spacing between buttons */
+  flex-wrap: wrap; /* Wrap buttons if needed */
+  justify-content: flex-end; /* Align to the right */
+}
+
+/* Responsive adjustments for small screens */
+@media (max-width: 768px) {
+  .calendar .fc-toolbar {
+    flex-direction: column; /* Stack toolbar vertically */
+    align-items: stretch; /* Stretch to full width */
+  }
+
+  /* Group navigation buttons (Prev, Today, Next) in one row */
+  .calendar .fc-toolbar-left {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 10px; /* Space below */
+  }
+
+  /* Move timezone selector to its own row */
+  .calendar .fc-toolbar-left .fc-calendarTimeZoneButton-button {
+    width: 100%; /* Full width */
+    margin-top: 5px; /* Add spacing above */
+  }
+
+  /* Title centered on its own row */
+  .calendar .fc-toolbar-title {
+    text-align: center;
+    font-size: 16px; /* Slightly smaller font */
+    margin-bottom: 10px; /* Space below */
+  }
+
+  /* View switch buttons grouped in 2 rows */
+  .calendar .fc-toolbar-right {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
+    gap: 8px;
+    margin-top: 10px; /* Space above */
+  }
+}
+
+/* Optional: Make all buttons full-width on very small screens */
+@media (max-width: 480px) {
+  .calendar .fc-toolbar button {
+    width: 100%; /* Full width buttons for mobile */
+  }
+
+  .calendar .fc-toolbar-right {
+    grid-template-columns: 1fr; /* Stack buttons vertically */
+  }
+}
+
+/* Center the title and position Prev and Next buttons */
+.calendar .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Add spacing between elements */
+}
+
+/* Align the title specifically */
+.calendar .fc-toolbar-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #001789;
+  margin: 0 10px; /* Space around the title */
+}
+
+/* Style the Prev and Next buttons */
+.calendar .fc-prev-button,
+.calendar .fc-next-button {
   background-color: #001789;
   color: white;
-  border: 2px solid #001789;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 16px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Hover effect */
-.calendar .fc-button:hover {
-  background-color: white;
-  color: #001789;
-  border-color: #001789;
+.calendar .fc-prev-button:hover,
+.calendar .fc-next-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.1);
+}
+
+.calendar .fc-prev-button:active,
+.calendar .fc-next-button:active {
+  background-color: #003366;
+  transform: scale(1);
+}
+
+.calendar .fc-prev-button:focus,
+.calendar .fc-next-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
+}
+
+.calendar .fc-day-today {
+  background-color: #a6caf1 !important;
 }

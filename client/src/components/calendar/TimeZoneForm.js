@@ -30,7 +30,7 @@ const TimeZoneForm = ({ initialTimeZone, onSubmit }) => {
 
   return (
     <div>
-      <select value={selectedTimeZone} onChange={handleChange}>
+      <select className="form-input" value={selectedTimeZone} onChange={handleChange}>
         {timeZones.map((tz) => (
           <option key={tz.value} value={tz.value}>
             {tz.label}

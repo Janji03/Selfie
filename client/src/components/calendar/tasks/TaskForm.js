@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TimeZoneForm from "../TimeZoneForm";
+import "../../../styles/Form.css";
 
 const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
   const [formData, setFormData] = useState({
@@ -70,18 +71,21 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
         {/* Title */}
         <div>
-          <label>Title:</label>
+          <label className="form-label">Title:</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
+            className="form-input"
           />
-          {errors.title && <span style={{ color: "red" }}>{errors.title}</span>}
+          {errors.title && (
+            <span className="error-message">{errors.title}</span>
+          )}
         </div>
         {/* All Day */}
         <div>
@@ -91,41 +95,57 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
               name="allDay"
               checked={formData.allDay}
               onChange={handleChange}
+              className="checkbox-input"
             />
-            All Day
+            <span className="checkbox-label">All Day</span>
           </label>
         </div>
         {/* Deadline Date*/}
         <div>
-          <label>Deadline date:</label>
+          <label className="form-label">Deadline date:</label>
           <input
             type="date"
             name="deadlineDate"
             value={formData.deadlineDate}
             onChange={handleChange}
+            className="form-input"
           />
           {errors.deadlineDate && (
-            <span style={{ color: "red" }}>{errors.deadlineDate}</span>
+            <span className="error-message">{errors.deadlineDate}</span>
           )}
         </div>
         {/* Deadline Time */}
         {!formData.allDay && (
           <div>
-            <label>Deadline time:</label>
+            <label className="form-label">Deadline time:</label>
             <input
               type="time"
               name="deadlineTime"
               value={formData.deadlineTime}
               onChange={handleChange}
+              className="form-input"
             />
             {errors.deadlineTime && (
-              <span style={{ color: "red" }}>{errors.deadlineTime}</span>
-            )}
+            <span className="error-message">{errors.deadlineTime}</span>
+          )}
           </div>
         )}
+        {/* Notifications */}
+        <div>
+          <label>
+            <input
+              type="checkbox"
+              name="notifications"
+              checked={formData.notifications}
+              onChange={handleChange}
+              className="checkbox-input"
+            />
+            <span className="checkbox-label">Overdue Notifications</span>
+          </label>
+        </div>
         {/* Time Zone */}
         <div>
-          <label>Time Zone:</label>
+          <label className="form-label">Time Zone:</label>
           <TimeZoneForm
             initialTimeZone={formData.timeZone}
             onSubmit={handleTimeZoneChange}
@@ -133,13 +153,13 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit">
+        <button type="submit" className="form-button form-submit">
           {isEditMode ? "Save Changes" : "Add Task"}
         </button>
 
         {/* Reset Button (only in edit mode) */}
         {isEditMode && (
-          <button type="button" onClick={handleResetChanges}>
+          <button type="button" onClick={handleResetChanges} className="form-button form-reset">
             Reset Changes
           </button>
         )}

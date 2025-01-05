@@ -58,6 +58,7 @@ const TaskHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedTask.allDay,
+        notifications: selectedTask.extendedProps.notifications,
         timeZone: selectedTask.extendedProps.timeZone,
       });
       setIsEditMode(true);
@@ -117,6 +118,7 @@ const TaskHandler = ({
         isOverdue: isOverdue,
         deadline,
         wasAllDay: isAllDay,
+        notifications: data.notifications,
         timeZone: data.timeZone,
       },
     };
@@ -157,6 +159,7 @@ const TaskHandler = ({
       deadlineDate: startDateTime.split("T")[0],
       deadlineTime: startTime,
       allDay: false,
+      notifications: false,
       timeZone: calendarTimeZone,
     });
   };
@@ -177,6 +180,11 @@ const TaskHandler = ({
         updatedStatus === "completed"
           ? false
           : selectedTask.extendedProps.deadline <= current;
+      
+      const updatedCompletedAt =
+      updatedStatus === "completed"
+        ? nowDateTime
+        : null;
 
       const updatedTask = {
         ...selectedTask,
@@ -184,6 +192,7 @@ const TaskHandler = ({
           ...selectedTask.extendedProps,
           status: updatedStatus,
           isOverdue: updatedIsOverdue,
+          completedAt: updatedCompletedAt,
         },
       };
       try {
@@ -249,11 +258,12 @@ const TaskHandler = ({
       return { ...task };
     });
 
-    console.log('isTimeMachineActive', isTimeMachineActive);
-
     setTasks(updatedTasks);
-    if (!isTimeMachineActive) {
-      await Promise.all(updatedTasks.map((task) => updateTask(task.id, task)));
+    if (isTimeMachineActive) {
+      await Promise.all(
+        updatedTasks.map((task) =>
+          createTask({ ...task, extendedProps: { ...task.extendedProps, temporary: true }, _id: undefined, id: uuidv4() }, userID)
+        ));  
     }
   };
 

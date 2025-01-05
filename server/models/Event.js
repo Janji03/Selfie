@@ -1,6 +1,20 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
+const NotificationSchema = new Schema(
+  {
+    timeBefore: {
+      type: Number, 
+      required: true,
+    },
+    isSent: {
+      type: Boolean, 
+      default: false,
+    }
+  },
+  { _id: false }
+);
+
 const ExtendedPropsSchema = new Schema(
   {
     location: {
@@ -26,6 +40,10 @@ const ExtendedPropsSchema = new Schema(
     itemType: {
       type: String,
       default: "event",
+    },
+    notifications: {
+      type: [NotificationSchema], 
+      default: [],
     },
   },
   { _id: false }

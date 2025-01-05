@@ -154,34 +154,6 @@ const Calendar = () => {
     setCalendarRenderKey((prevKey) => prevKey + 1);
   };
 
-  // boh non ho idea se funzioni
-  useEffect(() => {
-    let intervalId;
-
-    const checkForOverdueTasksAtMidnight = async () => {
-      console.log("Checking for overdue tasks at midnight...");
-      await checkForOverdueTasks();
-    };
-
-    const now = new Date();
-    const millisTillMidnight =
-      new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0) -
-      now;
-
-    const timeoutId = setTimeout(async () => {
-      await checkForOverdueTasksAtMidnight();
-
-      intervalId = setInterval(() => {
-        checkForOverdueTasksAtMidnight();
-      }, 24 * 60 * 60 * 1000);
-    }, millisTillMidnight);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
-    };
-  }, []);
-
   useEffect(() => {
     if (currentView === "eventList") {
       setCombinedEvents(events);
@@ -191,7 +163,8 @@ const Calendar = () => {
       const combined = [...events, ...tasks];
       setCombinedEvents(combined);
     }
-    handleTriggerReRender();
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.refetchEvents();
   }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
@@ -298,7 +271,7 @@ const Calendar = () => {
         }));
       }
     } else {
-      baseDate.setHours(new Date().getHours());
+      baseDate.setHours(new Date(time).getHours());
       startDateTime = roundTime(baseDate).toISOString();
       initializeEventForm(startDateTime);
       initializeTaskForm(startDateTime);
@@ -435,17 +408,17 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "today prev,next addEventButton calendarTimeZoneButton",
-            center: "title",
+            left: "today addEvent calendarTimeZone",
+            center: "prev title next",
             right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
           }}
           customButtons={{
-            addEventButton: {
-              text: "+",
+            addEvent: {
+              text: "",
               click: handleAddItem,
             },
-            calendarTimeZoneButton: {
-              text: 'Timezone',
+            calendarTimeZone: {
+              text: "",
               click: handleChangeTimeZone,
             }
           }}
@@ -453,12 +426,12 @@ const Calendar = () => {
             eventList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "Event List",
+              buttonText: "events",
             },
             taskList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "Task List",
+              buttonText: "tasks",
             },
           }}
           events={combinedEvents}
@@ -472,7 +445,9 @@ const Calendar = () => {
           select={handleSelectRange}
           stickyHeaderDates={true}
           handleWindowResize={true}
-          // height={}
+          height={"100%"}
+          scrollTime={"08:00:00"}
+          scrollTimeReset={false}
         />
       </div>
     </div>

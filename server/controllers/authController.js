@@ -2,7 +2,9 @@ import User from "../models/User.js";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import sendEmailNotification from "../utils/sendEmailNotification.js";
+import TimeMachine from "../models/TimeMachine.js";
+
 
 // Funzione per registrare un nuovo utente
 export const signup = async (req, res) => {
@@ -26,7 +28,16 @@ export const signup = async (req, res) => {
     const token = jwt.sign({ userId: userID }, config.jwtSecret, {
       expiresIn: "1h",
     });
+    
+    // Crea la TimeMachine associata all'utente
+    const newTimeMachine = new TimeMachine({
+      userID,
+      time: new Date(),
+      isActive: false,
+    });
 
+    await newTimeMachine.save();
+    
     res.status(201).json({
       message: "Utente registrato con successo!",
       token,
@@ -58,6 +69,13 @@ export const login = async (req, res) => {
     });
     const userID = user._id;
 
+    // Trova la TimeMachine associata all'utente e resetta il tempo
+    const timeMachine = await TimeMachine.findOne({ userID });
+    timeMachine.time = new Date();
+    timeMachine.isActive = false;
+
+    await timeMachine.save();
+
     res.status(200).json({
       message: "Login effettuato con successo!",
       token,
@@ -88,28 +106,20 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    const transporter = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: config.mailtrapUser,
-        pass: config.mailtrapPass,
-      },
-    });
-
     const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
-
-    // Invia l'email con HTML
-    await transporter.sendMail({
-      to: user.email,
-      subject: "Password Reset Request",
-      html: `
+    
+    const body = `
         <p>Hai richiesto di resettare la tua password.</p>
         <p>Clicca sul link sottostante per resettare la tua password:</p>
         <a href="${resetURL}" style="color: blue; text-decoration: underline;">Resetta la password</a>
         <p>Se non hai richiesto questa operazione, ignora questa email.</p>
-      `,
-    });
+      `;
+
+    await sendEmailNotification(
+      user.email,
+      "Password Reset Request",
+      body
+    );
 
     res.status(200).json({ message: "Email inviata con successo!" });
   } catch (error) {

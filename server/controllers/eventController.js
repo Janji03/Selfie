@@ -1,4 +1,6 @@
 import Event from "../models/Event.js";
+import agenda from "../config/agenda.js";
+import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 
 // Estrai tutti gli eventi
 export const getEvents = async (req, res) => {
@@ -39,6 +41,9 @@ export const createEvent = async (req, res) => {
     });
 
     const savedEvent = await newEvent.save();
+
+    await scheduleEventNotifications(agenda, userID, savedEvent);
+
     res.status(201).json(savedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione dell'evento" });
@@ -59,6 +64,12 @@ export const updateEvent = async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": updatedEvent.userID,
+    });    
+    await scheduleEventNotifications(agenda, updatedEvent.userID, updatedEvent);
+
     res.status(200).json(updatedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nell'aggiornamento dell'evento" });
@@ -76,8 +87,14 @@ export const deleteEvent = async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": deletedEvent.userID,
+    });    
+
     res.status(200).json({ message: "Evento eliminato con successo" });
   } catch (error) {
     res.status(500).json({ error: "Errore nell'eliminazione dell'evento" });
   }
 };
+
