@@ -2,12 +2,14 @@ import Message from '../models/Message.js';
 
 export const getMessages = async (req, res) => {
   try {
-    const messages = await Message.find({ recipients: req.params.userID });
+    const messages = await Message.find({ recipients: req.params.userID })
+      .populate('sender', 'name email'); 
     res.status(200).json(messages);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching messages', error: error.message });
   }
 };
+
 
 export const sendMessage = async (req, res) => {
   try {

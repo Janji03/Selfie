@@ -22,22 +22,22 @@ const Inbox = () => {
 
     const handleComplete = (id) => {
         messageService.completeMessage(id)
-          .then(() => {
-            setMessages(messages.map(msg =>
-              msg._id === id ? { ...msg, completed: true } : msg
-            ));
-          })
-          .catch(error => console.error('Error completing message:', error));
-      };
-      
-      const handleDelete = (id) => {
+            .then(() => {
+                setMessages(messages.map(msg =>
+                    msg._id === id ? { ...msg, completed: true } : msg
+                ));
+            })
+            .catch(error => console.error('Error completing message:', error));
+    };
+
+    const handleDelete = (id) => {
         messageService.deleteMessage(id)
-          .then(() => {
-            setMessages(messages.filter(msg => msg._id !== id));
-          })
-          .catch(error => console.error('Error deleting message:', error));
-      };
-      
+            .then(() => {
+                setMessages(messages.filter(msg => msg._id !== id));
+            })
+            .catch(error => console.error('Error deleting message:', error));
+    };
+
 
     const handleSend = () => {
         const payload = {
@@ -68,13 +68,17 @@ const Inbox = () => {
             <h1>Inbox</h1>
             <ul>
                 {messages.map(msg => (
-                    <li key={msg.id}>
+                    <li key={msg._id}>
                         <span>{msg.content}</span>
+                        <div>
+                            <strong>Sender:</strong> {msg.sender.name} ({msg.sender.email})
+                        </div>
                         <button onClick={() => handleComplete(msg._id)}>Complete</button>
                         <button onClick={() => handleDelete(msg._id)}>Delete</button>
                     </li>
                 ))}
             </ul>
+
 
             <h2>Send a Message</h2>
             <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} />
