@@ -20,9 +20,21 @@ const ExtendedPropsSchema = new Schema(
       type: Date,
       required: true,
     },
+    completedAt: {
+      type: Date,
+      default: null,
+    },
     wasAllDay: {
       type: Boolean,
       required: true,
+    },
+    notifications: {
+      type: Boolean,
+      default: false,
+    },
+    temporary: {
+      type: Boolean,
+      default: false,
     },
     itemType: {
       type: String,

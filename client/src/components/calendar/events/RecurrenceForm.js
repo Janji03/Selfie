@@ -83,10 +83,11 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
   };
 
   return (
-    <div>
+    <div className="recurrence-container">
       <div>
-        <label>Recurrence:</label>
+        <label className="form-label">Recurrence:</label>
         <select
+          className="form-input"
           name="recurrence.type"
           value={formData.recurrence.type}
           onChange={handleChange}
@@ -98,11 +99,13 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
           <option value="CUSTOM">Custom</option>
         </select>
       </div>
+
       {formData.recurrence.type === "CUSTOM" && (
         <div>
           <div>
-            <label>Repeat:</label>
+            <label className="form-label">Repeat:</label>
             <select
+              className="form-input"
               name="recurrence.frequency"
               value={formData.recurrence.frequency}
               onChange={handleChange}
@@ -114,8 +117,9 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
             </select>
           </div>
           <div>
-            <label>Every:</label>
+            <label className="form-label">Every:</label>
             <input
+              className="form-input"
               type="number"
               name="recurrence.interval"
               value={formData.recurrence.interval}
@@ -131,7 +135,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
           </div>
           {formData.recurrence.frequency === "WEEKLY" && (
             <div>
-              <label>On:</label>
+              <label className="form-label">On:</label>
               {[
                 "Sunday",
                 "Monday",
@@ -142,7 +146,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                 "Saturday",
               ].map((day) => (
                 <div key={day}>
-                  <label>
+                  <label className="checkbox-label checkbox-label-small">
                     <input
                       type="checkbox"
                       checked={formData.recurrence.daysOfWeek.includes(
@@ -160,7 +164,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
           {formData.recurrence.frequency === "MONTHLY" && (
             <div>
               <div>
-                <label>
+                <label className="radio-label">
                   <input
                     type="radio"
                     name="recurrence.monthlyType"
@@ -178,7 +182,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                   />
                   Each
                 </label>
-                <label>
+                <label className="radio-label">
                   <input
                     type="radio"
                     name="recurrence.monthlyType"
@@ -201,14 +205,8 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
               </div>
               {formData.recurrence.monthlyType === "daysOfMonth" && (
                 <div>
-                  <label>Select Day(s):</label>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "repeat(7, 1fr)",
-                      gap: "5px",
-                    }}
-                  >
+                  <label className="form-label">Select Day(s):</label>
+                  <div className="form-month-days-container">
                     {[...Array(31)].map((_, dayIndex) => {
                       const day = dayIndex + 1;
                       const isSelected =
@@ -219,15 +217,9 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                           onClick={() =>
                             handleRecurrenceToggle(day, "monthDays")
                           }
-                          style={{
-                            padding: "10px",
-                            textAlign: "center",
-                            cursor: "pointer",
-                            backgroundColor: isSelected ? "#4caf50" : "#f0f0f0",
-                            color: isSelected ? "#fff" : "#000",
-                            borderRadius: "5px",
-                            userSelect: "none",
-                          }}
+                          className={`form-month-day ${
+                            isSelected ? "selected" : "default"
+                          }`}
                         >
                           {day}
                         </div>
@@ -247,6 +239,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                     }}
                   >
                     <select
+                      className="form-input"
                       name="recurrence.ordinal"
                       value={formData.recurrence.ordinal}
                       onChange={handleChange}
@@ -259,6 +252,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                       <option value="-1">Last</option>
                     </select>
                     <select
+                      className="form-input"
                       name="recurrence.dayOfWeek"
                       value={formData.recurrence.dayOfWeek}
                       onChange={handleChange}
@@ -282,14 +276,8 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
           {formData.recurrence.frequency === "YEARLY" && (
             <div>
               <div>
-                <label>Select Month(s):</label>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(4, 1fr)",
-                    gap: "5px",
-                  }}
-                >
+                <label className="form-label">Select Month(s):</label>
+                <div className="form-year-months-container">
                   {[
                     "JAN",
                     "FEB",
@@ -313,15 +301,9 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                         onClick={() =>
                           handleRecurrenceToggle(monthIndex + 1, "yearMonths")
                         }
-                        style={{
-                          padding: "10px",
-                          textAlign: "center",
-                          cursor: "pointer",
-                          backgroundColor: isSelected ? "#4caf50" : "#f0f0f0",
-                          color: isSelected ? "#fff" : "#000",
-                          borderRadius: "5px",
-                          userSelect: "none",
-                        }}
+                        className={`form-year-month ${
+                          isSelected ? "selected" : "default"
+                        }`}
                       >
                         {month}
                       </div>
@@ -337,7 +319,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                     checked={formData.recurrence.triggerDaysOfWeek}
                     onChange={handleChange}
                   />
-                  Days of week
+                  <span className="checkbox-label checkbox-label-small">Days of week</span>
                 </label>
               </div>
               {formData.recurrence.triggerDaysOfWeek && (
@@ -350,6 +332,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                     }}
                   >
                     <select
+                      className="form-input"
                       name="recurrence.ordinal"
                       value={formData.recurrence.ordinal}
                       onChange={handleChange}
@@ -362,6 +345,7 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
                       <option value="-1">Last</option>
                     </select>
                     <select
+                      className="form-input"
                       name="recurrence.dayOfWeek"
                       value={formData.recurrence.dayOfWeek}
                       onChange={handleChange}
@@ -385,8 +369,9 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
         </div>
       )}
       <div>
-        <label>End Repeat:</label>
+        <label className="form-label">End Repeat:</label>
         <select
+          className="form-input"
           name="recurrence.endCondition"
           value={formData.recurrence.endCondition}
           onChange={handleChange}
@@ -398,8 +383,9 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
       </div>
       {formData.recurrence.endCondition === "onDate" && (
         <div>
-          <label>End Date:</label>
+          <label className="form-label">End Date:</label>
           <input
+            className="form-input"
             type="date"
             name="recurrence.endDate"
             value={formData.recurrence.endDate}
@@ -409,13 +395,14 @@ const RecurrenceForm = ({ formData, setFormData, handleChange }) => {
       )}
       {formData.recurrence.endCondition === "afterOccurrences" && (
         <div>
-          <label>Occurrences:</label>
+          <label className="form-label">Occurrences:</label>
           <input
+            className="form-input"
             type="number"
             name="recurrence.endOccurrences"
             value={formData.recurrence.endOccurrences}
             onChange={handleChange}
-            min="1"
+            min="2"
           />
         </div>
       )}

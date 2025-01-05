@@ -1,5 +1,7 @@
 import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
+import "../../../styles/EventInfo.css";
+
 const EventInfo = ({
   selectedEvent,
   selectedOccurrence,
@@ -12,6 +14,19 @@ const EventInfo = ({
 
   const start = selectedEvent.start;
   const end = selectedEvent.end;
+
+  const timeOptions = {
+    0: "At the time of the event",
+    5: "5 minutes before",
+    10: "10 minutes before",
+    15: "15 minutes before",
+    30: "30 minutes before",
+    60: "1 hour before",
+    120: "2 hours before",
+    1440: "1 day before",
+    2880: "2 days before",
+    10080: "1 week before",
+  };
 
   const getRecurrenceSummary = (rruleString) => {
     try {
@@ -142,9 +157,9 @@ const EventInfo = ({
         const endDate = DateTime.fromJSDate(options.until).toLocaleString(
           DateTime.DATE_FULL
         );
-        summary += `, until ${endDate}`;
+        summary += ` - repeat until ${endDate}`;
       } else if (options.count) {
-        summary += `, ${options.count} times`;
+        summary += ` - repeat ${options.count} times`;
       }
 
       return summary || "Custom recurrence";
@@ -155,11 +170,9 @@ const EventInfo = ({
   };
 
   return (
-    <div>
-      {/* Event Title */}
+    <div className="event-info">
       <h2>{selectedEvent.title}</h2>
 
-      {/* Event Time Information */}
       <p>
         <strong>Start:</strong>{" "}
         {selectedEvent.allDay
@@ -181,83 +194,74 @@ const EventInfo = ({
               .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
-      {/* All Day Event Indicator */}
       {selectedEvent.allDay && (
-        <p>
+        <p className="all-day-indicator">
           <strong>All Day Event</strong>
         </p>
       )}
 
-      {/* Location */}
       {selectedEvent.extendedProps.location && (
-        <p>
+        <p className="location">
           <strong>Location:</strong> {selectedEvent.extendedProps.location}
         </p>
       )}
 
-      {/* Description */}
       {selectedEvent.extendedProps.description && (
-        <p>
+        <p className="description">
           <strong>Description:</strong>{" "}
           {selectedEvent.extendedProps.description}
         </p>
       )}
 
-      {/* Recurrence Info */}
       {selectedEvent.rrule && (
-        <p>
+        <p className="recurrence">
           <strong>Repeats:</strong> {getRecurrenceSummary(selectedEvent.rrule)}
         </p>
       )}
 
-      {/* Time Zone */}
+      {/* Notifications Section */}
+      {selectedEvent.extendedProps.notifications.length > 0 && (
+        <div className="notifications-container">
+          <h3>Notifications:</h3>
+          <ul>
+            {selectedEvent.extendedProps.notifications.map(
+              (notification, index) => (
+                <li
+                  key={index}
+                  className="notification"
+                >
+                  <strong>{timeOptions[notification.timeBefore]}</strong>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
+
       {selectedEvent.extendedProps.timeZone && (
-        <p>
+        <p className="timezone">
           <strong>Time Zone:</strong> {selectedEvent.extendedProps.timeZone}
         </p>
       )}
 
-      {/* Action Buttons */}
-      <button
-        style={{
-          backgroundColor: "red",
-          color: "white",
-          padding: "10px",
-          border: "none",
-          cursor: "pointer",
-        }}
-        onClick={() => handleDeleteEvent(null)}
-      >
-        Delete Event
-      </button>
-
-      {selectedEvent.rrule && (
-        <button
-          style={{
-            backgroundColor: "red",
-            color: "white",
-            padding: "10px",
-            border: "none",
-            cursor: "pointer",
-          }}
-          onClick={() => handleDeleteEvent(selectedOccurrence)}
-        >
-          Delete Single Instance
+      <div className="action-buttons">
+        <button className="edit" onClick={handleEditEvent}>
+          Edit Event
         </button>
-      )}
 
-      <button
-        style={{
-          backgroundColor: "blue",
-          color: "white",
-          padding: "10px",
-          border: "none",
-          cursor: "pointer",
-        }}
-        onClick={handleEditEvent}
-      >
-        Edit Event
-      </button>
+        <button className="delete" onClick={() => handleDeleteEvent(null)}>
+          Delete Event
+        </button>
+
+        {selectedEvent.rrule && (
+          <button
+            className="delete-single"
+            onClick={() => handleDeleteEvent(selectedOccurrence)}
+          >
+            Delete Single Instance
+          </button>
+        )}
+      </div>
     </div>
   );
 };

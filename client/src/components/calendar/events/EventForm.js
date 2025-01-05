@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { useTimeMachine } from "../../../context/TimeMachineContext";
 import RecurrenceForm from "./RecurrenceForm";
+import NotificationForm from "./NotificationForm";
 import TimeZoneForm from "../TimeZoneForm";
+import "../../../styles/Form.css";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
+  const { time } = useTimeMachine();
+
   const [formData, setFormData] = useState({
     ...initialData,
   });
@@ -120,18 +125,18 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       }));
     }
 
-    if (name === "startTime") {
+      if (name === "startTime") {
       const [hours, minutes] = value.split(":").map(Number);
       const newHours = (hours + 1) % 24;
       const updatedValue = `${newHours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}`;
-
-      setFormData((prevFormData) => ({
-        ...prevFormData,
+          .toString()
+          .padStart(2, "0")}`;
+  
+        setFormData((prevFormData) => ({
+          ...prevFormData,
         endTime: updatedValue,
-      }));
-    }
+        }));
+      }
   };
 
   const handleResetChanges = () => {
@@ -139,17 +144,20 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Title:</label>
+          <label className="form-label">Title:</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
+            className="form-input"
           />
-          {errors.title && <span style={{ color: "red" }}>{errors.title}</span>}
+          {errors.title && (
+            <span className="error-message">{errors.title}</span>
+          )}
         </div>
         <div>
           <label>
@@ -158,56 +166,60 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               name="allDay"
               checked={formData.allDay}
               onChange={handleChange}
+              className="checkbox-input"
             />
-            All Day
+            <span className="checkbox-label">All Day</span>
           </label>
         </div>
         <div>
-          <label>Start Date:</label>
+          <label className="form-label">Start Date:</label>
           <input
             type="date"
             name="startDate"
             value={formData.startDate}
             onChange={handleChange}
+            className="form-input"
+            min={new Date(time).toISOString().split("T")[0]}
           />
         </div>
         {!formData.allDay && (
           <div>
-            <label>Start Time:</label>
+            <label className="form-label">Start Time:</label>
             <input
               type="time"
               name="startTime"
-              value={formData.startTime}
+              value={formData.startTime || "00:00"}
               onChange={handleChange}
+              className="form-input"
             />
           </div>
         )}
         <div>
-          <label>End Date:</label>
+          <label className="form-label">End Date:</label>
           <input
             type="date"
             name="endDate"
             value={formData.endDate}
             onChange={handleChange}
+            className="form-input"
             style={{
               textDecoration:
-                new Date(formData.endDate) < new Date(formData.startDate)
-                  ? "line-through"
-                  : "none",
+                formData.endDate < formData.startDate ? "line-through" : "none",
             }}
           />
           {errors.endDate && (
-            <span style={{ color: "red" }}>{errors.endDate}</span>
+            <span className="error-message">{errors.endDate}</span>
           )}
         </div>
         {!formData.allDay && (
           <div>
-            <label>End Time:</label>
+            <label className="form-label">End Time:</label>
             <input
               type="time"
               name="endTime"
-              value={formData.endTime}
+              value={formData.endTime || "00:00"}
               onChange={handleChange}
+              className="form-input"
               style={{
                 textDecoration:
                   formData.startDate === formData.endDate &&
@@ -216,9 +228,8 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                     : "none",
               }}
             />
-
             {errors.endTime && (
-              <span style={{ color: "red" }}>{errors.endTime}</span>
+              <span className="error-message">{errors.endTime}</span>
             )}
           </div>
         )}
@@ -229,8 +240,9 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               name="isRecurring"
               checked={formData.isRecurring}
               onChange={handleChange}
+              className="checkbox-input"
             />
-            Is Recurring
+            <span className="checkbox-label">Is Recurring</span>
           </label>
         </div>
         {formData.isRecurring && (
@@ -241,41 +253,49 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
           />
         )}
         <div>
-          <label>Location:</label>
+          <label className="form-label">Location:</label>
           <input
             type="text"
             name="location"
             value={formData.location}
             onChange={handleChange}
+            className="form-input"
           />
           {errors.location && (
-            <span style={{ color: "red" }}>{errors.location}</span>
+            <span className="error-message">{errors.location}</span>
           )}
         </div>
         <div>
-          <label>Description:</label>
+          <label className="form-label">Description:</label>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
+            className="form-textarea"
           />
           {errors.description && (
-            <span style={{ color: "red" }}>{errors.description}</span>
+            <span className="error-message">{errors.description}</span>
           )}
         </div>
+        <label className="form-label">Notifications</label>
+        <NotificationForm formData={formData} setFormData={setFormData} />
         <div>
-          <label>Time Zone:</label>
+          <label className="form-label">Time Zone:</label>
           <TimeZoneForm
             initialTimeZone={formData.timeZone}
             onSubmit={handleTimeZoneChange}
           />
         </div>
-        <button type="submit">
+        <button type="submit" className="form-button form-submit">
           {isEditMode ? "Save Changes" : "Add Event"}
         </button>
         {isEditMode && (
-          <button type="button" onClick={handleResetChanges}>
-            Reset changes
+          <button
+            type="button"
+            onClick={handleResetChanges}
+            className="form-button form-reset"
+          >
+            Reset Changes
           </button>
         )}
       </form>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTimeMachine } from "../../context/TimeMachineContext";
 import TimeMachineStyle from "../../styles/TimeMachine.css";
-
+import { updateTimeMachine, resetTimeMachine } from "../../services/timeMachineService";
 
 const formatDateTime = (date) => {
   return new Intl.DateTimeFormat("en-GB", {
@@ -20,7 +20,24 @@ const formatDateTimeForInput = (date) => {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 };
 
+const update = async (userID, newTime) => {
+  try {
+    await updateTimeMachine(userID, newTime);
+  } catch (error) {
+    console.error("Error while updating the time machine:", error.message);
+  }
+};
+
+const reset = async (userID) => {
+  try {
+    await resetTimeMachine(userID);
+  } catch (error) {
+    console.error("Error while resetting the time machine:", error.message);
+  }
+};
+
 const TimeMachine = () => {
+  const userID = localStorage.getItem("userID");
   const { time, setTime, isTimeMachineActive, setIsTimeMachineActive } =
     useTimeMachine();
   const [inputTime, setInputTime] = useState(formatDateTimeForInput(time));
@@ -39,6 +56,7 @@ const TimeMachine = () => {
   const handleUpdateTime = () => {
     const newTime = new Date(inputTime);
     setTime(newTime);
+    update(userID, newTime);
     if (isTimeMachineActive) {
       setIsTimeMachineActive(false);
       setTimeout(() => {
@@ -52,6 +70,7 @@ const TimeMachine = () => {
   const resetToLocalTime = () => {
     const localTime = new Date();
     setTime(localTime);
+    reset(userID);
     setIsTimeMachineActive(false);
     setInputTime(formatDateTimeForInput(localTime));
   };
