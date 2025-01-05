@@ -1,207 +1,257 @@
-/* Global Styles */
-body {
-    font-family: "Poppins", sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f9f9f9;
-    box-sizing: border-box;
+/* Container per l'intera inbox */
+.inbox-container {
+    width: 90%; /* Card più piccola di default per dispositivi mobili */
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f3f3f3;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
 }
 
-h1, h2, h3 {
-    font-weight: 700;
-    color: #001789;
-    text-align: center;
-}
-
+/* Titolo */
 h1 {
     font-size: 2rem;
-    margin: 20px 0;
-}
-
-h2, h3 {
-    font-size: 1.5rem;
-    margin: 15px 0;
-}
-
-/* Mobile-First (default) */
-.inbox-container {
-    width: 100%;
-    max-width: 100%;
-    margin: 20px auto;
-    padding: 15px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.message-list {
+    text-align: center;
+    color: #001789; /* Colore blu richiesto */
     margin-bottom: 20px;
 }
 
+/* Sezione filtri */
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-buttons button {
+    padding: 10px 20px;
+    background-color: #001789;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.filter-buttons button:hover {
+    background-color: #004bb5;
+    transform: translateY(-3px);
+}
+
+/* Card dei messaggi */
+/* Card dei messaggi */
+.message-card {
+    position: relative; /* Necessario per il posizionamento assoluto del bottone */
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow: hidden; /* Opzionale, per evitare che il bottone fuoriesca dalla card */
+}
+
+
+
+
+
+/* Lista dei messaggi */
+.message-list {
+    list-style-type: none;
+    padding: 0;
+}
+
 .message-item {
-    background: #f0f0f0;
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
     padding: 15px;
     border-radius: 8px;
-    margin-bottom: 10px;
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.message-item:hover {
+    background-color: #e9ecef;
+    transform: translateY(-3px);
+}
+
+
+/* Posizione dell'icona completed a sinistra */
+.message-item.completed .completed-icon {
+    order: -1; /* Sposta l'icona a sinistra */
+    margin-right: 15px;
+}
+
+.completed-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
+}
+
+/* Contenuto del messaggio */
+.message-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.message-content span {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.message-sender {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Sezione azioni dei messaggi */
+.message-actions {
+    display: flex;
+    gap: 15px;
     align-items: center;
 }
 
-.message-content {
-    font-size: 1rem;
-    color: #333;
-    flex: 1;
-}
-
-button {
-    padding: 8px 15px;
-    font-size: 1rem;
-    border: none;
+/* Bottone Completa */
+.complete-button, .delete-button {
+    padding: 8px 18px;
+    font-size: 0.9rem;
     border-radius: 5px;
+    border: none;
     cursor: pointer;
-    transition: background 0.3s ease;
-    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s ease;
 }
 
-button:disabled {
-    cursor: not-allowed;
-    background: #ddd;
-}
-
-button.complete {
-    background: #28a745;
+/* Completa */
+.complete-button {
+    background-color: #28a745;
     color: white;
 }
 
-button.complete:hover {
-    background: #218838;
+.complete-button:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
 }
 
-button.delete {
-    background: #dc3545;
+/* Elimina */
+.delete-button {
+    background-color: #dc3545;
     color: white;
 }
 
-button.delete:hover {
-    background: #c82333;
+.delete-button:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
 }
 
+/* Sezione invio messaggio */
 textarea {
     width: 100%;
-    padding: 10px;
-    font-size: 1rem;
+    height: 120px;
+    padding: 12px;
+    border-radius: 8px;
     border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    resize: vertical;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    resize: none;
+    transition: border-color 0.3s;
 }
 
-.user-selection-list {
-    list-style: none;
+textarea:focus {
+    border-color: #001789;
+    outline: none;
+}
+
+/* Selezione destinatari */
+ul {
     padding: 0;
-    margin: 0;
+    list-style-type: none;
 }
 
-.user-selection-list li {
+ul li {
     margin-bottom: 10px;
 }
 
-.user-selection-list label {
-    font-size: 1rem;
-    color: #333;
-}
-
-.user-selection-list input {
+label input {
     margin-right: 10px;
 }
 
-/* Centrare la Inbox sopra il profilo */
-.inbox-card {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80%;
-    max-width: 600px;
-    background-color: white;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 1001; /* Posizionare sopra il profilo */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  
-  /* Bottone per chiudere la Inbox */
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #96221e;
+/* Bottone invia messaggio */
+.send-button, .back-button {
+    padding: 12px 25px;
+    background-color: #001789;
     color: white;
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .close-button:hover {
-    background-color: #c12e29;
-  }
-  
-  /* Aggiungere margine tra Inbox e il profilo */
-  .profile-container {
-    position: relative;
-    z-index: 1; /* Mantenere il profilo sotto la Inbox */
-  }
-  
+    transition: background-color 0.3s ease, transform 0.2s;
+}
 
-/* Media Query: Tablet (schermi medi) */
-@media (min-width: 600px) {
+.send-button:hover, .back-button:hover {
+    background-color: #004bb5;
+    transform: translateY(-3px);
+}
+
+/* Posizione del bottone di ritorno al profilo */
+
+.back-button {
+    padding: 12px 25px;
+    background-color: gray;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.back-button:hover {
+    background-color: darkgray;
+    transform: translateY(-3px);
+}
+
+
+/* Responsività per schermi più grandi */
+@media (min-width: 768px) {
     .inbox-container {
-        max-width: 85%;
-        padding: 20px;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        width: 70%;
+        padding: 40px;
     }
 
     h1 {
         font-size: 2.5rem;
     }
 
-    h2, h3 {
-        font-size: 1.8rem;
+    .filter-buttons {
+        margin-bottom: 30px;
     }
 
-    button {
-        font-size: 1.1rem;
-    }
-}
-
-/* Media Query: Desktop (schermi larghi) */
-@media (min-width: 1024px) {
-    .inbox-container {
-        max-width: 1000px;
-        padding: 25px;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    h1 {
-        font-size: 3rem;
-    }
-
-    h2, h3 {
-        font-size: 2rem;
+    .message-card {
+        padding: 30px;
     }
 
     .message-item {
         padding: 20px;
     }
 
-    button {
-        padding: 12px 20px;
-        font-size: 1.2rem;
+    .send-button, .back-button {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .inbox-container {
+        width: 50%;
+    }
+
+    h1 {
+        font-size: 3rem;
     }
 }

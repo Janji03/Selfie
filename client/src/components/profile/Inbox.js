@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import messageService from '../../services/messageService';
 import { getAllUsersBasicInfo } from '../../services/userService';
 import "../../styles/Inbox.css";
+import completedIcon from "../../assets/completedIcon.png";
 
 const Inbox = () => {
     const [messages, setMessages] = useState([]);
@@ -10,6 +12,8 @@ const Inbox = () => {
     const [newMessage, setNewMessage] = useState('');
     const [filter, setFilter] = useState('all');
     const userID = localStorage.getItem("userID");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         messageService.getMessages(userID)
@@ -67,56 +71,75 @@ const Inbox = () => {
     const filteredMessages = messages.filter(msg => {
         if (filter === 'completed') return msg.completed;
         if (filter === 'non-completed') return !msg.completed;
-        return true; // 'all' option shows all messages
+        return true;
     });
 
     return (
-        <div>
-            <h1>Inbox</h1>
+        <div className="inbox-container">
+    <h1>Inbox</h1>
 
-            {/* Filter options */}
-            <div>
-                <button onClick={() => setFilter('all')}>All</button>
-                <button onClick={() => setFilter('completed')}>Completed</button>
-                <button onClick={() => setFilter('non-completed')}>Non-completed</button>
-            </div>
+    {/* Filter options */}
+    <div className="filter-buttons">
+        <button onClick={() => setFilter('all')}>All</button>
+        <button onClick={() => setFilter('completed')}>Completed</button>
+        <button onClick={() => setFilter('non-completed')}>Non-completed</button>
+    </div>
 
-            <ul>
-                {filteredMessages.map(msg => (
-                    <li key={msg._id}>
+    <div className="message-card">
+        <ul className="message-list">
+            {filteredMessages.map(msg => (
+                <li key={msg._id} className="message-item">
+                    {/* Icona completed a sinistra */}
+                    {msg.completed && (
+                        <img src={completedIcon} alt="Completed" className="completed-icon" />
+                    )}
+
+                    <div className="message-content">
                         <span>{msg.content}</span>
-                        <div>
+                        <div className="message-sender">
                             <strong>Sender:</strong> {msg.sender.name} ({msg.sender.email})
                         </div>
-                        {/* Only show the "Complete" button if the message is not completed */}
-                        {!msg.completed && (
-                            <button onClick={() => handleComplete(msg._id)}>Complete</button>
-                        )}
-                        <button onClick={() => handleDelete(msg._id)}>Delete</button>
-                    </li>
-                ))}
-            </ul>
+                    </div>
 
-            <h2>Send a Message</h2>
-            <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} />
-            <h3>Select Recipients</h3>
-            <ul>
-                {users.map(user => (
-                    <li key={user._id}>
-                        <label>
-                            <input
-                                type="checkbox"
-                                value={user._id}
-                                checked={selectedUsers.includes(user._id)}
-                                onChange={() => handleUserSelection(user._id)}
-                            />
-                            {user.name} ({user.email})
-                        </label>
-                    </li>
-                ))}
-            </ul>
-            <button onClick={handleSend}>Send Message</button>
-        </div>
+                    <div className="message-actions">
+                        {/* Show "Complete" button if not completed */}
+                        {!msg.completed && (
+                            <button className="complete-button" onClick={() => handleComplete(msg._id)}>
+                                Complete
+                            </button>
+                        )}
+
+                        <button className="delete-button" onClick={() => handleDelete(msg._id)}>Delete</button>
+                    </div>
+                </li>
+            ))}
+        </ul>
+    </div>
+
+    <h2>Send a Message</h2>
+    <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} />
+    <h3>Select Recipients</h3>
+    <ul>
+        {users.map(user => (
+            <li key={user._id}>
+                <label>
+                    <input
+                        type="checkbox"
+                        value={user._id}
+                        checked={selectedUsers.includes(user._id)}
+                        onChange={() => handleUserSelection(user._id)}
+                    />
+                    {user.name} ({user.email})
+                </label>
+            </li>
+        ))}
+    </ul>
+
+    <div className="send-message-container">
+        <button className="send-button" onClick={handleSend}>Send Message</button>
+        <button className="back-button" onClick={() => navigate('/profile')}>Back to Profile</button>
+    </div>
+</div>
     );
 };
 
