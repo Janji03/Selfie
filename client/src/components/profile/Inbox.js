@@ -8,6 +8,7 @@ const Inbox = () => {
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [newMessage, setNewMessage] = useState('');
+    const [filter, setFilter] = useState('all');
     const userID = localStorage.getItem("userID");
 
     useEffect(() => {
@@ -38,7 +39,6 @@ const Inbox = () => {
             .catch(error => console.error('Error deleting message:', error));
     };
 
-
     const handleSend = () => {
         const payload = {
             content: newMessage,
@@ -63,22 +63,39 @@ const Inbox = () => {
         );
     };
 
+    // Filter messages based on selected filter
+    const filteredMessages = messages.filter(msg => {
+        if (filter === 'completed') return msg.completed;
+        if (filter === 'non-completed') return !msg.completed;
+        return true; // 'all' option shows all messages
+    });
+
     return (
         <div>
             <h1>Inbox</h1>
+
+            {/* Filter options */}
+            <div>
+                <button onClick={() => setFilter('all')}>All</button>
+                <button onClick={() => setFilter('completed')}>Completed</button>
+                <button onClick={() => setFilter('non-completed')}>Non-completed</button>
+            </div>
+
             <ul>
-                {messages.map(msg => (
+                {filteredMessages.map(msg => (
                     <li key={msg._id}>
                         <span>{msg.content}</span>
                         <div>
                             <strong>Sender:</strong> {msg.sender.name} ({msg.sender.email})
                         </div>
-                        <button onClick={() => handleComplete(msg._id)}>Complete</button>
+                        {/* Only show the "Complete" button if the message is not completed */}
+                        {!msg.completed && (
+                            <button onClick={() => handleComplete(msg._id)}>Complete</button>
+                        )}
                         <button onClick={() => handleDelete(msg._id)}>Delete</button>
                     </li>
                 ))}
             </ul>
-
 
             <h2>Send a Message</h2>
             <textarea value={newMessage} onChange={e => setNewMessage(e.target.value)} />
