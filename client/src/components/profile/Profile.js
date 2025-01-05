@@ -6,23 +6,20 @@ import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
 import "../../styles/Profile.css";
 import DefaultIcon from '../../assets/default.png';
-
+import Inbox from './Inbox'; 
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [profileImage, setProfileImage] = useState("");
+  const [isInboxOpen, setIsInboxOpen] = useState(false); // State to manage Inbox visibility
 
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-
   const [error, setError] = useState('');
-
   const token = localStorage.getItem('token');
   const userID = localStorage.getItem('userID');
-
   const baseURL = "http://localhost:5000/";
 
   useEffect(() => {
@@ -45,7 +42,6 @@ const Profile = () => {
     fetchUserData();
   }, [userID, token]);
 
-
   const handleLogout = async () => {
     try {
       logout();
@@ -56,6 +52,9 @@ const Profile = () => {
   };
 
   const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
+  
+  // Function to toggle Inbox visibility
+  const toggleInbox = () => setIsInboxOpen(prev => !prev);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +73,6 @@ const Profile = () => {
       setProfileImage(DefaultIcon);
       return;
     }
-    
   };
 
   const handleFormSubmit = async (e) => {
@@ -103,38 +101,40 @@ const Profile = () => {
     }
   };
 
-
   return (
     <div className="profile-wrapper">
       <div className="profile-container">
         <h1 className="profile-header">Profilo</h1>
-
-        {user ? (
+  
+        {/* Condizione per nascondere il profilo quando l'inbox è aperta */}
+        {!isInboxOpen && user ? (
           <div className="profile-details">
             <h2 className="profile-name">{user.name}</h2>
             {profileImage && <img
               src={profileImage || DefaultIcon}
               alt="Profile"
               className="profile-image"
-            />
-            }
+            />}
             <p className="profile-info"><strong>Email:</strong> {user.email}</p>
             <p className="profile-info"><strong>Bio:</strong> {user.bio}</p>
             <p className="profile-info"><strong>Birthday:</strong> {user.birthday}</p>
             <p className="profile-info"><strong>Sex:</strong> {user.sex}</p>
           </div>
         ) : (
-          <p className="loading">Loading...</p>
+          <p ></p>
         )}
-
+  
         <div className="profile-actions">
           <button className="button edit-button" onClick={toggleEditModal}>Edit Profile</button>
           <button className="button delete-button" onClick={handleDelete}>Delete Profile</button>
           <button className="button logout-button" onClick={handleLogout}>Logout</button>
+  
+          {/* Aggiungi un nuovo pulsante per aprire la Inbox */}
+          <button className="button inbox-button" onClick={toggleInbox}>Open Inbox</button>
         </div>
-
+  
         {error && <p className="error-message">{error}</p>}
-
+  
         <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
           <EditProfileForm
             formData={formData}
@@ -144,9 +144,18 @@ const Profile = () => {
             onCancel={toggleEditModal}
           />
         </Modal>
+  
+        {/* Condizione per renderizzare la Inbox */}
+        {isInboxOpen && 
+          <div className="inbox-card">
+            <button className="button close-button" onClick={toggleInbox}>Close Inbox</button>
+            <Inbox />
+          </div>
+        }
       </div>
     </div>
   );
+  
 };
 
 export default Profile;

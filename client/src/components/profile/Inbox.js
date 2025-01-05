@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import messageService from '../../services/messageService';
 import { getAllUsersBasicInfo } from '../../services/userService';
+import "../../styles/Inbox.css";
 
 const Inbox = () => {
     const [messages, setMessages] = useState([]);
