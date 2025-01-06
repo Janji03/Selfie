@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import shuffleIcon from "../../assets/shuffleIcon.png";
 
 const SortNotes = ({ notes, setNotes }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const handleSortChange = (event) => {
     const sortType = event.target.value;
     let sorted = [...notes];
@@ -31,23 +33,32 @@ const SortNotes = ({ notes, setNotes }) => {
 
   return (
     <div className="sort-notes-container">
-      <label htmlFor="sort-select" className="sort-label">
-        Ordina per:
-      </label>
-      <select
-        id="sort-select"
-        onChange={handleSortChange}
-        defaultValue=""
-        className="sort-select"
+      <button
+        className="shuffle-button"
+        onClick={() => setIsOpen(!isOpen)}
       >
-        <option value="" disabled>
-          Seleziona un'opzione
-        </option>
-        <option value="alphabetical">Ordine Alfabetico</option>
-        <option value="date">Data</option>
-        <option value="length">Lunghezza Contenuto</option>
-        <option value="category">Categoria</option>
-      </select>
+        <img src={shuffleIcon} alt="Shuffle" className="shuffle-icon" />
+        Ordina
+      </button>
+
+      {isOpen && (
+        <div className="sort-menu">
+          <label htmlFor="sort-select" className="sort-label">
+            Ordina per:
+          </label>
+          <select
+            id="sort-select"
+            onChange={handleSortChange}
+            defaultValue=""
+            className="sort-select"
+          >
+            <option value="alphabetical">Ordine Alfabetico</option>
+            <option value="date">Data</option>
+            <option value="length">Lunghezza Contenuto</option>
+            <option value="category">Categoria</option>
+          </select>
+        </div>
+      )}
     </div>
   );
 };

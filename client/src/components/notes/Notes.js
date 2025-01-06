@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { createNote, getNotes } from "../../services/noteService";
+import { getAllUsersBasicInfo } from "../../services/userService";
 import NotesView from "./NotesView";
 import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
@@ -25,6 +26,9 @@ const Notes = () => {
   });
 
   const [markdownPreview, setMarkdownPreview] = useState("");
+  const [visibility, setVisibility] = useState("open"); // Visibilità predefinita
+  const [userList, setUserList] = useState([]); // Lista degli utenti
+  const [selectedUsers, setSelectedUsers] = useState([]); // Utenti selezionati per la visibilità "restricted"
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -37,6 +41,22 @@ const Notes = () => {
   useEffect(() => {
     setMarkdownPreview(marked(newNote.content || ""));
   }, [newNote.content]);
+
+  useEffect(() => {
+    if (visibility === "restricted") {
+      getAllUsersBasicInfo()
+        .then(setUserList) // Salva la lista completa di utenti con id, name ed email
+        .catch((err) => setError(err.message));
+    }
+  }, [visibility]);
+
+  const handleUserSelection = (id) => {
+    if (selectedUsers.includes(id)) {
+      setSelectedUsers(selectedUsers.filter((userId) => userId !== id));
+    } else {
+      setSelectedUsers([...selectedUsers, id]);
+    }
+  };
 
   const handleCreateNote = (e) => {
     e.preventDefault();
@@ -51,7 +71,14 @@ const Notes = () => {
       return;
     }
 
-    createNote({ ...newNote, userID })
+    const noteData = {
+      ...newNote,
+      userID,
+      visibility,
+      accessList: visibility === "restricted" ? selectedUsers : [],
+    };
+
+    createNote(noteData)
       .then((createdNote) => {
         setNotes((prev) => [...prev, createdNote]);
         setNewNote({ title: "", content: "", categories: [] });
@@ -68,6 +95,7 @@ const Notes = () => {
         <button className="new-note-button" onClick={() => setIsCreating(true)}>
           Nuova Nota
         </button>
+        <SortNotes notes={notes} setNotes={setNotes} />
         <button
           className="new-note-button"
           onClick={() => setShowMarkdownLegend(true)}
@@ -109,6 +137,58 @@ const Notes = () => {
                 }
                 required
               />
+
+              <div className="visibility-options">
+                <label>
+                  <input
+                    type="radio"
+                    value="open"
+                    checked={visibility === "open"}
+                    onChange={() => setVisibility("open")}
+                  />
+                  Pubblica
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="private"
+                    checked={visibility === "private"}
+                    onChange={() => setVisibility("private")}
+                  />
+                  Privata
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    value="restricted"
+                    checked={visibility === "restricted"}
+                    onChange={() => setVisibility("restricted")}
+                  />
+                  Ristretta
+                </label>
+              </div>
+
+              {visibility === "restricted" && (
+                <div className="user-selection">
+                  <h3>Seleziona gli utenti:</h3>
+                  <ul>
+                    {userList.map((user) => (
+                      <li key={user._id}>
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={selectedUsers.includes(user._id)}
+                            onChange={() => handleUserSelection(user._id)}
+                          />
+                          {`${user.name} (${user.email})`} {/* Mostra nome ed email */}
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+
               <button className="create-note-button" type="submit">
                 Crea Nota
               </button>
@@ -120,12 +200,12 @@ const Notes = () => {
               </button>
             </form>
             <button
-              onClick={() =>
-                setShowMarkdownPreview(!showMarkdownPreview)
-              }
+              className="preview-button"
+              onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}
             >
               {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
             </button>
+
           </div>
 
           {showMarkdownPreview && (
@@ -149,7 +229,6 @@ const Notes = () => {
         onClose={() => setSelectedNote(null)}
         refreshNotes={() => getNotes(userID).then(setNotes)}
       />
-      <SortNotes notes={notes} setNotes={setNotes} />
       <NotesView
         notes={notes}
         setSelectedNote={setSelectedNote}

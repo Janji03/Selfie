@@ -1,5 +1,7 @@
 import axiosInstance from "./axiosInstance";
 
+const API_URL = "http://localhost:5000/api/notes";
+
 // Ottieni tutte le note associate all'utente loggato
 export const getNotes = async (userID) => {
   try {
@@ -41,26 +43,19 @@ export const updateNote = async (id, noteData) => {
 
 // Cancella una nota
 export const deleteNote = async (id) => {
-  try {
-    const response = await axiosInstance.delete(`notes/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message ||
-        "Errore durante l'eliminazione della nota"
-    );
-  }
+  const userID = localStorage.getItem("userID"); // Ottieni l'ID dell'utente corrente
+  return axiosInstance.delete(`${API_URL}/${id}`, {
+    params: { userID },
+  });
 };
 
-// Duplica una nota
-export const duplicateNote = async (id) => {
+export const duplicateNote = async (id, userID) => {
   try {
-    const response = await axiosInstance.post(`notes/${id}/duplicate`);
+    const response = await axiosInstance.post(`notes/${id}/duplicate`, { userID });
     return response.data;
   } catch (error) {
     throw new Error(
-      error.response?.data?.message ||
-        "Errore durante la duplicazione della nota"
+      error.response?.data?.message || "Errore durante la duplicazione della nota"
     );
   }
 };

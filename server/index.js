@@ -7,6 +7,7 @@ import eventRoutes from "./routes/eventRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
 import pomodoroRoutes from "./routes/pomodoroRoutes.js";
+import messageRoutes from './routes/messageRoutes.js';
 import timeMachineRoutes from "./routes/timeMachineRoutes.js";
 import config from "./config/config.js";
 import agenda from "./config/agenda.js"; 
@@ -27,6 +28,7 @@ app.use("/api/events", eventRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/notes", notesRoutes);
 app.use("/api/pomodoro", pomodoroRoutes);
+app.use("/api/messages", messageRoutes);
 app.use("/api/time-machine", timeMachineRoutes);
 
 

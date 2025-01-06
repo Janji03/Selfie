@@ -13,6 +13,7 @@ import TimeMachine from "./components/timemachine/TimeMachine";
 import ProtectedRoute from "./components/loginsignup/ProtectedRoute";
 import ForgotPassword from "./components/loginsignup/ForgotPassword";
 import ResetPassword from "./components/loginsignup/ResetPassword";
+import Inbox from "./components/profile/Inbox";
 
 const App = () => {
   
@@ -38,6 +39,14 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/inbox"
+              element={
+                <ProtectedRoute>
+                  <Inbox />
                 </ProtectedRoute>
               }
             />
