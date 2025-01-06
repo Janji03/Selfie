@@ -17,11 +17,9 @@
 
 .pomodoro-logo {
   font-family: "Poppins", sans-serif;
-  font-size: 10vw;
-  color: #284bff;
   color: #001789;
   width: auto;
-  font-size: 2vw;
+  font-size: 20px;
   padding-left: 15px;
 }
 
@@ -29,22 +27,22 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  width: 52%;
+  width: 38%;
   color: #ccd1ec;
   font-family: "Figtree", sans-serif;
-  font-size: 1.9vw;
+  font-size: 16px;
 }
 
 .pomodoro-nav-page {
   border-radius: 15px;
   border: #ccd1ec solid 1px;
-  padding: 2%;
+  padding: 5px;
   color: #a6add1;
 }
 
 .pomodoro-nav i {
   color: #001789;
-  font-size: 3vw;
+  font-size: 26px;
 }
 
 .left-pomodoro {
@@ -57,11 +55,20 @@
   align-items: center;
 }
 
+.left-pomodoro img{
+  width: 7vw;
+  height: auto;
+  margin-bottom: 0.7vh;
+}
+
 .left-pomodoro h1 {
   text-align: center;
   color: #fff;
   font-family: "Poppins";
-  font-size: 3.6vw;
+  font-size: 3vw;
+  margin: 0;
+  
+  margin-bottom: 3vh;
 }
 
 .study-form {
@@ -103,7 +110,7 @@
   color: #001789;
 }
 
-.but-start {
+.but-start, .pomo-button {
   margin-top: 20px;
   padding: 3%;
   font-family: "Poppins";
@@ -117,19 +124,24 @@
   transition: all 0.4s ease;
 }
 
-.but-start:hover {
+.but-start:hover , .pomo-button:hover{
   background-color: #001789;
   color: white;
+}
+
+
+.pomodoro-applyers{
+  display: flex;
 }
 
 .pomo-info-form input {
   font-size: 16px;
   font-family: "Figtree";
-  padding: 8px 16px;
+  padding: 1vh 1vw;
   width: 90%;
   margin-top: 1px;
-  min-height: 44px;
   border: unset;
+  height: 5vh;
   border-radius: 4px;
   outline-color: rgb(84 105 212 / 0.5);
   background-color: rgb(255, 255, 255);
@@ -146,4 +158,191 @@
 
 .pomodoro-body{
   display: flex;
+}
+
+.right-pomodoro{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.vertical-layout{
+  display: none;
+}
+
+.short-label{
+  display: none;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 380px) and (max-width: 750px) {
+  .pomodoro-nav{
+    width: 40%;
+  }
+
+  .pomodoro-nav h4{
+    font-size: 16px;
+  }
+
+  .pomodoro-nav-page{
+    border: 0;
+    display: none;
+  } 
+
+}
+
+@media (max-width: 500px) {
+  .pomodoro-nav h4{
+    display: none;
+  }
+
+  .pomodoro-nav{
+    width: auto;
+    margin-right: 10px;
+  }
+}
+
+
+
+
+@media (max-width: 600px){
+
+  .pomodoro-body{
+    flex-direction: column;
+  }
+
+  .left-pomodoro{
+    height: 30vh;
+    width: 100vw;
+    background-color: #fff;    
+  }
+
+  .study-form{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    width: 90vw;
+    
+  }
+
+  .horizontal-layout{
+    display: none;
+  }
+
+  .vertical-layout{
+    display: block;
+  }
+
+  .but-start{
+    border: 0;
+    padding: 0.8vh;
+    background-color: #001789;
+    color: #fff;
+    width: 60%;
+    align-self: center;
+  }
+
+  .but-start:hover{
+    transform: scale(1.1);
+  }
+
+  .left-pomodoro img{
+    display: none;
+  }
+
+  .left-pomodoro h1{
+    font-size: 6.2vw;
+    color: #fff;
+    width: 100vw;
+    background-color:  #001789;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pomo-info-form{
+    text-align: center;
+    width: 25%;
+  }
+
+
+  .pomo-info-form input{
+    height: auto;
+    width: 45px;
+    font-size: 16px;
+    text-align: center; 
+  }
+
+  .pomo-info-form label{
+    font-size: 16px;
+    text-wrap: wrap;
+    font-weight: 600;
+  }
+
+  .short-label{
+    display: block;
+    color: #0017894b;
+  }
+
+  .long-label{
+    display: none;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+.pomo-info-form input::-webkit-outer-spin-button,
+.pomo-info-form input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.pomo-info-form input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.pomo-button{
+  padding: 5px;
+  font-size: 2.5vw;
+  font-weight: 400;
+  color: #008cff;
+  border: 1px solid #008cff;
+}
+
+.pomo-button:nth-child(4){
+  border: 0;
+  background-color: red;
+  color: #fff;
+  font-weight: 700;
+}
+
+.pomo-button:nth-child(4):hover{
+  transform: scale(1.1);
+}
+
+.pomodoro-applyers{
+  gap: 3px;
+}
+  
 }

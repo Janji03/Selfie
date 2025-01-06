@@ -270,6 +270,7 @@ const EventInfo = ({
           id: selectedEvent.id,
           title: selectedEvent.title,
           pomodoroSettings: selectedEvent.extendedProps.pomodoroSettings,
+          selectedEvent: selectedEvent,
         }}
       >
         Vai al Pomodoro

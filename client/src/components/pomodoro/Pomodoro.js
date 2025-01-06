@@ -3,9 +3,12 @@ import {
   createPomodoro,
   getUserPomodoros,
 } from "../../services/pomodoroService";
-import { updateCompletedCycles } from "../../services/eventService";
+import PomodoroAnimation from "./PomodoroAnimation";
+import { updateCompletedCycles, updateEvent } from "../../services/eventService";
 import { useLocation } from "react-router-dom";
-import PomodoroStyle from "../../styles/Pomodoro.css";
+import "../../styles/Pomodoro.css";
+import pomodoroIcon from "../pomodoro/pomodoro.png";
+
 
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
@@ -18,11 +21,14 @@ const Pomodoro = () => {
   const [onBreak, setOnBreak] = useState(false);
   const [nPomodoro, setNPomodoro] = useState(0);
   const [sessionNumber, setSessionNumber] = useState(0);
+  const [isAnimationRunning, setIsAnimationRunning] = useState(false);
+  const [animationKey, setAnimationKey] = useState(0);
+
   const userID = localStorage.getItem("userID");
 
 
   const location = useLocation();
-  const { id, title, pomodoroSettings } = location.state || {};
+  const { id, title, pomodoroSettings, selectedEvent } = location.state || {};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +38,7 @@ const Pomodoro = () => {
     setIsRunning(true);
     setOnBreak(false);
     setSessionNumber(sessionNumber + 1)
+    setIsAnimationRunning(true)
 
     const pomodoroData = {
       studyTime: studyTime,
@@ -39,6 +46,27 @@ const Pomodoro = () => {
       cycles: initialCycles,
       userID: userID,
     };
+
+    if(selectedEvent){
+      const updatedEventPomodoroSettings = {
+      ...selectedEvent,
+        extendedProps: {
+          ...selectedEvent.extendedProps,
+          pomodoroSettings: {
+            ...selectedEvent.extendedProps.pomodoroSettings,
+            cycles: initialCycles,
+            studyTime: studyTime,
+            breakTime: breakTime,
+    },},};
+
+    try {
+      await updateEvent(id, updatedEventPomodoroSettings);
+      console.log("Sessione evento Pomodoro aggiornato correttamente");
+    } catch (error) {
+      console.error("Errore aggiornamento sessione pomdooro:", error);
+    }
+    }
+    
 
 
     /* setStudyTime(0);
@@ -102,7 +130,7 @@ const Pomodoro = () => {
 
 
   useEffect(() => {
-    if (pomodoroSettings) {
+    if (pomodoroSettings && timeLeft == 0 && !isRunning) { //in modo che sia applicato solo all'inizio per settarli e poi se modificati non ritornano cosi
       setStudyTime(pomodoroSettings.studyTime)
       setBreakTime(pomodoroSettings.breakTime)
       setInitialCycles(pomodoroSettings.cycles)
@@ -113,7 +141,7 @@ const Pomodoro = () => {
         const interval = setInterval(() => {
           //fa andare il timer
           setTimeLeft((prevTime) => prevTime - 1);
-        }, 20);
+        }, 1000);
 
         return () => clearInterval(interval);
       } else if (timeLeft === 0) {
@@ -135,6 +163,7 @@ const Pomodoro = () => {
           //se finiti cicli e tempo = 0
           alert("Fine ciclo di studio");
           setIsRunning(false);
+          setIsAnimationRunning(false)
           setRemainingCycles(initialCycles);
         }
       }
@@ -158,14 +187,15 @@ const Pomodoro = () => {
 
         <div className="pomodoro-body">
           <div className="left-pomodoro">
+            <img src={pomodoroIcon}></img>
             <h1>POMODORO TECHNIQUE</h1>
             <form className="study-form" onSubmit={handleSubmit}>
               <div className="pomo-info-form">
-                <label htmlFor="total-time">Tempo complessivo:</label>
+                <label htmlFor="total-time" className="long-label">Tempo complessivo:</label>
+                <label htmlFor="total-time" className="short-label">Tempo totale</label>
                 <input
                   type="number"
                   id="total-time"
-                  min={1}
                   value={totalMinutes}
                   onChange={(e) => setTotalMinutes(e.target.value)}
                 />{" "}
@@ -199,7 +229,8 @@ const Pomodoro = () => {
               </div>
 
               <div className="pomo-info-form">
-                <label htmlFor="study-time">Tempo di studio (minuti):</label>
+                <label htmlFor="study-time" className="long-label">Tempo di studio (minuti):</label>
+                <label htmlFor="study-time" className="short-label">Studio</label>
                 <input
                   type="number"
                   id="study-time"
@@ -212,7 +243,8 @@ const Pomodoro = () => {
               </div>
 
               <div className="pomo-info-form">
-                <label htmlFor="break-time">Tempo di pausa (minuti):</label>
+                <label htmlFor="break-time" className="long-label">Tempo di pausa (minuti):</label>
+                <label htmlFor="break-time" className="short-label">Break</label>
                 <input
                   type="number"
                   id="break-time"
@@ -225,7 +257,8 @@ const Pomodoro = () => {
               </div>
 
               <div className="pomo-info-form">
-                <label htmlFor="cycles">Cicli:</label>
+                <label htmlFor="cycles" className="long-label">Cicli:</label> 
+                <label htmlFor="cycles" className="short-label">Cicli</label> 
                 <input
                   type="number"
                   id="cycles"
@@ -238,7 +271,7 @@ const Pomodoro = () => {
                   }}
                 />{" "}
                 <br />
-                <button
+                {/* <button
                   className="but-plus"
                   type="button"
                   onClick={() => setInitialCycles(initialCycles + 1)}
@@ -253,9 +286,9 @@ const Pomodoro = () => {
                   }
                 >
                   -
-                </button>
+                </button> */}
                 <button
-                  className="but-start"
+                  className="but-start horizontal-layout"
                   type="submit"
                 >
                   Inizia Sessione
@@ -263,39 +296,61 @@ const Pomodoro = () => {
               </div>
             </form>
           </div>
+
           <div className="right-pomodoro">
-            <button onClick={handleGet}> get</button>
 
             {pomodoroSettings && (
               <h2>{title}</h2>
             )}
 
-            <h1>Timer:{convertTime()}</h1>
 
+            {(isAnimationRunning) && (
+              <PomodoroAnimation key={animationKey} studyTime={studyTime} breakTime={breakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak}/>
+            )}
+
+             <div className="pomodoro-applyers">
             <button onClick={() => {
               setTimeLeft(1)}
-              }>Vai al prossimo</button>
+              }
+              className="pomo-button"
+              >Vai al prossimo</button>
 
-
+              
               <button onClick={() => {
                 if(onBreak){
                   setTimeLeft(breakTime * 60)
-                } else setTimeLeft(studyTime * 60)
+                } else {setTimeLeft(studyTime * 60)
+                }
+                setAnimationKey((prevKey) => prevKey + 1);
                 alert('ricomincia questo ciclo')
-              }}>Ricomincia questo</button>
+              }}
+              className="pomo-button">Ricomincia questo</button>
 
 
-            <button onClick={handleSubmit}>
+            <button onClick={handleSubmit}
+            className="pomo-button"
+            >
               Ricomincia tutto</button>
 
 
               <button onClick={() => {
                   setIsRunning(false);
+                  setIsAnimationRunning(false);
                   alert('ciclo terminato forzato')
-              }}>Fine tutto</button> 
+              }}
+              className="pomo-button"
+              >Fine tutto</button> 
+              </div>
 
           </div>
         </div>
+
+        <button
+                  className="but-start vertical-layout"
+                  onClick={handleSubmit}
+                >
+                  Inizia Sessione
+                </button>
       </div>
 
       {/* <h1>Pomodoro Timer</h1>

@@ -1,0 +1,91 @@
+:root {
+    --timer-unit: 1s;
+    --timer-delay: 1s;
+  }
+  
+  
+  
+  .timer-animation-countdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #fff;
+    border-radius: 50%;
+    border: 8px solid #008cff;
+    mix-blend-mode: exclusion;
+    font-weight: 700;
+    font-family: 'Figtree';
+    width: calc(40vmin); 
+    height: calc(40vmin); 
+    font-size: calc(12vmin); 
+    text-shadow: calc(1.5vmin) calc(1.5vmin) calc(3vmin) rgba(0, 0, 0, 0.125); 
+  }
+   
+  .timer-animation-countdown::before {
+    content: calc(var(--timer-length));
+    animation: timer-beat var(--timer-unit) calc(var(--timer-delay) - var(--timer-unit) * 0.125) var(--timer-length) ;
+  }
+  
+  .timer-animation-countdown.study-mode::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+    width: 100%;
+    height: 100%;
+    background-color: #011789;
+    animation: timer-indicator calc(var(--timer-unit) * var(--timer-length)) var(--timer-delay) linear;
+  }
+
+  .timer-animation-countdown.break-mode::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -100;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.125);
+    animation: timer-indicator-reverse calc(var(--timer-unit) * var(--pause-length)) var(--timer-delay) linear;
+  }
+  
+  @media (min-width: 600px) {
+    timer-animation-countdown {
+      width: calc(50vmin * 1);
+      height: calc(50vmin * 1);
+      box-shadow: 0 0 0 calc(1.25vmin * 1), inset calc(2.5vmin * 1) calc(2.5vmin * 1) calc(5vmin * 1) rgba(0, 0, 0, 0.125), calc(2.5vmin * 1) calc(2.5vmin * 1) calc(5vmin * 1) rgba(0, 0, 0, 0.125);
+      font-size: calc(25vmin * 1);
+      text-shadow: calc(2.5vmin * 1) calc(2.5vmin * 1) calc(5vmin * 1) rgba(0, 0, 0, 0.125);
+    }
+  }
+  
+  @keyframes timer-beat {
+    40%, 80% {
+      transform: none;
+    }
+    50% {
+      transform: scale(1.125);
+    }
+  }
+  
+  @keyframes timer-indicator {
+    0% {
+        transform: translateY(0%);
+      }
+    100% {
+      transform: translateY(100%);
+    }
+  } 
+
+  @keyframes timer-indicator-reverse {
+    0% {
+      transform: translateY(100%);
+    }
+    100% {
+      transform: translateY(0%);
+    }
+  }
+  

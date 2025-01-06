@@ -14,31 +14,43 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
       );
     });
 
-    const updatedEvents = [];
     let nextDate = new Date(currentDate);
 
 
     for (const event of uncompletedPomodoros) { //si usa questo perchè foreach non supporta funzioni asincrone
       const { studyTime, breakTime, cycles, completedCycles } = event.extendedProps.pomodoroSettings;
+      
+      // Convert minutes to time string "HH:mm"
+      function minutesToTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        minutes = minutes % 60;
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+      }
+
 
       const remainingCycles = cycles - completedCycles;
+      nextDate.setDate(nextDate.getDate() + 2);
 
-      nextDate.setDate(nextDate.getDate() + 2); //aggiorna data 
-
-      const nextPomodorosOnDate = events.filter((event) => { //returna i pomodori in data nextdate
+      const isSameDay = (date1, date2) => {
         return (
-          event.extendedProps.isPomodoro &&
-          new Date(event.end).getTime() === new Date(nextDate).getTime()  //new per averla in formato adatto a js
+          date1.getFullYear() === date2.getFullYear() &&
+          date1.getMonth() === date2.getMonth() &&
+          date1.getDate() === date2.getDate()
         );
-      });
+      };
+      
+      const nextPomodorosOnDate = events.filter((event) =>
+        event.extendedProps.isPomodoro && isSameDay(new Date(event.end), nextDate)
+      );
 
-      if (!nextPomodorosOnDate) { 
+      if (nextPomodorosOnDate.length === 0) { 
 
         const newEvent = {
           ...event,
+          title: event.title + ' - da recuperare', //prova
           start: nextDate.toISOString(),
           end: nextDate.toISOString(),
-          duration: ((studyTime + breakTime)*remainingCycles),
+          duration: minutesToTime(((studyTime + breakTime)*remainingCycles)),
           extendedProps: {
             ...event.extendedProps,
             pomodoroSettings: {
@@ -48,28 +60,31 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
             },
           },
         };
-
-        updatedEvents.push(newEvent); //pusha evento nel vettore
+        delete newEvent.userID
+        console.log(newEvent)
+        await createEvent(newEvent, userID); 
+        setEvents((prevEvents) => [...prevEvents, newEvent]);
 
       } else {
-        const pomodorosOnDateLength = nextPomodorosOnDate.length;
 
         for (const event of nextPomodorosOnDate) {
         const { studyTime: eventStudyTime, breakTime: eventBreakTime, cycles: eventCycles } = event.extendedProps.pomodoroSettings;
 
-        const combinedStudyTime = Math.floor(
+        const combinedStudyTime = Math.round(
             (studyTime * remainingCycles + eventStudyTime * eventCycles) /
             (remainingCycles + eventCycles)
         );
 
-        const combinedBreakTime = Math.floor(
+        const combinedBreakTime = Math.round(
             (breakTime * remainingCycles + eventBreakTime * eventCycles) /
             (remainingCycles + eventCycles)
         );
 
+        const totalDuration = (combinedStudyTime + combinedBreakTime) * (remainingCycles + eventCycles);
+
         const updateOnDateEvent = {
             ...event,
-            duration: Math.floor(((studyTime + breakTime) * remainingCycles) / pomodorosOnDateLength) + event.duration,
+            duration: minutesToTime(totalDuration),
             extendedProps: {
             ...event.extendedProps,
             pomodoroSettings: {
@@ -80,10 +95,8 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
             },
             },
         };
-
         await updateEvent(updateOnDateEvent.id, updateOnDateEvent);
         }
-
       }
 
       const updatedPastEvent = { //metti completedcycles = cycles per eventi passati
@@ -100,11 +113,6 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
       await updateEvent(updatedPastEvent.id, updatedPastEvent);
     }
 
-    for (const newEvent of updatedEvents) {
-      await createEvent(newEvent, userID);
-    }
-
-    setEvents((prevEvents) => [...prevEvents, ...updatedEvents]);
   } catch (error) {
     console.error("Errore durante la ridistribuzione dei pomodori:", error);
   }

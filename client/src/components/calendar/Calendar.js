@@ -88,9 +88,9 @@ const Calendar = () => {
           console.error("Error during redistribution:", error);
         }
       };
-  
-      fetchEventsAndTasks();
+      
       fetchAndRedistributeEvents();
+      fetchEventsAndTasks();
 
     }
   }, [isAuthenticated, userID]);

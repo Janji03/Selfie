@@ -92,6 +92,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       // Logica specifica per eventi Pomodoro
       if (adjustedFormData.isPomodoro) {
         adjustedFormData.endDate = formData.startDate; // Forza endDate uguale a startDate
+        adjustedFormData.pomodoroSettings.completedCycles = 0;
       }
 
       if (
@@ -167,6 +168,47 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     }
   };
 
+  const handleChangePomodoroSettings = (e) => {
+    const { name, value } = e.target;
+  
+    setFormData((prevFormData) => {
+      const updatedPomodoroSettings = {
+        ...prevFormData.pomodoroSettings,
+        [name]: value,  
+      };
+  
+      const { studyTime, breakTime, cycles } = updatedPomodoroSettings;
+      
+      const study = parseInt(studyTime, 10) || 0;
+      const breakDuration = parseInt(breakTime, 10) || 0;
+      const cycleCount = parseInt(cycles, 10) || 0;
+  
+      const [startHours, startMinutes] = formData.startTime
+        .split(":")
+        .map((value) => parseInt(value, 10));
+  
+      const totalMinutesToAdd = (study + breakDuration) * cycleCount;
+  
+      const newTotalMinutes = startMinutes + totalMinutesToAdd;
+      const endHours = (startHours + Math.floor(newTotalMinutes / 60)) % 24;
+      const endMinutes = newTotalMinutes % 60;
+  
+      const formattedEndTime = `${endHours.toString().padStart(2, "0")}:${endMinutes
+        .toString()
+        .padStart(2, "0")}`;
+  
+      return { //capisci ben perchè
+        ...prevFormData,
+        pomodoroSettings: updatedPomodoroSettings,
+        endTime: formattedEndTime, 
+      };
+    });
+  };
+  
+  
+
+  
+
   const handleResetChanges = () => {
     setFormData({ ...initialData });
   };
@@ -174,16 +216,21 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
   // Funzione per calcolare le proposte di studio
   const calculateProposals = () => {
+
     const startTime = new Date(`${formData.startDate}T${formData.startTime}`);
-    const endTime = new Date(`${formData.startDate}T${formData.endTime}`);
+    let endTime = new Date(`${formData.startDate}T${formData.endTime}`);
+
+    if (endTime < startTime) {
+      endTime.setDate(endTime.getDate() + 1);
+    }
     const totalMinutes = Math.floor((endTime - startTime) / 60000); 
 
     const breakTime = Math.floor(totalMinutes * 0.2);
     const studyTime = totalMinutes - breakTime;
     return [
       { study: studyTime, break: breakTime, cycles: 1 },
-      { study: Math.floor(studyTime / 2), break: breakTime, cycles: 2 },
-      { study: Math.floor(studyTime / 3), break: breakTime, cycles: 3 },
+      { study: Math.floor(studyTime / 2), break: Math.floor(breakTime/2), cycles: 2 },
+      { study: Math.floor(studyTime / 3), break: Math.floor(breakTime/3), cycles: 3 },
     ];
   };
 
@@ -297,15 +344,9 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="studyTime"
                 value={formData.pomodoroSettings.studyTime || ""}
-                onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    pomodoroSettings: {
-                      ...prevFormData.pomodoroSettings,
-                      studyTime: e.target.value,
-                    },
-                  }))
+                onChange={handleChangePomodoroSettings
                 }
+                  
               />
             </div>
             <div>
@@ -314,15 +355,9 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="breakTime"
                 value={formData.pomodoroSettings.breakTime || ""}
-                onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    pomodoroSettings: {
-                      ...prevFormData.pomodoroSettings,
-                      breakTime: e.target.value,
-                    },
-                  }))
+                onChange={handleChangePomodoroSettings
                 }
+              
               />
             </div>
             <div>
@@ -331,15 +366,9 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="cycles"
                 value={formData.pomodoroSettings.cycles || ""}
-                onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    pomodoroSettings: {
-                      ...prevFormData.pomodoroSettings,
-                      cycles: e.target.value,
-                    },
-                  }))
+                onChange={handleChangePomodoroSettings
                 }
+                  
               />
             </div>
           </>
