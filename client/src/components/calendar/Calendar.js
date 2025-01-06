@@ -28,8 +28,8 @@ import TaskHandler from "./tasks/TaskHandler";
 import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
-import { getEvents } from "../../services/eventService";
-import { getTasks } from "../../services/taskService";
+import { getEvents, updateEvent } from "../../services/eventService";
+import { getTasks, updateTask } from "../../services/taskService";
 
 import DateUtilities from "./DateUtilities";
 
@@ -70,7 +70,7 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
   
-  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -209,9 +209,7 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    if (currentView === "eventList") {
-      setCombinedEvents(events);
-    } else if (currentView === "taskList") {
+    if (currentView === "taskList") {
       setCombinedEvents(tasks);
     } else {
       const combined = [...events, ...tasks];
@@ -222,8 +220,8 @@ const Calendar = () => {
   }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
-    if (view.type === "eventList" || view.type === "taskList") {
-      setCombinedEvents(view.type === "eventList" ? events : tasks);
+    if (view.type === "taskList") {
+      setCombinedEvents(tasks);
     } else {
       setCombinedEvents([...events, ...tasks]);
     }
@@ -296,7 +294,6 @@ const Calendar = () => {
     if (
       view.type === "timeGridDay" ||
       view.type === "timeGridWeek" ||
-      view.type === "eventList" ||
       view.type === "taskList"
     ) {
       baseDate = new Date(view.currentStart);
@@ -335,6 +332,7 @@ const Calendar = () => {
     setIsFormOpen(true);
     setSelectedRange(null);
   };
+
 
   const isEventEditing = selectedEvent !== null;
   const isTaskEditing = selectedTask !== null;
@@ -379,11 +377,19 @@ const Calendar = () => {
     setCombinedEvents(combined);
   };
 
+  const toolbarChunks = document.querySelectorAll(".fc-toolbar-chunk");
+  if (toolbarChunks.length >= 3) {
+    toolbarChunks[0].classList.add("fc-toolbar-left");
+    toolbarChunks[1].classList.add("fc-toolbar-center");
+    toolbarChunks[2].classList.add("fc-toolbar-right");
+  }
+
   return (
     <div>
       <div className="time-machine-button">
         <TimeMachinePreview />
       </div>
+      <button onClick={handleChangeTimeZone} className="timezone-button"></button>
 
       <Modal
         isOpen={isFormOpen}
@@ -462,30 +468,33 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "title",
-            center: "dayGridMonth,timeGridWeek,timeGridDay,eventList,taskList",
-            right: "calendarTimeZone addEvent prev,today,next",
+            left: "title addEvent,prev,today,next",
+            center: "dayGridMonth,timeGridWeek,timeGridDay,taskList",
+            right: "addEvent prev,today,next",
+          }}
+          buttonText={{
+            today: "Today",              
+            month: "Month",         
+            week: "Week",            
+            day: "Day",           
+            list: "Tasks",              
           }}
           customButtons={{
             addEvent: {
-              text: " Add",
+              text: "",
               click: handleAddItem,
             },
-            calendarTimeZone: {
-              text: "",
-              click: handleChangeTimeZone,
-            }
           }}
           views={{
-            eventList: {
-              type: "list",
-              duration: { month: 1 },
-              buttonText: "events",
-            },
             taskList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "tasks",
+              buttonText: "Tasks",
+              noEventsContent: () => (
+                <div style={{ textAlign: "center", padding: "10px" }}>
+                  🎉 No tasks found for this period! 🎉
+                </div>
+              ),
             },
           }}
           events={combinedEvents}
@@ -502,6 +511,13 @@ const Calendar = () => {
           height={"100%"}
           scrollTime={"08:00:00"}
           scrollTimeReset={false}
+          dayMaxEventRows={2}
+          eventMaxStack={3}
+          // editable={true}
+          // eventResizableFromStart={true}
+          // eventDurationEditable={true}
+          // eventResize={handleItemResize}
+          // eventDragStop={handleItemDrop}
         />
       </div>
     </div>
