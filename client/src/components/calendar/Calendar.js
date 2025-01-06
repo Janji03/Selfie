@@ -508,7 +508,6 @@ const Calendar = () => {
           select={handleSelectRange}
           stickyHeaderDates={true}
           handleWindowResize={true}
-          height={"100%"}
           scrollTime={"08:00:00"}
           scrollTimeReset={false}
           dayMaxEventRows={2}
