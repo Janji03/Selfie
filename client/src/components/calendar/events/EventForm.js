@@ -1,8 +1,14 @@
 import React, { useState } from "react";
+import { useTimeMachine } from "../../../context/TimeMachineContext";
 import RecurrenceForm from "./RecurrenceForm";
+import NotificationForm from "./NotificationForm";
+import UserForm from "../UserForm";
 import TimeZoneForm from "../TimeZoneForm";
+import "../../../styles/Form.css";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
+  const { time } = useTimeMachine();
+
   const [formData, setFormData] = useState({
     ...initialData,
     isPomodoro: false,
@@ -21,11 +27,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const MAX_LOCATION_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
 
-
   const validateForm = () => {
     const newErrors = {};
-    const { 
-      title, 
+    const {
+      title,
       startDate,
       startTime,
       endDate,
@@ -33,9 +38,8 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       allDay,
       location,
       description,
-      isPomodoro 
+      isPomodoro,
     } = formData;
-
 
     if (title.length > MAX_TITLE_LENGTH) {
       newErrors.title = `Event title can only be max ${MAX_TITLE_LENGTH} characters.`;
@@ -78,11 +82,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-    
-   
-
-    
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -105,6 +104,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         const endDate = new Date(adjustedFormData.endDate);
         endDate.setDate(endDate.getDate() + 1);
         adjustedFormData.endDate = endDate.toISOString().split("T")[0];
+        adjustedFormData.endTime = "00:00";
       }
 
       if (!adjustedFormData.isRecurring) {
@@ -114,7 +114,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       if (adjustedFormData.isPomodoro) {
         adjustedFormData.pomodoroSettings = { ...formData.pomodoroSettings };
       }
-   
+
       onSubmit({ ...adjustedFormData });
     }
   };
@@ -125,7 +125,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       timeZone: selectedTimeZone,
     }));
   };
-
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -169,67 +168,70 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
   const handleChangePomodoroSettings = (e) => {
     const { name, value } = e.target;
-  
+
     setFormData((prevFormData) => {
       const updatedPomodoroSettings = {
         ...prevFormData.pomodoroSettings,
-        [name]: value,  
+        [name]: value,
       };
-  
+
       const { studyTime, breakTime, cycles } = updatedPomodoroSettings;
-      
+
       const study = parseInt(studyTime, 10) || 0;
       const breakDuration = parseInt(breakTime, 10) || 0;
       const cycleCount = parseInt(cycles, 10) || 0;
-  
+
       const [startHours, startMinutes] = formData.startTime
         .split(":")
         .map((value) => parseInt(value, 10));
-  
+
       const totalMinutesToAdd = (study + breakDuration) * cycleCount;
-  
+
       const newTotalMinutes = startMinutes + totalMinutesToAdd;
       const endHours = (startHours + Math.floor(newTotalMinutes / 60)) % 24;
       const endMinutes = newTotalMinutes % 60;
-  
-      const formattedEndTime = `${endHours.toString().padStart(2, "0")}:${endMinutes
+
+      const formattedEndTime = `${endHours
         .toString()
-        .padStart(2, "0")}`;
-  
-      return { //capisci ben perchè
+        .padStart(2, "0")}:${endMinutes.toString().padStart(2, "0")}`;
+
+      return {
+        //capisci ben perchè
         ...prevFormData,
         pomodoroSettings: updatedPomodoroSettings,
-        endTime: formattedEndTime, 
+        endTime: formattedEndTime,
       };
     });
   };
-  
-  
-
-  
 
   const handleResetChanges = () => {
     setFormData({ ...initialData });
   };
 
-
   // Funzione per calcolare le proposte di studio
   const calculateProposals = () => {
-
     const startTime = new Date(`${formData.startDate}T${formData.startTime}`);
     let endTime = new Date(`${formData.startDate}T${formData.endTime}`);
 
     if (endTime < startTime) {
       endTime.setDate(endTime.getDate() + 1);
     }
-    const totalMinutes = Math.floor((endTime - startTime) / 60000); 
+    const totalMinutes = Math.floor((endTime - startTime) / 60000);
 
     const breakTime = Math.floor(totalMinutes * 0.2);
     const studyTime = totalMinutes - breakTime;
     return [
       { study: studyTime, break: breakTime, cycles: 1 },
-      { study: Math.floor(studyTime / 2), break: Math.floor(breakTime/2), cycles: 2 },
-      { study: Math.floor(studyTime / 3), break: Math.floor(breakTime/3), cycles: 3 },
+      {
+        study: Math.floor(studyTime / 2),
+        break: Math.floor(breakTime / 2),
+        cycles: 2,
+      },
+      {
+        study: Math.floor(studyTime / 3),
+        break: Math.floor(breakTime / 3),
+        cycles: 3,
+      },
     ];
   };
 
@@ -247,17 +249,20 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   };
 
   return (
-    <div>
+    <div className="form-container">
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Title:</label>
+          <label className="form-label">Title:</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleChange}
+            className="form-input"
           />
-          {errors.title && <span style={{ color: "red" }}>{errors.title}</span>}
+          {errors.title && (
+            <span className="error-message">{errors.title}</span>
+          )}
         </div>
 
         <div>
@@ -267,6 +272,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               name="isPomodoro"
               checked={formData.isPomodoro}
               onChange={handleChange}
+              className="checkbox-input"
             />
             Is Pomodoro
           </label>
@@ -331,7 +337,8 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   type="button"
                   onClick={() => handleProposalSelect(proposal)}
                 >
-                  Study: {proposal.study} min, Break: {proposal.break} min, Cycles:{" "} {proposal.cycles} <br/>
+                  Study: {proposal.study} min, Break: {proposal.break} min,
+                  Cycles: {proposal.cycles} <br />
                 </button>
               ))}
             </div>
@@ -343,9 +350,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="studyTime"
                 value={formData.pomodoroSettings.studyTime || ""}
-                onChange={handleChangePomodoroSettings
-                }
-                  
+                onChange={handleChangePomodoroSettings}
               />
             </div>
             <div>
@@ -354,9 +359,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="breakTime"
                 value={formData.pomodoroSettings.breakTime || ""}
-                onChange={handleChangePomodoroSettings
-                }
-              
+                onChange={handleChangePomodoroSettings}
               />
             </div>
             <div>
@@ -365,33 +368,12 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 type="number"
                 name="cycles"
                 value={formData.pomodoroSettings.cycles || ""}
-                onChange={handleChangePomodoroSettings
-                }
-                  
+                onChange={handleChangePomodoroSettings}
               />
             </div>
           </>
         ) : (
-          <>
-            {/* Campi standard per eventi non Pomodoro */}
-            <div>
-              <label>Start Date:</label>
-              <input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label>End Date:</label>
-              <input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-              />
-            </div>
+          <div>
             <div>
               <label>
                 <input
@@ -399,44 +381,75 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   name="allDay"
                   checked={formData.allDay}
                   onChange={handleChange}
+                  className="checkbox-input"
                 />
-                All Day
+                <span className="checkbox-label">All Day</span>
               </label>
             </div>
-
-            {!formData.allDay && (
-              <>
-                <div>
-                  <label>Start Time:</label>
-                  <input
-                    type="time"
-                    name="startTime"
-                    value={formData.startTime}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label>End Time:</label>
-                  <input
-                    type="time"
-                    name="endTime"
-                    value={formData.endTime}
-                    onChange={handleChange}
-                  />
-                </div>
-              </>
-            )}
-
             <div>
-              <label>Location:</label>
+              <label className="form-label">Start Date:</label>
               <input
-                type="text"
-                name="location"
-                value={formData.location}
+                type="date"
+                name="startDate"
+                value={formData.startDate}
                 onChange={handleChange}
+                className="form-input"
+                min={new Date(time).toISOString().split("T")[0]}
               />
             </div>
-
+            {!formData.allDay && (
+              <div>
+                <label className="form-label">Start Time:</label>
+                <input
+                  type="time"
+                  name="startTime"
+                  value={formData.startTime || "00:00"}
+                  onChange={handleChange}
+                  className="form-input"
+                />
+              </div>
+            )}
+            <div>
+              <label className="form-label">End Date:</label>
+              <input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+                className="form-input"
+                style={{
+                  textDecoration:
+                    formData.endDate < formData.startDate
+                      ? "line-through"
+                      : "none",
+                }}
+              />
+              {errors.endDate && (
+                <span className="error-message">{errors.endDate}</span>
+              )}
+            </div>
+            {!formData.allDay && (
+              <div>
+                <label className="form-label">End Time:</label>
+                <input
+                  type="time"
+                  name="endTime"
+                  value={formData.endTime || "00:00"}
+                  onChange={handleChange}
+                  className="form-input"
+                  style={{
+                    textDecoration:
+                      formData.startDate === formData.endDate &&
+                      formData.endTime <= formData.startTime
+                        ? "line-through"
+                        : "none",
+                  }}
+                />
+                {errors.endTime && (
+                  <span className="error-message">{errors.endTime}</span>
+                )}
+              </div>
+            )}
             <div>
               <label>
                 <input
@@ -444,8 +457,9 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   name="isRecurring"
                   checked={formData.isRecurring}
                   onChange={handleChange}
+                  className="checkbox-input"
                 />
-                Is Recurring
+                <span className="checkbox-label">Is Recurring</span>
               </label>
             </div>
             {formData.isRecurring && (
@@ -455,31 +469,57 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 handleChange={handleChange}
               />
             )}
-
             <div>
-              <label>Description:</label>
+              <label className="form-label">Location:</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                className="form-input"
+              />
+              {errors.location && (
+                <span className="error-message">{errors.location}</span>
+              )}
+            </div>
+            <div>
+              <label className="form-label">Description:</label>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
+                className="form-textarea"
               />
+              {errors.description && (
+                <span className="error-message">{errors.description}</span>
+              )}
             </div>
+            <label className="form-label">Notifications</label>
+            <NotificationForm formData={formData} setFormData={setFormData} />
+
+            <label className="form-label">Invite users</label>
+            <UserForm formData={formData} setFormData={setFormData} />
+
             <div>
-              <label>Time Zone:</label>
+              <label className="form-label">Time Zone:</label>
               <TimeZoneForm
                 initialTimeZone={formData.timeZone}
                 onSubmit={handleTimeZoneChange}
               />
             </div>
-          </>
+          </div>
         )}
 
-        <button type="submit">
+        <button type="submit" className="form-button form-submit">
           {isEditMode ? "Save Changes" : "Add Event"}
         </button>
         {isEditMode && (
-          <button type="button" onClick={handleResetChanges}>
-            Reset changes
+          <button
+            type="button"
+            onClick={handleResetChanges}
+            className="form-button form-reset"
+          >
+            Reset Changes
           </button>
         )}
       </form>

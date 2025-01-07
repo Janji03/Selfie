@@ -1,254 +1,743 @@
-/* Mobile-first styles */
-.notes-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 20px;
-  background: linear-gradient(to bottom, #f5f6fd, #e8efff);
-  font-family: "Poppins", sans-serif;
-  color: #001789;
-}
+  /* Stile di Notes.js*/
 
-.new-note-button {
-  background-color: #fff;
-  color: #001789;
-  border: 2px solid #001789;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-bottom: 20px;
-}
-
-.new-note-button:hover {
-  background-color: #001789;
-  color: #fff;
-  border-color: #001789;
-}
-
-.new-note-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 30px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  text-align: center;
-  margin: 20px auto;
-}
-
-/* Updated styles for .new-note-card */
-@media (min-width: 769px) {
-  .new-note-card {
-    max-width: 300px;
-    margin: 20px auto;
+  /* Container principale */
+  .notes-container {
+    font-family: 'Figtree', sans-serif;
     padding: 20px;
+    background: linear-gradient(135deg, #f5f6fd, #e0e7ff);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+
+  /* Header con i pulsanti */
+  .note-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .new-note-button {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0 4px 10px rgba(40, 75, 255, 0.3);
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .new-note-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+
+  /* Contenitore principale per la creazione e l'anteprima */
+  .new-note-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  /* Stile della card per creare la nota */
+  .new-note-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    max-width: 80%;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+    flex: 1;
+  }
+
+  .new-note-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+  }
+
+  .new-note-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .new-note-card input,
+  .new-note-card textarea {
+    width: 100%;
+    padding: 3px;
+    border: 2px solid #ccd1ec;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Figtree', sans-serif;
+    background: #f9faff;
+    transition: all 0.3s ease;
+  }
+
+  .new-note-card input:focus,
+  .new-note-card textarea:focus {
+    outline: none;
+    border-color: #284bff;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(40, 75, 255, 0.2);
+  }
+
+  .new-note-card textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+
+  .create-note-button {
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .create-note-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+
+  /* Lista utenti per visibilità ristretta */
+
+.user-selection {
+  margin-top: 10px;
+  padding: 8px; /* Padding ridotto */
+  background: #fff; /* Colore più neutro e sofisticato */
+  border: 1px solid #d6d9f2; /* Colore del bordo più chiaro */
+  border-radius: 6px; /* Curve leggermente più morbide */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
-.new-note-card h2 {
-  font-family: "Figtree", sans-serif;
+.user-selection h3 {
+  font-size: 0.95rem; /* Testo leggermente più piccolo */
+  color: #002266; /* Tonalità di blu più elegante */
+  font-family: 'Poppins', sans-serif;
+  margin-bottom: 6px; /* Margine ridotto */
+}
+
+.user-selection ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px; /* Altezza massima più compatta */
+  overflow-y: auto; /* Scroll per liste lunghe */
+  scrollbar-width: thin; /* Scrollbar sottile */
+  scrollbar-color: #ccd1ec #f9faff;
+}
+
+.user-selection ul::-webkit-scrollbar {
+  width: 8px;
+}
+
+.user-selection ul::-webkit-scrollbar-thumb {
+  background-color: #ccd1ec;
+  border-radius: 4px;
+}
+
+.user-selection li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px; /* Ridotto per maggiore compattezza */
+  border-bottom: 1px solid #eef1fc; /* Bordo più discreto */
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.user-selection li:hover {
+  background: #f1f5ff; /* Colore più chiaro al passaggio */
+  transform: scale(1.02); /* Leggero effetto di ingrandimento */
+}
+
+.user-selection label {
+  font-size: 0.85rem; /* Testo più piccolo per maggiore compattezza */
+  color: #002266; /* Tonalità coordinata al titolo */
+  font-family: 'Figtree', sans-serif;
+  cursor: pointer;
+  line-height: 1.2; /* Allineamento verticale migliore */
+}
+
+.user-selection input[type="checkbox"] {
+  accent-color: #284bff; /* Colore coerente con il tema */
+  transform: scale(1.1); /* Dimensione moderata */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.user-selection input[type="checkbox"]:hover {
+  transform: scale(1.2); /* Effetto hover sul checkbox */
+}
+
+
+
+  /* Bottone "Crea", "Annulla" e "Mostra Anteprima" */
+  .action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Spazio uniforme tra i bottoni */
+  }
+
+  .create-note-button,
+  .cancel-button,
+  .preview-button {
+    padding: 8px 8px;
+    font-size: 0.9rem;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .create-note-button:hover,
+  .cancel-button:hover,
+  .preview-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+
+
+
+  /* Sezione anteprima Markdown */
+  .markdown-preview {
+    background: #f5f6fd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    max-width: 80%;
+    margin: 0 auto;
+    flex: 1;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .markdown-preview h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .preview-content {
+    font-family: 'Figtree', sans-serif;
+    line-height: 1.5;
+    color: #001789;
+    word-wrap: break-word;
+  }
+
+  /* Animazioni */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Layout desktop */
+  @media (min-width: 768px) {
+    .new-note-section {
+      flex-direction: row;
+      gap: 15px;
+    }
+
+    .new-note-card,
+    .markdown-preview {
+      max-width: 45%;
+    }
+  }
+
+
+
+  /* Stile di NoteView */
+/* Lista Note */
+
+/* Header con il titolo centrato e le icone */
+.notes-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+}
+
+.icons-container {
+  display: flex;
+  gap: 10px;
+}
+
+.notes-title {
   font-size: 1.5rem;
   color: #001789;
-  margin-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
 }
 
-.new-note-card input,
-.new-note-card textarea {
-  padding: 10px;
-  border: 1px solid #ccd1ec;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.new-note-card textarea {
-  resize: none;
-  height: 100px;
-}
-
-.new-note-card input:focus,
-.new-note-card textarea:focus {
-  border: 1px solid #001789;
-  box-shadow: 0 0 5px #001789;
-}
-
-.create-note-button {
-  background-color: #001789;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
+.filter-icon {
+  width: 25px;
+  height: 25px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: transform 0.2s ease;
 }
 
-.create-note-button:hover {
-  background-color: #0036d0;
+.filter-icon:hover {
+  transform: scale(1.1);
 }
 
+.search-icon {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.search-icon:hover {
+  transform: scale(1.1);
+}
+
+.category-input {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  font-size: 1rem;
+}
+
+/* Menu del filtro compatto */
+.filter-menu {
+  color: #001789;
+  margin-top: -30px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 220px;
+  background-color: #f9faff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  z-index: 1000;
+}
+
+/* Lista di note */
 .notes-list {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
+  flex-direction: column;
   gap: 15px;
-  width: 100%;
   padding: 10px;
-  box-sizing: border-box;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
 }
 
 .note-card {
+  min-width: 300px;
   background: #fff;
-  border-radius: 15px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 20px;
-  flex: 1 1 100%;
-  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  flex-shrink: 0;
+  animation: fadeIn 0.5s ease;
+}
+
+.note-header {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-left: 4px solid #001789;
-  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.note-card h3 {
-  font-size: 1.25rem;
-  color: #001789;
-  margin: 0;
-}
-
-.note-card p {
+.note-header h3 {
   font-size: 1rem;
-  color: #4a4a4a;
-  margin: 0;
+  color: #001789;
+  font-family: 'Poppins', sans-serif;
 }
 
-.note-card .note-actions {
+.note-actions {
   display: flex;
-  justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
+  justify-content: flex-end;
 }
 
 .note-button {
-  background-color: #fff;
-  color: #001789;
-  border: 2px solid #001789;
-  border-radius: 8px;
-  padding: 5px 15px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #284bff, #001789);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
 }
 
 .note-button:hover {
-  background-color: #001789;
-  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
 }
 
-.edit-note-card {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  padding: 30px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  text-align: center;
-  margin: 20px auto;
+.markdown-icon,
+.padlock-icon {
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
 }
 
-.edit-note-card input,
-.edit-note-card textarea {
-  padding: 10px;
-  border: 1px solid #ccd1ec;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  width: 100%;
-  box-sizing: border-box;
-}
+/* Layout responsive */
+@media (min-width: 768px) {
+  .notes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    overflow-x: hidden;
+  }
 
-.edit-note-card textarea {
-  resize: none;
-  height: 100px;
-}
-
-.edit-note-card input:focus,
-.edit-note-card textarea:focus {
-  border: 1px solid #001789;
-  box-shadow: 0 0 5px #001789;
-}
-
-.save-note-button {
-  background-color: #001789;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.save-note-button:hover {
-  background-color: #0036d0;
-}
-
-.sort-notes-container {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.sort-label {
-  font-size: 1rem;
-  color: #001789;
-}
-
-.sort-select {
-  padding: 10px;
-  font-size: 1rem;
-  border: 1px solid #ccd1ec;
-  border-radius: 8px;
-  outline: none;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.sort-select:hover {
-  border-color: #001789;
-  box-shadow: 0 0 5px #001789;
-}
-
-.sort-select:focus {
-  border-color: #001789;
-}
-
-/* Tablet styles */
-@media (min-width: 481px) and (max-width: 768px) {
   .note-card {
-    flex: 1 1 calc(50% - 15px);
-    max-width: calc(50% - 15px);
+    max-width: 100%;
   }
 }
 
-/* Desktop styles */
-@media (min-width: 769px) {
-  .note-card {
-    flex: 1 1 calc(33.333% - 15px);
-    max-width: calc(33.333% - 15px);
+
+  /* Stile NoteDetail.js */ 
+
+  /* Contenitore principale per la visualizzazione e modifica */
+  .note-detail-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #f5f6fd;
+  }
+
+  /* Card di modifica */
+  .edit-note-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 100%;
+    max-width: 600px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .edit-note-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+  }
+
+  .edit-note-card input,
+  .edit-note-card textarea {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ccd1ec;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Figtree', sans-serif;
+    background: #f9faff;
+    transition: all 0.3s ease;
+  }
+
+  .edit-note-card input:focus,
+  .edit-note-card textarea:focus {
+    outline: none;
+    border-color: #284bff;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(40, 75, 255, 0.2);
+  }
+
+  .edit-note-card textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .note-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+
+  .save-note-button,
+  .cancel-button,
+  .preview-button {
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .save-note-button:hover,
+  .cancel-button:hover,
+  .preview-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+
+  /* Anteprima Markdown a destra della card di modifica */
+  .markdown-preview {
+    background: #f5f6fd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    max-width: 600px;
+    margin-left: 30px;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .markdown-preview h2 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+  }
+
+  .preview-content {
+    font-family: 'Figtree', sans-serif;
+    line-height: 1.5;
+    color: #001789;
+    word-wrap: break-word;
+  }
+
+  /* Stile della visualizzazione della nota */
+  .note-view-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 80%;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease;
+  }
+
+  .note-view-card h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+  }
+
+  .note-view-card p {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  .note-view-card .note-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .note-view-card .note-button {
+    font-size: 1rem;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .note-view-card .note-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+
+  /* Animazioni */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Layout responsive per desktop */
+  @media (min-width: 768px) {
+    .note-detail-container {
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .note-view-card {
+      max-width: 70%; /* Ingrossa la visualizzazione della nota */
+    }
+
+    .markdown-preview {
+      max-width: 40%; /* Limita la larghezza dell'anteprima markdown */
+    }
+  }
+
+  /* Layout mobile (in verticale) */
+  @media (max-width: 767px) {
+    .note-detail-container {
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .note-view-card {
+      max-width: 100%;
+    }
+
+    .markdown-preview {
+      max-width: 100%;
+    }
+  }
+
+
+  /* Stile NotesFilter.js */
+
+
+
+  /* Stile SortNotes.js */
+  .sort-notes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .shuffle-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    background: linear-gradient(135deg, #284bff, #001789);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(40, 75, 255, 0.3);
+  }
+  
+  .shuffle-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 75, 255, 0.5);
+  }
+  
+  .shuffle-icon {
+    width: 20px;
+    height: 20px;
+    animation: shuffle-animation 1s infinite;
+  }
+  
+  @keyframes shuffle-animation {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .sort-menu {
+    background: #f9faff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .sort-label {
+    font-size: 1rem;
+    color: #001789;
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 10px;
+  }
+  
+  .sort-select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ccd1ec;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Figtree', sans-serif;
+    background: #f9faff;
+    transition: all 0.3s ease;
+  }
+  
+  .sort-select:focus {
+    outline: none;
+    border-color: #284bff;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(40, 75, 255, 0.2);
+  }
+  
+/* Stile responsive per dispositivi mobili */
+@media (max-width: 768px) {
+  .shuffle-button {
+    padding: 6px 10px; /* Riduce la dimensione del bottone */
+    font-size: 0.8rem; /* Testo più piccolo */
+    gap: 5px; /* Riduce lo spazio tra icona e testo */
+  }
+
+  .shuffle-icon {
+    width: 16px; /* Icona più piccola */
+    height: 16px;
+  }
+
+  .sort-menu {
+    width: 150px; /* Menu a tendina più stretto */
+    padding: 10px; /* Riduce il padding */
+    font-size: 0.8rem; /* Testo più piccolo nel menu */
+  }
+
+  .sort-select {
+    padding: 6px; /* Riduce il padding interno */
+    font-size: 0.8rem; /* Testo più piccolo */
+  }
+
+  .sort-label {
+    font-size: 0.9rem; /* Testo leggermente più piccolo */
+  }
+
+  .notes-list .note-card {
+    min-width: 250px; /* Riduce la larghezza minima delle card */
+    padding: 10px; /* Riduce il padding interno */
+    font-size: 0.9rem; /* Testo più piccolo */
   }
 }

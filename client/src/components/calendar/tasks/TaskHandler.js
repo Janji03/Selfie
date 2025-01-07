@@ -24,7 +24,7 @@ const TaskHandler = ({
   isTimeMachineActive,
   calendarTimeZone,
 }) => {
-  const { addThirtyMinutes } = DateUtilities({ calendarTimeZone });
+  const { addThirtyMinutes, convertEventTimes } = DateUtilities({ calendarTimeZone });
 
   const handleTaskClick = async (clickedItemId) => {
     try {
@@ -58,6 +58,7 @@ const TaskHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedTask.allDay,
+        notifications: selectedTask.extendedProps.notifications,
         timeZone: selectedTask.extendedProps.timeZone,
       });
       setIsEditMode(true);
@@ -81,19 +82,20 @@ const TaskHandler = ({
   };
 
   const handleTaskFormSubmit = async (data) => {
+    const taskTimeZone = data.timeZone;
+
+    
     const now = new Date(time);
     const nowDate = now.toISOString().split("T")[0];
     const nowTime = now.toISOString().split("T")[1].slice(0, 5);
-    const nowDateTime = `${nowDate}T${nowTime}`;
-
+    const nowDateTime = `${nowDate}T${nowTime}:00Z`;
+    
     const isAllDay = data.allDay;
-
+    
     const deadlineDate = data.deadlineDate;
     const deadlineTime = data.deadlineTime;
-    const deadlineDateTime = `${deadlineDate}T${deadlineTime}`;
-    const deadlineEndDateTime = `${data.deadlineDate}T${addThirtyMinutes(
-      data.deadlineTime
-    )}`;
+    const deadlineDateTime = `${deadlineDate}T${deadlineTime}:00`;
+    const deadlineEndDateTime = `${addThirtyMinutes(deadlineDateTime)}`;
 
     const deadline = isAllDay ? deadlineDate : deadlineDateTime;
     const endDeadline = isAllDay ? deadlineDate : deadlineEndDateTime;
@@ -102,31 +104,46 @@ const TaskHandler = ({
 
     const isOverdue = deadline <= current;
 
+    const utcDeadline = DateTime.fromISO(deadline, { zone: taskTimeZone }).toUTC().toISO();
+    const utcEndDeadline = DateTime.fromISO(endDeadline, { zone: taskTimeZone }).toUTC().toISO();
+    const utcCurrent = DateTime.fromISO(current, { zone: taskTimeZone }).toUTC().toISO();
+    const utcEndCurrent = DateTime.fromISO(addThirtyMinutes(current), { zone: taskTimeZone }).toUTC().toISO();
+
     const newTask = {
       id: uuidv4(),
       title: data.title,
-      start: isOverdue ? current : deadline,
-      end: isOverdue ? current : endDeadline,
-      allDay: isOverdue ? true : isAllDay,
+      start: isOverdue ? utcCurrent  : utcDeadline,
+      end: isOverdue ? utcEndCurrent  : utcEndDeadline,
+      allDay: isAllDay,
       extendedProps: {
         status: "pending",
         isOverdue: isOverdue,
         deadline,
-        wasAllDay: isAllDay,
+        notifications: data.notifications,
         timeZone: data.timeZone,
       },
     };
+
     try {
       if (isEditMode) {
         const updatedTask = await updateTask(selectedTask.id, newTask);
+
+        // Convert the updated task from UTC to Local Timezone
+        const convertedTask = convertEventTimes(updatedTask);
+
         const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...updatedTask } : task
+          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
         );
+
         setTasks(updatedTasks);
         setSelectedTask(updatedTask);
       } else {
         const createdTask = await createTask(newTask, userID);
-        setTasks([...tasks, createdTask]);
+
+        // Convert the updated task from UTC to Local Timezone
+        const convertedTask = convertEventTimes(createdTask);
+
+        setTasks([...tasks, convertedTask]);
       }
       setIsFormOpen(false);
     } catch (error) {
@@ -143,6 +160,7 @@ const TaskHandler = ({
       deadlineDate: startDateTime.split("T")[0],
       deadlineTime: startTime,
       allDay: false,
+      notifications: false,
       timeZone: calendarTimeZone,
     });
   };
@@ -163,6 +181,11 @@ const TaskHandler = ({
         updatedStatus === "completed"
           ? false
           : selectedTask.extendedProps.deadline <= current;
+      
+      const updatedCompletedAt =
+      updatedStatus === "completed"
+        ? nowDateTime
+        : null;
 
       const updatedTask = {
         ...selectedTask,
@@ -170,6 +193,7 @@ const TaskHandler = ({
           ...selectedTask.extendedProps,
           status: updatedStatus,
           isOverdue: updatedIsOverdue,
+          completedAt: updatedCompletedAt,
         },
       };
       try {
@@ -191,13 +215,14 @@ const TaskHandler = ({
     const now = new Date(time);
     const nowDate = now.toISOString().split("T")[0];
     const nowTime = now.toISOString().split("T")[1].slice(0, 5);
-    const nowDateTime = `${nowDate}T${nowTime}`;
+    const nowDateTime = `${nowDate}T${nowTime}:00Z`;
 
     const updatedTasks = tasks.map((task) => {
       const taskDeadline = task.extendedProps.deadline.slice(0, 16);
-      const isAllDay = task.extendedProps.isAllDay;
+      const isAllDay = task.isAllDay;
 
       const current = isAllDay ? nowDate : nowDateTime;
+      const currentEnd = isAllDay ? nowDate : `${addThirtyMinutes(nowDateTime)}`;
 
       const isOverdue = taskDeadline <= current;
 
@@ -208,12 +233,10 @@ const TaskHandler = ({
             ...task.extendedProps,
             isOverdue: true,
           },
-          start: nowDate,
-          end: nowDate,
-          allDay: true,
+          start: current,
+          end: currentEnd,
         };
       } else if (!isOverdue && task.extendedProps.isOverdue) {
-        const wasAllDay = task.extendedProps.wasAllDay;
         const startDeadline = new Date(taskDeadline);
         const endDeadline = new Date(startDeadline.getTime() + 30 * 60 * 1000);
 
@@ -226,9 +249,8 @@ const TaskHandler = ({
             ...task.extendedProps,
             isOverdue: false,
           },
-          start: wasAllDay ? taskDeadline.split("T")[0] : taskStartDeadline,
-          end: wasAllDay ? taskDeadline.split("T")[0] : taskEndDeadline,
-          allDay: wasAllDay,
+          start: isAllDay ? taskDeadline.split("T")[0] : taskStartDeadline,
+          end: isAllDay ? taskDeadline.split("T")[0] : taskEndDeadline,
         };
       }
 
@@ -236,8 +258,11 @@ const TaskHandler = ({
     });
 
     setTasks(updatedTasks);
-    if (!isTimeMachineActive) {
-      await Promise.all(updatedTasks.map((task) => updateTask(task.id, task)));
+    if (isTimeMachineActive) {
+      await Promise.all(
+        updatedTasks.map((task) =>
+          createTask({ ...task, extendedProps: { ...task.extendedProps, temporary: true }, _id: undefined, id: uuidv4() }, userID)
+        ));  
     }
   };
 

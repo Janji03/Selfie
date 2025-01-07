@@ -1,6 +1,20 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
+const NotificationSchema = new Schema(
+  {
+    timeBefore: {
+      type: Number, 
+      required: true,
+    },
+    isSent: {
+      type: Boolean, 
+      default: false,
+    }
+  },
+  { _id: false }
+);
+
 const ExtendedPropsSchema = new Schema(
   {
     location: {
@@ -26,6 +40,23 @@ const ExtendedPropsSchema = new Schema(
       type: String,
       default: "event",
     },
+    notifications: {
+      type: [NotificationSchema], 
+      default: [],
+    },
+    invitedUsers: [
+      {
+        userID: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected", "resend_requested"],
+          default: "pending",
+        },
+      },
+    ],
     isPomodoro: {
       type: Boolean,
       default: false, 
