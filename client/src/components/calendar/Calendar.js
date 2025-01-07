@@ -28,8 +28,8 @@ import TaskHandler from "./tasks/TaskHandler";
 import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
-import { getEvents, updateEvent } from "../../services/eventService";
-import { getTasks, updateTask } from "../../services/taskService";
+import { getEvents, getInvitedEvents } from "../../services/eventService";
+import { getTasks } from "../../services/taskService";
 
 import DateUtilities from "./DateUtilities";
 
@@ -79,20 +79,28 @@ const Calendar = () => {
           const fetchedEvents = await getEvents(userID);
           const fetchedTasks = await getTasks(userID);
 
+          const invitedEvents = await getInvitedEvents(userID);
+
           // Convert the events and tasks to calendar timezone
           const convertedEvents = fetchedEvents.map((event) => ({
             ...convertEventTimes(event),
             classNames: ["event"], 
+          }));
+          const convertedInvitedEvents = invitedEvents.map((event) => ({
+            ...convertEventTimes(event),
+            classNames: ["invited-event"],
           }));
           const convertedTasks = fetchedTasks.map((task) => ({
             ...convertEventTimes(task),
             classNames: getClassNamesForTask(task), 
           }));
           
-          setEvents(convertedEvents);
+          const combinedEvents = [...convertedEvents, ...convertedInvitedEvents]
+
+          setEvents(combinedEvents);
           setTasks(convertedTasks);
           
-          const combined = [...convertedEvents, ...convertedTasks];
+          const combined = [...combinedEvents, ...convertedTasks];
           setCombinedEvents(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);

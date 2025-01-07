@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useTimeMachine } from "../../../context/TimeMachineContext";
 import RecurrenceForm from "./RecurrenceForm";
 import NotificationForm from "./NotificationForm";
+import UserForm from "../UserForm"
 import TimeZoneForm from "../TimeZoneForm";
 import "../../../styles/Form.css";
 
@@ -279,6 +280,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         </div>
         <label className="form-label">Notifications</label>
         <NotificationForm formData={formData} setFormData={setFormData} />
+
+        <label className="form-label">Invite users</label>
+        <UserForm formData={formData} setFormData={setFormData} />
+        
         <div>
           <label className="form-label">Time Zone:</label>
           <TimeZoneForm

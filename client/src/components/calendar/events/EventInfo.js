@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
 import "../../../styles/EventInfo.css";
+import { getUser } from "../../../services/userService";
 
 const EventInfo = ({
   selectedEvent,
@@ -8,9 +10,32 @@ const EventInfo = ({
   handleEditEvent,
   handleDeleteEvent,
 }) => {
-  if (!selectedEvent) {
-    return <div>Select an event to view its details</div>;
-  }
+  const [invitedUsers, setInvitedUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      if (
+        selectedEvent.extendedProps.invitedUsers &&
+        selectedEvent.extendedProps.invitedUsers.length > 0
+      ) {
+        const users = await Promise.all(
+          selectedEvent.extendedProps.invitedUsers.map(async (invite) => {
+            const user = await getUser(invite.userID);
+            return user
+              ? {
+                  name: user.name,
+                  email: user.email,
+                  status: invite.status,
+                }
+              : null;
+          })
+        );
+        setInvitedUsers(users.filter((user) => user));
+      }
+    };
+
+    fetchParticipants();
+  }, [selectedEvent, getUser]);
 
   const start = selectedEvent.start;
   const end = selectedEvent.end;
@@ -219,6 +244,26 @@ const EventInfo = ({
         </p>
       )}
 
+      {/* Invited Users Section */}
+      {invitedUsers.length > 0 && (
+        <div className="invited-users-container">
+          <h3>Invited Users:</h3>
+          <ul>
+            {invitedUsers.map((user, index) => (
+              <li key={index} className="invited-user-item">
+                <div className="user-details">
+                  <div>
+                    <strong>{user.name}</strong> 
+                    <div className="user-email">{user.email}</div>{" "}
+                  </div>
+                </div>
+                <div className={`status ${user.status.toLowerCase()}`}>{user.status}</div>{" "}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Notifications Section */}
       {selectedEvent.extendedProps.notifications.length > 0 && (
         <div className="notifications-container">
@@ -226,10 +271,7 @@ const EventInfo = ({
           <ul>
             {selectedEvent.extendedProps.notifications.map(
               (notification, index) => (
-                <li
-                  key={index}
-                  className="notification"
-                >
+                <li key={index} className="notification">
                   <strong>{timeOptions[notification.timeBefore]}</strong>
                 </li>
               )

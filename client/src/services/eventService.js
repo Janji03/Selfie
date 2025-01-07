@@ -14,6 +14,21 @@ export const getEvents = async (userID) => {
   }
 };
 
+// Ottieni tutti gli eventi a cui l'utente loggato è stato invitato
+export const getInvitedEvents = async (userID) => {
+  try {
+    const response = await axiosInstance.get(`events/invited`, {
+      params: { userID },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore durante il recupero degli eventi"
+    );
+  }
+};
+
+
 // Ottieni un evento tramite il suo ID
 export const getEventById = async (id) => {
   try {

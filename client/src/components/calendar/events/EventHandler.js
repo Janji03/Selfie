@@ -127,6 +127,7 @@ const EventHandler = ({
               endOccurrences: 2,
             },
         notifications: formattedNotifications,
+        invitedUsers: selectedEvent.extendedProps.invitedUsers
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -207,6 +208,7 @@ const EventHandler = ({
           recurrenceType:
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
+        invitedUsers: data.invitedUsers
       },
       exdate: [],
     };
@@ -278,6 +280,7 @@ const EventHandler = ({
         endOccurrences: 2,
       },
       notifications: [],
+      invitedUsers: []
     });
   };
 

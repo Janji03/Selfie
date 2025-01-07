@@ -1,4 +1,5 @@
 import Event from "../models/Event.js";
+import User from "../models/User.js";
 import agenda from "../config/agenda.js";
 import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 
@@ -7,6 +8,24 @@ export const getEvents = async (req, res) => {
   const { userID } = req.query;
   try {
     const events = await Event.find({ userID });
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nel recupero degli eventi" });
+  }
+};
+
+// Estrai tutti gli eventi a cui è stato invitato
+export const getInvitedEvents = async (req, res) => {
+  const { userID } = req.query;
+  try {
+    const events = await Event.find({
+      "extendedProps.invitedUsers": {
+        $elemMatch: {
+          userID: userID,
+          status: { $ne: "rejected" }  
+        }
+      }
+    });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ error: "Errore nel recupero degli eventi" });
@@ -43,6 +62,19 @@ export const createEvent = async (req, res) => {
     const savedEvent = await newEvent.save();
 
     await scheduleEventNotifications(agenda, userID, savedEvent);
+
+    if (eventData.extendedProps.invitedUsers.length > 0) {
+      for (const invitee of eventData.extendedProps.invitedUsers) {
+        const user = await User.findById(invitee.userID).select("name email");
+        if (!user) continue;
+    
+        await agenda.schedule("in 1 second", "send-invite-email", {
+          user: user,
+          event: newEvent,
+          invitee: invitee,
+        });
+      }
+    }
 
     res.status(201).json(savedEvent);
   } catch (error) {
@@ -98,3 +130,85 @@ export const deleteEvent = async (req, res) => {
   }
 };
 
+export const acceptEventInvitation = async (req, res) => {
+
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    if (invitee.status !== 'pending') {
+      return res.status(403).send('You cannot modify your response.');
+    }
+
+    invitee.status = 'accepted';
+    await event.save();
+
+    res.send(`You have successfully accepted the invitation for ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error accepting invitation');
+  }
+}
+
+export const rejectEventInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    if (invitee.status !== 'pending') {
+      return res.status(403).send('You cannot modify your response.');
+    }
+
+    invitee.status = 'rejected';
+    await event.save();
+
+    res.send(`You have successfully rejected the invitation for ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error rejecting invitation');
+  }
+}
+
+export const resendEventInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    invitee.status = 'pending';
+    await event.save();
+
+    const user = await User.findById(invitee.userID).select("name email");
+
+    await agenda.schedule("in 30 minutes", "send-invite-email", {
+      user: user,
+      event: event,
+      invitee: invitee,
+    });
+
+    res.send(`Reminder has been sent for the event: ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error resending reminder');
+  }
+}
