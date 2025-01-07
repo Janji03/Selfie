@@ -14,18 +14,16 @@
     color: #fff;
     border-radius: 50%;
     border: 8px solid #008cff;
-    mix-blend-mode: exclusion;
     font-weight: 700;
     font-family: 'Figtree';
     width: calc(40vmin); 
     height: calc(40vmin); 
     font-size: calc(12vmin); 
-    text-shadow: calc(1.5vmin) calc(1.5vmin) calc(3vmin) rgba(0, 0, 0, 0.125); 
+    text-shadow: calc(1.5vmin) calc(1.5vmin) calc(3vmin) rgba(0, 0, 0, 0.511); 
   }
    
   .timer-animation-countdown::before {
     content: calc(var(--timer-length));
-    animation: timer-beat var(--timer-unit) calc(var(--timer-delay) - var(--timer-unit) * 0.125) var(--timer-length) ;
   }
   
   .timer-animation-countdown.study-mode::after {
@@ -33,7 +31,7 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: -100;
+    z-index: -1;
     width: 100%;
     height: 100%;
     background-color: #011789;
@@ -45,10 +43,10 @@
     position: absolute;
     top: 0;
     left: 0;
-    z-index: -100;
+    z-index: -1;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.125);
+    background-color: #011789;
     animation: timer-indicator-reverse calc(var(--timer-unit) * var(--pause-length)) var(--timer-delay) linear;
   }
   
@@ -62,14 +60,6 @@
     }
   }
   
-  @keyframes timer-beat {
-    40%, 80% {
-      transform: none;
-    }
-    50% {
-      transform: scale(1.125);
-    }
-  }
   
   @keyframes timer-indicator {
     0% {

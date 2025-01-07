@@ -23,6 +23,7 @@ const Pomodoro = () => {
   const [sessionNumber, setSessionNumber] = useState(0);
   const [isAnimationRunning, setIsAnimationRunning] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const [isProposalOpen, setisProposalOpen] = useState(false);
 
   const userID = localStorage.getItem("userID");
 
@@ -39,6 +40,8 @@ const Pomodoro = () => {
     setOnBreak(false);
     setSessionNumber(sessionNumber + 1)
     setIsAnimationRunning(true)
+    setAnimationKey((prevKey) => prevKey + 1);
+    
 
     const pomodoroData = {
       studyTime: studyTime,
@@ -192,22 +195,29 @@ const Pomodoro = () => {
             <form className="study-form" onSubmit={handleSubmit}>
               <div className="pomo-info-form">
                 <label htmlFor="total-time" className="long-label">Tempo complessivo:</label>
-                <label htmlFor="total-time" className="short-label">Tempo totale</label>
+                <label htmlFor="total-time" className="short-label">How long do you want to study?</label>
                 <input
                   type="number"
                   id="total-time"
                   value={totalMinutes}
-                  onChange={(e) => setTotalMinutes(e.target.value)}
+                  onChange={(e) => {
+                    setTotalMinutes(e.target.value); 
+                    if(e.target.value > 5){
+                      setisProposalOpen(true)
+                    } else setisProposalOpen(false)
+                    }}
                 />{" "}
                 <br />
-                {totalMinutes > 0 ? (
+                {(totalMinutes > 5 && isProposalOpen) && (
                   <>
+                  <div className="form-proposals">
                     {calculateProposals().map(
                       (
                         proposal,
                         index //setta i valori scelti dalle proposte
                       ) => (
                         <button
+                          className="proposal-button"
                           key={index}
                           type="button"
                           onClick={() => {
@@ -215,6 +225,7 @@ const Pomodoro = () => {
                             setBreakTime(proposal.break);
                             setInitialCycles(proposal.cycles);
                             setRemainingCycles(proposal.cycles);
+                            setisProposalOpen(false);
                           }}
                         >
                           Studio: {proposal.study} minuti - Pausa:{" "}
@@ -222,83 +233,74 @@ const Pomodoro = () => {
                         </button>
                       )
                     )}
+                  </div>
+                    
                   </>
-                ) : (
-                  ""
                 )}
               </div>
 
-              <div className="pomo-info-form">
-                <label htmlFor="study-time" className="long-label">Tempo di studio (minuti):</label>
-                <label htmlFor="study-time" className="short-label">Studio</label>
-                <input
-                  type="number"
-                  id="study-time"
-                  min={1}
-                  value={studyTime}
-                  required
-                  onChange={(e) => setStudyTime(Number(e.target.value))}
-                />{" "}
-                <br />
-              </div>
 
-              <div className="pomo-info-form">
-                <label htmlFor="break-time" className="long-label">Tempo di pausa (minuti):</label>
-                <label htmlFor="break-time" className="short-label">Break</label>
-                <input
-                  type="number"
-                  id="break-time"
-                  min={1}
-                  value={breakTime}
-                  required
-                  onChange={(e) => setBreakTime(Number(e.target.value))}
-                />{" "}
-                <br />
-              </div>
+                { !isProposalOpen && (
+                  <>
+                    <span className="or">OR</span>
 
-              <div className="pomo-info-form">
-                <label htmlFor="cycles" className="long-label">Cicli:</label> 
-                <label htmlFor="cycles" className="short-label">Cicli</label> 
-                <input
-                  type="number"
-                  id="cycles"
-                  min={1}
-                  value={initialCycles}
-                  required
-                  onChange={(e) => {
-                    setRemainingCycles(Number(e.target.value));
-                    setInitialCycles(Number(e.target.value));
-                  }}
-                />{" "}
-                <br />
-                {/* <button
-                  className="but-plus"
-                  type="button"
-                  onClick={() => setInitialCycles(initialCycles + 1)}
-                >
-                  +
-                </button>
-                <button
-                  className="but-min"
-                  type="button"
-                  onClick={() =>
-                    setInitialCycles(Math.max(1, initialCycles - 1))
-                  }
-                >
-                  -
-                </button> */}
-                <button
-                  className="but-start horizontal-layout"
-                  type="submit"
-                >
-                  Inizia Sessione
-                </button>
-              </div>
+                  <div className="pomo-info-form">
+                    <label htmlFor="study-time" className="long-label">Tempo di studio (minuti):</label>
+                    <label htmlFor="study-time" className="short-label">Studio</label>
+                    <input
+                      type="number"
+                      id="study-time"
+                      min={1}
+                      value={studyTime}
+                      required
+                      onChange={(e) => setStudyTime(Number(e.target.value))}
+                    />{" "}
+                    <br />
+                  </div>
+
+                  <div className="pomo-info-form">
+                    <label htmlFor="break-time" className="long-label">Tempo di pausa (minuti):</label>
+                    <label htmlFor="break-time" className="short-label">Break</label>
+                    <input
+                      type="number"
+                      id="break-time"
+                      min={1}
+                      value={breakTime}
+                      required
+                      onChange={(e) => setBreakTime(Number(e.target.value))}
+                    />{" "}
+                    <br />
+                  </div>
+
+                  <div className="pomo-info-form">
+                    <label htmlFor="cycles" className="long-label">Cicli:</label> 
+                    <label htmlFor="cycles" className="short-label">Cicli</label> 
+                    <input
+                      type="number"
+                      id="cycles"
+                      min={1}
+                      value={initialCycles}
+                      required
+                      onChange={(e) => {
+                        setRemainingCycles(Number(e.target.value));
+                        setInitialCycles(Number(e.target.value));
+                      }}
+                    />{" "}
+                    <br />
+                    <button
+                      className="but-start horizontal-layout"
+                      type="submit"
+                    >
+                      Inizia Sessione
+                    </button>
+                  </div>
+                  </>
+                )} 
             </form>
           </div>
-
+          
           <div className="right-pomodoro">
-
+          
             {pomodoroSettings && (
               <h2>{title}</h2>
             )}
