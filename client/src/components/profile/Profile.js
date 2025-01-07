@@ -4,22 +4,20 @@ import { AuthContext } from '../../context/AuthContext';
 import { getUser, updateUser, updateUserProfilePicture, deleteUser } from '../../services/userService';
 import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
+import "../../styles/Profile.css";
+import DefaultIcon from '../../assets/default.png';
+import Inbox from './Inbox'; 
 
 const Profile = () => {
   const [user, setUser] = useState(null);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [profileImage, setProfileImage] = useState("");
-
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-
   const [error, setError] = useState('');
-
   const token = localStorage.getItem('token');
   const userID = localStorage.getItem('userID');
-
   const baseURL = "http://localhost:5000/";
 
   useEffect(() => {
@@ -27,23 +25,24 @@ const Profile = () => {
       try {
         if (userID) {
           const userInfo = await getUser(userID);
-          setUser(userInfo); 
+          setUser(userInfo);
           setFormData(userInfo);
           if (userInfo.profilePicture) {
             setProfileImage(baseURL + userInfo.profilePicture);
+          } else {
+            setProfileImage(DefaultIcon);
           }
         }
       } catch (err) {
-        setError(err.message); 
+        setError(err.message);
       }
     };
-    fetchUserData(); 
+    fetchUserData();
   }, [userID, token]);
-
 
   const handleLogout = async () => {
     try {
-      logout(); 
+      logout();
       navigate('/login');
     } catch (err) {
       setError(err.message);
@@ -51,6 +50,11 @@ const Profile = () => {
   };
 
   const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
+
+  // Navigate to Inbox
+  const handleOpenInbox = () => {
+    navigate('/inbox'); // Redirect to the Inbox page
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -62,9 +66,13 @@ const Profile = () => {
     setFormData((prev) => ({ ...prev, profilePicture: file }));
     const reader = new FileReader();
     reader.onloadend = () => {
-      setProfileImage(reader.result); 
+      setProfileImage(reader.result);
     };
     if (file) reader.readAsDataURL(file);
+    if (!file) {
+      setProfileImage(DefaultIcon);
+      return;
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -76,8 +84,8 @@ const Profile = () => {
         setProfileImage(baseURL + profilePictureResponse.profilePicture);
       }
       await updateUser(userID, formData);
-      setUser(formData); 
-      toggleEditModal(); 
+      setUser(formData);
+      toggleEditModal();
     } catch (err) {
       setError(err.message);
     }
@@ -85,50 +93,53 @@ const Profile = () => {
 
   const handleDelete = async () => {
     try {
-      await deleteUser(userID); 
-      logout(); 
-      navigate('/login'); 
+      await deleteUser(userID);
+      logout();
+      navigate('/login');
     } catch (err) {
-      setError(err.message); 
+      setError(err.message);
     }
   };
 
-
   return (
-    <div>
-      <h1>Profilo</h1>
+    <div className="profile-wrapper">
+      <div className="profile-container">
+        <h1 className="profile-header">Profilo</h1>
 
-      {user ? (
-        <div>
-          <h2>{user.name}</h2>
-          {profileImage && <img src={profileImage} alt="Profile" width="100" />}
-          <p>Email: {user.email}</p>
-          <p>Bio: {user.bio}</p>
-          <p>Birthday: {user.birthday}</p>
-          <p>Sex: {user.sex}</p>
-
+        <div className="profile-details">
+          <h2 className="profile-name">{user?.name}</h2>
+          {profileImage && <img
+            src={profileImage || DefaultIcon}
+            alt="Profile"
+            className="profile-image"
+          />}
+          <p className="profile-info"><strong>Email:</strong> {user?.email}</p>
+          <p className="profile-info"><strong>Bio:</strong> {user?.bio}</p>
+          <p className="profile-info"><strong>Birthday:</strong> {user?.birthday}</p>
+          <p className="profile-info"><strong>Sex:</strong> {user?.sex}</p>
         </div>
-      ) : (
-        <p>Loading...</p>
-      )}
 
-      <button onClick={toggleEditModal}>Edit Profile</button>
+        <div className="profile-actions">
+          <button className="button edit-button" onClick={toggleEditModal}>Edit Profile</button>
+          <button className="button delete-button" onClick={handleDelete}>Delete Profile</button>
+          <button className="button logout-button" onClick={handleLogout}>Logout</button>
 
-      <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
-        <EditProfileForm
-          formData={formData}
-          handleInputChange={handleInputChange}
-          handleFileChange={handleFileChange}
-          handleFormSubmit={handleFormSubmit}
-          onCancel={toggleEditModal}
-        />
-      </Modal>
-      
-      <button onClick={handleDelete}>Delete Profile</button>
+          {/* Navigate to Inbox */}
+          <button className="button inbox-button" onClick={handleOpenInbox}>Open Inbox</button>
+        </div>
 
-      <button onClick={handleLogout}>Logout</button>
+        {error && <p className="error-message">{error}</p>}
 
-      {error && <p>{error}</p>}
+        <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
+          <EditProfileForm
+            formData={formData}
+            handleInputChange={handleInputChange}
+            handleFileChange={handleFileChange}
+            handleFormSubmit={handleFormSubmit}
+            onCancel={toggleEditModal}
+          />
+        </Modal>
+      </div>
     </div>
   );
 };

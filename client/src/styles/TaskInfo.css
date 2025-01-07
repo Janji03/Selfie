@@ -1,0 +1,106 @@
+.task-info {
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.task-info h2 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+}
+
+.task-info h2.overdue {
+  background-color: #dc3545;
+}
+
+.task-info h2.completed {
+  background-color: #28a745;
+}
+
+.task-info h2.late {
+  background-color: #ff9800;
+}
+
+.task-info h2.pending {
+  background-color: #007bff;
+}
+
+.task-info p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.task-info p strong {
+  font-weight: bold;
+  color: #333;
+}
+
+.task-info .all-day-indicator {
+  font-style: italic;
+  color: #777;
+}
+
+.task-info .overdue {
+  font-weight: bold;
+}
+
+.task-info .time-zone {
+  margin-bottom: 15px;
+}
+
+.task-info .action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.task-info button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.task-info button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.task-info button.delete:hover {
+  background-color: #990615;
+}
+
+.task-info button.edit {
+  background-color: #0056b3;
+  color: white;
+}
+
+.task-info button.edit:hover {
+  background-color: #007bff;
+}
+
+.task-info button.completed,
+.task-info button.pending,
+.task-info button.mark-status {
+  background-color: #66bb6a;
+  color: white;
+}
+
+.task-info button.completed:hover,
+.task-info button.pending:hover,
+.task-info button.mark-status:hover {
+  background-color: #43a047;
+}

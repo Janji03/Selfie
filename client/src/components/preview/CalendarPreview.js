@@ -10,6 +10,8 @@ import { useTimeMachine } from "../../context/TimeMachineContext";
 import { getEvents } from "../../services/eventService";
 import { getTasks } from "../../services/taskService";
 
+import TaskHandler from "../calendar/tasks/TaskHandler";
+
 const CalendarPreview = () => {
   const navigate = useNavigate();
 
@@ -20,7 +22,33 @@ const CalendarPreview = () => {
 
   const [calendarRenderKey, setCalendarRenderKey] = useState(0);
 
+  const [tasks, setTasks] = useState([]);
   const [previewCombined, setPreviewCombined] = useState([]);
+
+  const {
+    checkForOverdueTasks,
+  } = TaskHandler({
+    userID,
+    tasks,
+    setTasks,
+    time,
+    isTimeMachineActive,
+  });
+
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
+
+  const filterTodayItems = (items) => {
+    const currentDate = formatDate(new Date(time)); 
+
+    return items.filter((item) => {
+      const startDate = formatDate(new Date(item.start));
+      const endDate = formatDate(new Date(item.end || item.start)); 
+
+      return currentDate >= startDate && currentDate <= endDate;
+    });
+  };
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -28,7 +56,9 @@ const CalendarPreview = () => {
         try {
           const fetchedEvents = await getEvents(userID);
           const fetchedTasks = await getTasks(userID);
-          const combined = [...fetchedEvents, ...fetchedTasks];
+          setTasks(fetchedTasks);
+
+          const combined = filterTodayItems([...fetchedEvents, ...fetchedTasks]);
           setPreviewCombined(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
@@ -36,11 +66,12 @@ const CalendarPreview = () => {
       };
       fetchEventsAndTasks();
     }
-  }, [isAuthenticated, userID]);
+  }, [isAuthenticated, userID, isTimeMachineActive]); 
 
-  useEffect(() => {
-    handleTriggerReRender();
-  }, [isTimeMachineActive]);
+  useEffect(() => {  
+      checkForOverdueTasks();
+      handleTriggerReRender();
+    }, [isTimeMachineActive]);
 
   const handleTriggerReRender = () => {
     setCalendarRenderKey((prevKey) => prevKey + 1);

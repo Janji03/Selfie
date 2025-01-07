@@ -1,6 +1,10 @@
+import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
 import { Link } from "react-router-dom";
+
+import "../../../styles/EventInfo.css";
+import { getUser } from "../../../services/userService";
 
 const EventInfo = ({
   selectedEvent,
@@ -8,12 +12,48 @@ const EventInfo = ({
   handleEditEvent,
   handleDeleteEvent,
 }) => {
-  if (!selectedEvent) {
-    return <div>Select an event to view its details</div>;
-  }
+  const [invitedUsers, setInvitedUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      if (
+        selectedEvent.extendedProps.invitedUsers &&
+        selectedEvent.extendedProps.invitedUsers.length > 0
+      ) {
+        const users = await Promise.all(
+          selectedEvent.extendedProps.invitedUsers.map(async (invite) => {
+            const user = await getUser(invite.userID);
+            return user
+              ? {
+                  name: user.name,
+                  email: user.email,
+                  status: invite.status,
+                }
+              : null;
+          })
+        );
+        setInvitedUsers(users.filter((user) => user));
+      }
+    };
+
+    fetchParticipants();
+  }, [selectedEvent, getUser]);
 
   const start = selectedEvent.start;
   const end = selectedEvent.end;
+
+  const timeOptions = {
+    0: "At the time of the event",
+    5: "5 minutes before",
+    10: "10 minutes before",
+    15: "15 minutes before",
+    30: "30 minutes before",
+    60: "1 hour before",
+    120: "2 hours before",
+    1440: "1 day before",
+    2880: "2 days before",
+    10080: "1 week before",
+  };
 
   const getRecurrenceSummary = (rruleString) => {
     try {
@@ -144,9 +184,9 @@ const EventInfo = ({
         const endDate = DateTime.fromJSDate(options.until).toLocaleString(
           DateTime.DATE_FULL
         );
-        summary += `, until ${endDate}`;
+        summary += ` - repeat until ${endDate}`;
       } else if (options.count) {
-        summary += `, ${options.count} times`;
+        summary += ` - repeat ${options.count} times`;
       }
 
       return summary || "Custom recurrence";
@@ -157,11 +197,9 @@ const EventInfo = ({
   };
 
   return (
-    <div>
-      {/* Event Title */}
+    <div className="event-info">
       <h2>{selectedEvent.title}</h2>
 
-      {/* Event Time Information */}
       <p>
         <strong>Start:</strong>{" "}
         {selectedEvent.allDay
@@ -183,103 +221,112 @@ const EventInfo = ({
               .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
-      {/* All Day Event Indicator */}
       {selectedEvent.allDay && (
-        <p>
+        <p className="all-day-indicator">
           <strong>All Day Event</strong>
         </p>
       )}
 
-      {/* Location */}
       {selectedEvent.extendedProps.location && (
-        <p>
+        <p className="location">
           <strong>Location:</strong> {selectedEvent.extendedProps.location}
         </p>
       )}
 
-      {/* Description */}
       {selectedEvent.extendedProps.description && (
-        <p>
+        <p className="description">
           <strong>Description:</strong>{" "}
           {selectedEvent.extendedProps.description}
         </p>
       )}
 
-      {/* Recurrence Info */}
       {selectedEvent.rrule && (
-        <p>
+        <p className="recurrence">
           <strong>Repeats:</strong> {getRecurrenceSummary(selectedEvent.rrule)}
         </p>
       )}
 
-      {/* Time Zone */}
+      {/* Invited Users Section */}
+      {invitedUsers.length > 0 && (
+        <div className="invited-users-container">
+          <h3>Invited Users:</h3>
+          <ul>
+            {invitedUsers.map((user, index) => (
+              <li key={index} className="invited-user-item">
+                <div className="user-details">
+                  <div>
+                    <strong>{user.name}</strong>
+                    <div className="user-email">{user.email}</div>{" "}
+                  </div>
+                </div>
+                <div className={`status ${user.status.toLowerCase()}`}>
+                  {user.status}
+                </div>{" "}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Notifications Section */}
+      {selectedEvent.extendedProps.notifications.length > 0 && (
+        <div className="notifications-container">
+          <h3>Notifications:</h3>
+          <ul>
+            {selectedEvent.extendedProps.notifications.map(
+              (notification, index) => (
+                <li key={index} className="notification">
+                  <strong>{timeOptions[notification.timeBefore]}</strong>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      )}
+
       {selectedEvent.extendedProps.timeZone && (
-        <p>
+        <p className="timezone">
           <strong>Time Zone:</strong> {selectedEvent.extendedProps.timeZone}
         </p>
       )}
 
-      {/* Action Buttons */}
-      <button
-        style={{
-          backgroundColor: "red",
-          color: "white",
-          padding: "10px",
-          border: "none",
-          cursor: "pointer",
-        }}
-        onClick={() => handleDeleteEvent(null)}
-      >
-        Delete Event
-      </button>
-
-      {selectedEvent.rrule && (
-        <button
-          style={{
-            backgroundColor: "red",
-            color: "white",
-            padding: "10px",
-            border: "none",
-            cursor: "pointer",
-          }}
-          onClick={() => handleDeleteEvent(selectedOccurrence)}
-        >
-          Delete Single Instance
+      <div className="action-buttons">
+        <button className="edit" onClick={handleEditEvent}>
+          Edit Event
         </button>
-      )}
 
-      <button
-        style={{
-          backgroundColor: "blue",
-          color: "white",
-          padding: "10px",
-          border: "none",
-          cursor: "pointer",
-        }}
-        onClick={handleEditEvent}
-      >
-        Edit Event
-      </button>
-
-      {selectedEvent.extendedProps.isPomodoro && (
-        <div> 
-        <button>
-        <Link
-        to="/pomodoro"
-        state={{
-          id: selectedEvent.id,
-          title: selectedEvent.title,
-          pomodoroSettings: selectedEvent.extendedProps.pomodoroSettings,
-          selectedEvent: selectedEvent,
-        }}
-      >
-        Vai al Pomodoro
-      </Link>
+        <button className="delete" onClick={() => handleDeleteEvent(null)}>
+          Delete Event
         </button>
-        </div>
 
-        
-      )} 
+        {selectedEvent.rrule && (
+          <button
+            className="delete-single"
+            onClick={() => handleDeleteEvent(selectedOccurrence)}
+          >
+            Delete Single Instance
+          </button>
+        )}
+
+        {selectedEvent.extendedProps.isPomodoro && (
+          <div>
+            <button>
+              <Link
+                to="/pomodoro"
+                state={{
+                  id: selectedEvent.id,
+                  title: selectedEvent.title,
+                  pomodoroSettings:
+                    selectedEvent.extendedProps.pomodoroSettings,
+                  selectedEvent: selectedEvent,
+                }}
+              >
+                Vai al Pomodoro
+              </Link>
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

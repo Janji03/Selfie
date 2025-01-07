@@ -232,7 +232,7 @@ const RecurrenceHandler = () => {
       endDate: rrule.until
         ? formatDate(rrule.until)
         : calculateEndDateRecurrence(startDateTime, rrule.freq),
-      endOccurrences: rrule.count || 1,
+      endOccurrences: rrule.count || 2,
     };
 
     return recurrence;

@@ -1,0 +1,129 @@
+.event-info {
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.event-info h2 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  background-color: #0056b3;
+}
+
+.event-info p {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.event-info p strong {
+  font-weight: bold;
+  color: #333;
+}
+
+.event-info .all-day-indicator {
+  font-style: italic;
+  color: #777;
+}
+
+.event-info .location,
+.event-info .description,
+.event-info .recurrence,
+.event-info .timezone {
+  margin-bottom: 15px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.event-info .action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.event-info button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.event-info button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.event-info button.delete:hover {
+  background-color: #990615;
+}
+
+.event-info button.delete-single {
+  background-color: #dc3545;
+  color: white;
+}
+
+.event-info button.delete-single:hover {
+  background-color: #990615;
+}
+
+.event-info button.edit {
+  background-color: #0056b3;
+  color: white;
+}
+
+.event-info button.edit:hover {
+  background-color: #007bff;
+}
+
+/* Notifications Section */
+.notifications-container {
+  /* margin-top: 20px; */
+  padding: 0 15px 0 15px; 
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.notifications-container h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+.notifications-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #555;
+  background-color: #f1f1f1;
+}
+
+.notification {
+  border-left: 5px solid #65a9fd;
+  background-color: #b0d3ea;
+}
+
+.notification .status {
+  font-size: 0.9rem;
+  color: #666;
+}

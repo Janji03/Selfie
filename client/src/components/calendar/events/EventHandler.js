@@ -58,6 +58,13 @@ const EventHandler = ({
         );
       }
 
+      const notifications = selectedEvent.extendedProps.notifications || [];
+      const formattedNotifications = notifications.map((notif) => {
+        return {
+          timeBefore: notif.timeBefore || 0,
+        };
+      });
+
       setEventFormInitialData({
         title: selectedEvent.title,
         startDate: DateTime.fromISO(selectedEvent.start, { zone: "UTC" })
@@ -117,8 +124,10 @@ const EventHandler = ({
                 selectedEvent.start.split("T")[0],
                 "DAILY"
               ),
-              endOccurrences: 1,
+              endOccurrences: 2,
             },
+        notifications: formattedNotifications,
+        invitedUsers: selectedEvent.extendedProps.invitedUsers,
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -130,10 +139,8 @@ const EventHandler = ({
       try {
         if (eventOccurrenceDate) {
           const exdate = selectedEvent.exdate ? [...selectedEvent.exdate] : [];
-          console.log("eventOccurrenceDate", eventOccurrenceDate);
           exdate.push(eventOccurrenceDate.toISOString());
           const updatedEvent = { ...selectedEvent, exdate };
-          console.log("updatedEvent", updatedEvent);
           await updateEvent(selectedEvent.id, updatedEvent);
 
           const updatedEvents = events.map((evt) =>
@@ -157,20 +164,17 @@ const EventHandler = ({
 
   const handleEventFormSubmit = async (data) => {
     const eventTimeZone = data.timeZone;
-    const eventStartDateTime = `${data.startDate}T${data.startTime}`;
-    const eventEndDateTime = `${data.endDate}T${data.endTime}`;
+    const eventStartDateTime = `${data.startDate}T${data.startTime}:00`;
+    const eventEndDateTime = `${data.endDate}T${data.endTime}:00`;
 
-    const utcStart = data.allDay
-      ? `${data.startDate}T00:00:00Z`
-      : DateTime.fromISO(eventStartDateTime, { zone: eventTimeZone })
-          .toUTC()
-          .toISO();
-
-    const utcEnd = data.allDay
-      ? `${data.endDate}T00:00:00Z`
-      : DateTime.fromISO(eventEndDateTime, { zone: eventTimeZone })
-          .toUTC()
-          .toISO();
+    const utcStart = DateTime.fromISO(eventStartDateTime, {
+      zone: eventTimeZone,
+    })
+      .toUTC()
+      .toISO();
+    const utcEnd = DateTime.fromISO(eventEndDateTime, { zone: eventTimeZone })
+      .toUTC()
+      .toISO();
 
     const rruleString = handleRecurrence(data.recurrence, utcStart);
 
@@ -179,6 +183,13 @@ const EventHandler = ({
       eventStartDateTime,
       eventEndDateTime
     );
+
+    const notificationData = data.notifications.map((notif) => {
+      return {
+        timeBefore: notif.timeBefore,
+        isSent: false,
+      };
+    });
 
     const newEvent = {
       id: uuidv4(),
@@ -191,18 +202,20 @@ const EventHandler = ({
       extendedProps: {
         location: data.location,
         description: data.description,
+        notifications: notificationData,
         timeZone: eventTimeZone,
         ...(rruleString && {
           recurrenceType:
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
-         isPomodoro: data.isPomodoro, 
+        isPomodoro: data.isPomodoro,
         pomodoroSettings: {
           studyTime: data.pomodoroSettings.studyTime,
-          breakTime: data.pomodoroSettings.breakTime, 
+          breakTime: data.pomodoroSettings.breakTime,
           cycles: data.pomodoroSettings.cycles,
           completedCycles: data.pomodoroSettings.completedCycles,
-        }
+        },
+        invitedUsers: data.invitedUsers,
       },
       exdate: [],
     };
@@ -213,25 +226,23 @@ const EventHandler = ({
       if (isEditMode) {
         const updatedEvent = await updateEvent(selectedEvent.id, newEvent);
 
-        const convertedEvent = convertEventTimes(
-          updatedEvent,
-          calendarTimeZone
-        );
+        // Convert from UTC to Local Timezone
+        const convertedEvent = convertEventTimes(updatedEvent);
 
         const updatedEvents = events.map((event) =>
           event.id === selectedEvent.id
             ? { ...event, ...convertedEvent }
             : event
         );
+
         setEvents(updatedEvents);
         setSelectedEvent(convertedEvent);
       } else {
         const createdEvent = await createEvent(newEvent, userID);
 
-        const convertedEvent = convertEventTimes(
-          createdEvent,
-          calendarTimeZone
-        );
+        // Convert from UTC to Local Timezone
+        const convertedEvent = convertEventTimes(createdEvent);
+
         setEvents([...events, convertedEvent]);
       }
       setSelectedRange(null);
@@ -275,8 +286,10 @@ const EventHandler = ({
         triggerDaysOfWeek: false,
         endCondition: "never",
         endDate: calculateEndDateRecurrence(startDateTime, "DAILY"),
-        endOccurrences: 1,
+        endOccurrences: 2,
       },
+      notifications: [],
+      invitedUsers: [],
     });
   };
 

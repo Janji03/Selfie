@@ -1,10 +1,31 @@
 import Event from "../models/Event.js";
+import User from "../models/User.js";
+import agenda from "../config/agenda.js";
+import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
 
 // Estrai tutti gli eventi
 export const getEvents = async (req, res) => {
   const { userID } = req.query;
   try {
     const events = await Event.find({ userID });
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nel recupero degli eventi" });
+  }
+};
+
+// Estrai tutti gli eventi a cui è stato invitato
+export const getInvitedEvents = async (req, res) => {
+  const { userID } = req.query;
+  try {
+    const events = await Event.find({
+      "extendedProps.invitedUsers": {
+        $elemMatch: {
+          userID: userID,
+          status: { $ne: "rejected" }  
+        }
+      }
+    });
     res.status(200).json(events);
   } catch (error) {
     res.status(500).json({ error: "Errore nel recupero degli eventi" });
@@ -32,13 +53,32 @@ export const getEventById = async (req, res) => {
 export const createEvent = async (req, res) => {
   const { eventData, userID } = req.body;
 
+  console.log('eventData', eventData);
   try {
     const newEvent = new Event({
       ...eventData,
       userID,
     });
 
+    console.log('new event', newEvent);
+
     const savedEvent = await newEvent.save();
+
+    await scheduleEventNotifications(agenda, userID, savedEvent);
+
+    if (eventData.extendedProps.invitedUsers.length > 0) {
+      for (const invitee of eventData.extendedProps.invitedUsers) {
+        const user = await User.findById(invitee.userID).select("name email");
+        if (!user) continue;
+    
+        await agenda.schedule("in 1 second", "send-invite-email", {
+          user: user,
+          event: newEvent,
+          invitee: invitee,
+        });
+      }
+    }
+
     res.status(201).json(savedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione dell'evento" });
@@ -59,6 +99,12 @@ export const updateEvent = async (req, res) => {
       return res.status(404).json({ error: "Evento non trovato" });
     }
 
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": updatedEvent.userID,
+    });    
+    await scheduleEventNotifications(agenda, updatedEvent.userID, updatedEvent);
+
     res.status(200).json(updatedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nell'aggiornamento dell'evento" });
@@ -75,6 +121,11 @@ export const deleteEvent = async (req, res) => {
     if (!deletedEvent) {
       return res.status(404).json({ error: "Evento non trovato" });
     }
+
+    await agenda.cancel({
+      "data.event.id": id,
+      "data.event.userID": deletedEvent.userID,
+    });    
 
     res.status(200).json({ message: "Evento eliminato con successo" });
   } catch (error) {
@@ -115,3 +166,86 @@ export const updateCompletedCycles = async (req, res) => {
     res.status(500).json({ error: "Errore nell'aggiornamento dell'evento" });
   }
 };
+
+export const acceptEventInvitation = async (req, res) => {
+
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    if (invitee.status !== 'pending') {
+      return res.status(403).send('You cannot modify your response.');
+    }
+
+    invitee.status = 'accepted';
+    await event.save();
+
+    res.send(`You have successfully accepted the invitation for ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error accepting invitation');
+  }
+}
+
+export const rejectEventInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    if (invitee.status !== 'pending') {
+      return res.status(403).send('You cannot modify your response.');
+    }
+
+    invitee.status = 'rejected';
+    await event.save();
+
+    res.send(`You have successfully rejected the invitation for ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error rejecting invitation');
+  }
+}
+
+export const resendEventInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const event = await Event.findOne({ id });
+    if (!event) return res.status(404).send('Event not found');
+
+    const invitee = event.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    invitee.status = 'pending';
+    await event.save();
+
+    const user = await User.findById(invitee.userID).select("name email");
+
+    await agenda.schedule("in 30 minutes", "send-invite-email", {
+      user: user,
+      event: event,
+      invitee: invitee,
+    });
+
+    res.send(`Reminder has been sent for the event: ${event.title}`);
+  } catch (error) {
+    res.status(500).send('Error resending reminder');
+  }
+}

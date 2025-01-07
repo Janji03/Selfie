@@ -1,4 +1,5 @@
 import { getEvents, updateEvent, createEvent } from "../../../services/eventService";
+import { v4 as uuidv4 } from "uuid";
 
 const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
   try {
@@ -15,7 +16,6 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
     });
 
     let nextDate = new Date(currentDate);
-
 
     for (const event of uncompletedPomodoros) { //si usa questo perchè foreach non supporta funzioni asincrone
       const { studyTime, breakTime, cycles, completedCycles } = event.extendedProps.pomodoroSettings;
@@ -43,14 +43,24 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
         event.extendedProps.isPomodoro && isSameDay(new Date(event.end), nextDate)
       );
 
-      if (nextPomodorosOnDate.length === 0) { 
+      const start = new Date(nextDate); // Start with the current date
+      start.setHours(new Date(event.start).getHours());   // Set hours
+      start.setMinutes(new Date(event.start).getMinutes()); // Set minutes
+      start.setSeconds(new Date(event.start).getSeconds()); // Set seconds
+      start.setMilliseconds(0); // Ensure milliseconds are 0
 
+      // Set end time based on duration from the original event
+      const durationMs = new Date(event.end) - new Date(event.start); // Calculate duration
+      const end = new Date(start.getTime() + durationMs);
+
+      if (nextPomodorosOnDate.length === 0) { 
+        const { _id, ...rest } = event;
         const newEvent = {
-          ...event,
+          ...rest,
+          id: uuidv4(),
           title: event.title + ' - da recuperare', //prova
-          start: nextDate.toISOString(),
-          end: nextDate.toISOString(),
-          duration: minutesToTime(((studyTime + breakTime)*remainingCycles)),
+          start: start.toISOString(), 
+          end: end.toISOString(), 
           extendedProps: {
             ...event.extendedProps,
             pomodoroSettings: {
@@ -60,8 +70,6 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
             },
           },
         };
-        delete newEvent.userID
-        console.log(newEvent)
         await createEvent(newEvent, userID); 
         setEvents((prevEvents) => [...prevEvents, newEvent]);
 

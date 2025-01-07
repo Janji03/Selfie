@@ -9,7 +9,7 @@ const ExtendedPropsSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "completed", "overdue"],
+      enum: ["pending", "completed"],
       required: true,
     },
     isOverdue: {
@@ -20,9 +20,17 @@ const ExtendedPropsSchema = new Schema(
       type: Date,
       required: true,
     },
-    wasAllDay: {
+    completedAt: {
+      type: Date,
+      default: null,
+    },
+    notifications: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    temporary: {
+      type: Boolean,
+      default: false,
     },
     itemType: {
       type: String,
