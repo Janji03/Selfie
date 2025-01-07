@@ -8,7 +8,7 @@ import {
   deleteEvent,
   acceptEventInvitation,
   rejectEventInvitation,
-  resendEventInvitation
+  resendEventInvitation,
   updateCompletedCycles,
 } from "../controllers/eventController.js";
 
