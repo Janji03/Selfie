@@ -32,13 +32,18 @@ export const getEventById = async (req, res) => {
 export const createEvent = async (req, res) => {
   const { eventData, userID } = req.body;
 
+  console.log('eventData', eventData);
   try {
     const newEvent = new Event({
       ...eventData,
       userID,
     });
 
+    console.log('new event', newEvent);
+
     const savedEvent = await newEvent.save();
+
+    console.log('savedEvent', savedEvent);
     res.status(201).json(savedEvent);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione dell'evento" });

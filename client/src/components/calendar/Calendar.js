@@ -82,11 +82,17 @@ const Calendar = () => {
       };
 
       const fetchAndRedistributeEvents = async () => {
+        if (isInitialMount.current) {
+          isInitialMount.current = false;
+          return;
+        }
+        
         try {
           await redistributePomodoroTime(userID, time, setEvents);
         } catch (error) {
           console.error("Error during redistribution:", error);
         }
+        console.log('here');
       };
       
       fetchAndRedistributeEvents();

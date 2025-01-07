@@ -121,10 +121,6 @@ eventSchema.pre("save", function (next) {
     this.extendedProps.recurrenceType = undefined;
   }
 
-  if (this.extendedProps.isPomodoro) { //forse si può togliere
-    this.end = this.start; 
-  }
-
   next();
 });
 

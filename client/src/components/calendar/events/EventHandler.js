@@ -227,7 +227,6 @@ const EventHandler = ({
         setSelectedEvent(convertedEvent);
       } else {
         const createdEvent = await createEvent(newEvent, userID);
-
         const convertedEvent = convertEventTimes(
           createdEvent,
           calendarTimeZone

@@ -37,8 +37,8 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     } = formData;
 
 
-    if (!title || title.length > MAX_TITLE_LENGTH) {
-      newErrors.title = `Event title must be between 1 and ${MAX_TITLE_LENGTH} characters.`;
+    if (title.length > MAX_TITLE_LENGTH) {
+      newErrors.title = `Event title can only be max ${MAX_TITLE_LENGTH} characters.`;
     }
 
     if (isPomodoro) {
@@ -91,7 +91,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
       // Logica specifica per eventi Pomodoro
       if (adjustedFormData.isPomodoro) {
-        adjustedFormData.endDate = formData.startDate; // Forza endDate uguale a startDate
         adjustedFormData.pomodoroSettings.completedCycles = 0;
       }
 
