@@ -1,44 +1,62 @@
 import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
-import { RRule, rrulestr } from "rrule";
-import "../../../styles/EventInfo.css";
+import RecurrenceHandler from "./RecurrenceHandler";
 import { getUser } from "../../../services/userService";
+import { handleInvitationResponse } from "../../../services/eventService";
+import "../../../styles/EventInfo.css";
 
 const EventInfo = ({
   selectedEvent,
+  setSelectedEvent,
+  events,
+  setEvents,
   selectedOccurrence,
   handleEditEvent,
   handleDeleteEvent,
 }) => {
-  const [invitedUsers, setInvitedUsers] = useState([]);
+  const { getRecurrenceSummary } = RecurrenceHandler();
+
+  const { id, userID, title, start, end, allDay, rrule, extendedProps } = selectedEvent;
+  const { location, description, timeZone, notifications, invitedUsers } = extendedProps;
+
+  const currentUserID = localStorage.getItem("userID");
+  const isOwner = userID === currentUserID;
+
+  const [ownerUser, setOwnerUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [participants, setParticipants] = useState([]);
+  const [currentUserStatus, setCurrentUserStatus] = useState("pending");
 
   useEffect(() => {
     const fetchParticipants = async () => {
-      if (
-        selectedEvent.extendedProps.invitedUsers &&
-        selectedEvent.extendedProps.invitedUsers.length > 0
-      ) {
-        const users = await Promise.all(
-          selectedEvent.extendedProps.invitedUsers.map(async (invite) => {
-            const user = await getUser(invite.userID);
-            return user
-              ? {
-                  name: user.name,
-                  email: user.email,
-                  status: invite.status,
-                }
-              : null;
-          })
-        );
-        setInvitedUsers(users.filter((user) => user));
+      try {
+        if (!isOwner) {
+          const owner = await getUser(userID);
+          setOwnerUser(owner);
+        }
+
+        const user = getUser(currentUserID);
+        setCurrentUser(user); 
+
+        if (invitedUsers && invitedUsers.length > 0) {
+          const users = await Promise.all(
+            invitedUsers.map(async (invite) => {
+              const participant = await getUser(invite.userID);
+              if (invite.userID === currentUserID) {
+                setCurrentUserStatus(invite.status);
+              }
+              return participant ? { id: invite.userID, name: participant.name, email: participant.email, status: invite.status } : null;
+            })
+          );
+          setParticipants(users.filter(Boolean));
+        }
+      } catch (error) {
+        console.error("Failed to fetch participants:", error);
       }
     };
 
     fetchParticipants();
-  }, [selectedEvent, getUser]);
-
-  const start = selectedEvent.start;
-  const end = selectedEvent.end;
+  }, []);
 
   const timeOptions = {
     0: "At the time of the event",
@@ -53,257 +71,164 @@ const EventInfo = ({
     10080: "1 week before",
   };
 
-  const getRecurrenceSummary = (rruleString) => {
-    try {
-      const rule = rrulestr(rruleString);
-      const options = rule.origOptions;
-      let summary = "";
+  const handleResponse = async (responseType) => {
+    await handleInvitationResponse(id, currentUserID, responseType);
+    setCurrentUserStatus(responseType === "accept" ? "accepted" : "rejected");
 
-      const fullDayNames = {
-        MO: "Monday",
-        TU: "Tuesday",
-        WE: "Wednesday",
-        TH: "Thursday",
-        FR: "Friday",
-        SA: "Saturday",
-        SU: "Sunday",
-      };
-
-      const fullMonthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-      ];
-
-      if (options.interval && options.interval > 1) {
-        switch (options.freq) {
-          case RRule.DAILY:
-            summary += `Every ${options.interval} days`;
-            break;
-          case RRule.WEEKLY:
-            summary += `Every ${options.interval} weeks`;
-            break;
-          case RRule.MONTHLY:
-            summary += `Every ${options.interval} months`;
-            break;
-          case RRule.YEARLY:
-            summary += `Every ${options.interval} years`;
-            break;
-          default:
-            summary += `Custom`;
-        }
-      } else {
-        switch (options.freq) {
-          case RRule.DAILY:
-            summary += `Daily`;
-            break;
-          case RRule.WEEKLY:
-            summary += `Weekly`;
-            break;
-          case RRule.MONTHLY:
-            summary += `Monthly`;
-            break;
-          case RRule.YEARLY:
-            summary += `Yearly`;
-            break;
-          default:
-            summary += `Custom`;
-        }
-      }
-
-      if (options.byweekday) {
-        const weekdayOrder = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
-        const ordinals = [
-          "first",
-          "second",
-          "third",
-          "fourth",
-          "fifth",
-          "last",
-        ];
-
-        let ordinal;
-
-        const days = options.byweekday
-          .sort(
-            (a, b) =>
-              weekdayOrder.indexOf(a.weekday) - weekdayOrder.indexOf(b.weekday)
-          )
-          .map((day) => {
-            const dayName = fullDayNames[day.toString().slice(-2)];
-            ordinal = day.n ? ordinals[day.n > 0 ? day.n - 1 : 5] : "";
-            return ordinal ? `the ${ordinal} ${dayName}` : dayName;
-          });
-
-        const isWeekdayPattern =
-          days.length === 5 &&
-          ["MO", "TU", "WE", "TH", "FR"].every((d) =>
-            days.some((day) => day.includes(fullDayNames[d]))
-          );
-        const isWeekendPattern =
-          days.length === 2 &&
-          ["SA", "SU"].every((d) =>
-            days.some((day) => day.includes(fullDayNames[d]))
-          );
-
-        if (isWeekdayPattern) {
-          summary += ` on the ${ordinal} weekday`;
-        } else if (isWeekendPattern) {
-          summary += ` on the ${ordinal} weekend`;
-        } else {
-          summary += ` on ${days.join(", ")}`;
-        }
-      }
-
-      if (options.bymonthday) {
-        const monthDays = Array.isArray(options.bymonthday)
-          ? options.bymonthday
-          : [options.bymonthday];
-        summary += ` on day ${monthDays.join(", ")}`;
-      }
-
-      if (options.freq === RRule.YEARLY && options.bymonth) {
-        const months = options.bymonth
-          .map((month) => fullMonthNames[month - 1])
-          .join(", ");
-        summary += ` in ${months}`;
-      }
-
-      if (options.until) {
-        const endDate = DateTime.fromJSDate(options.until).toLocaleString(
-          DateTime.DATE_FULL
-        );
-        summary += ` - repeat until ${endDate}`;
-      } else if (options.count) {
-        summary += ` - repeat ${options.count} times`;
-      }
-
-      return summary || "Custom recurrence";
-    } catch (error) {
-      console.error("Invalid RRULE string", error);
-      return "Custom recurrence";
+    if (responseType === "reject") {
+      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== selectedEvent.id));
+      setSelectedEvent(null);
     }
   };
 
   return (
     <div className="event-info">
-      <h2>{selectedEvent.title}</h2>
+      <h2 className={`${isOwner ? "" : "invited"}`}>{title}</h2>
 
       <p>
         <strong>Start:</strong>{" "}
-        {selectedEvent.allDay
+        {allDay
           ? DateTime.fromISO(start, { zone: "UTC" })
-              .setZone(selectedEvent.extendedProps.timeZone)
+              .setZone(timeZone)
               .toLocaleString(DateTime.DATE_SHORT)
           : DateTime.fromISO(start, { zone: "UTC" })
-              .setZone(selectedEvent.extendedProps.timeZone)
+              .setZone(timeZone)
               .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
       <p>
         <strong>End:</strong>{" "}
-        {selectedEvent.allDay
+        {allDay
           ? DateTime.fromISO(end, { zone: "UTC" })
-              .setZone(selectedEvent.extendedProps.timeZone)
+              .setZone(timeZone)
               .toLocaleString(DateTime.DATE_SHORT)
           : DateTime.fromISO(end, { zone: "UTC" })
-              .setZone(selectedEvent.extendedProps.timeZone)
+              .setZone(timeZone)
               .toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
-      {selectedEvent.allDay && (
+      {allDay && (
         <p className="all-day-indicator">
           <strong>All Day Event</strong>
         </p>
       )}
 
-      {selectedEvent.extendedProps.location && (
+      {location && (
         <p className="location">
-          <strong>Location:</strong> {selectedEvent.extendedProps.location}
+          <strong>Location:</strong> {location}
         </p>
       )}
 
-      {selectedEvent.extendedProps.description && (
+      {description && (
         <p className="description">
-          <strong>Description:</strong>{" "}
-          {selectedEvent.extendedProps.description}
+          <strong>Description:</strong> {description}
         </p>
       )}
 
-      {selectedEvent.rrule && (
+      {rrule && (
         <p className="recurrence">
-          <strong>Repeats:</strong> {getRecurrenceSummary(selectedEvent.rrule)}
+          <strong>Repeats:</strong> {getRecurrenceSummary(rrule)}
         </p>
       )}
 
-      {/* Invited Users Section */}
-      {invitedUsers.length > 0 && (
-        <div className="invited-users-container">
-          <h3>Invited Users:</h3>
+      {notifications.length > 0 && (
+        <div className="notifications-container">
+          <h3>Notifications:</h3>
           <ul>
-            {invitedUsers.map((user, index) => (
-              <li key={index} className="invited-user-item">
-                <div className="user-details">
-                  <div>
-                    <strong>{user.name}</strong> 
-                    <div className="user-email">{user.email}</div>{" "}
-                  </div>
-                </div>
-                <div className={`status ${user.status.toLowerCase()}`}>{user.status}</div>{" "}
+            {notifications.map((notification, index) => (
+              <li key={index} className="notification">
+                <strong>{timeOptions[notification.timeBefore]}</strong>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Notifications Section */}
-      {selectedEvent.extendedProps.notifications.length > 0 && (
-        <div className="notifications-container">
-          <h3>Notifications:</h3>
+      {timeZone && (
+        <p className="timezone">
+          <strong>Time Zone:</strong> {timeZone}
+        </p>
+      )}
+
+      {!isOwner && ownerUser && (
+        <div className="owner-info">
+          <p>
+            <strong>Event Owner: </strong>
+            {ownerUser.name} ({ownerUser.email})
+          </p>
+        </div>
+      )}
+
+      {invitedUsers.length > 0 && (
+        <div className="invited-users-container">
+          <h3>Invited Users:</h3>
           <ul>
-            {selectedEvent.extendedProps.notifications.map(
-              (notification, index) => (
-                <li key={index} className="notification">
-                  <strong>{timeOptions[notification.timeBefore]}</strong>
-                </li>
-              )
-            )}
+            {participants.map((user, index) => (
+              <li key={index} className="invited-user-item">
+                <div className="user-details">
+                  <div>
+                    <strong>{user.name}</strong>
+                    <div className="user-email">{user.email}</div>{" "}
+                  </div>
+                </div>
+                {user.id === currentUserID ? (
+                  <div className="response-buttons">
+                    {currentUserStatus === "pending" ? (
+                      <>
+                        <button
+                          className="accept"
+                          onClick={() => handleResponse("accept")}
+                          title="Accept"
+                        >
+                          ✔️
+                        </button>
+                        <button
+                          className="reject"
+                          onClick={() => handleResponse("reject")}
+                          title="Reject"
+                        >
+                          ❌
+                        </button>
+                      </>
+                    ) : (
+                      <div className={`status ${currentUserStatus.toLowerCase()}`}>
+                        {currentUserStatus}
+                      </div>
+                    )}
+                    {currentUserStatus === "accepted" && (
+                      <button className="leave" onClick={() => handleResponse("reject")}>
+                        Leave
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className={`status ${user.status.toLowerCase()}`}>
+                    {user.status}
+                  </div>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       )}
 
-      {selectedEvent.extendedProps.timeZone && (
-        <p className="timezone">
-          <strong>Time Zone:</strong> {selectedEvent.extendedProps.timeZone}
-        </p>
-      )}
-
-      <div className="action-buttons">
-        <button className="edit" onClick={handleEditEvent}>
-          Edit Event
-        </button>
-
-        <button className="delete" onClick={() => handleDeleteEvent(null)}>
-          Delete Event
-        </button>
-
-        {selectedEvent.rrule && (
-          <button
-            className="delete-single"
-            onClick={() => handleDeleteEvent(selectedOccurrence)}
-          >
-            Delete Single Instance
+      {isOwner && (
+        <div className="action-buttons">
+          <button className="edit" onClick={handleEditEvent}>
+            Edit Event
           </button>
-        )}
-      </div>
+          <button className="delete" onClick={() => handleDeleteEvent(null)}>
+            Delete Event
+          </button>
+          {selectedEvent.rrule && (
+            <button
+              className="delete-single"
+              onClick={() => handleDeleteEvent(selectedOccurrence)}
+            >
+              Delete Single Instance
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 };

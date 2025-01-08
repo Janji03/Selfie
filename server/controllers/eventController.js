@@ -170,10 +170,6 @@ export const rejectEventInvitation = async (req, res) => {
     );
     if (!invitee) return res.status(404).send('Invitee not found');
 
-    if (invitee.status !== 'pending') {
-      return res.status(403).send('You cannot modify your response.');
-    }
-
     invitee.status = 'rejected';
     await event.save();
 

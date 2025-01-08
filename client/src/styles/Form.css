@@ -251,7 +251,7 @@
 }
 
 .status.accepted {
-  color: green;
+  color: #149108;
 }
 
 .status.rejected {
@@ -261,8 +261,6 @@
 .status.pending {
   color: #007bff;
 }
-
-
 
 ::placeholder {
   font-family: "Poppins", sans-serif;

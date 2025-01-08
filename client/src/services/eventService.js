@@ -78,3 +78,15 @@ export const deleteEvent = async (id) => {
     );
   }
 };
+
+export const handleInvitationResponse = async (id, userID, responseType) => {
+  try {
+    const response = await axiosInstance.put(`events/${id}/${responseType}`, {}, { params: { userID } });
+
+    if (response.status === 200) {
+      return response.data;
+    } 
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};

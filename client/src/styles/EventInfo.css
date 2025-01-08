@@ -19,6 +19,17 @@
   background-color: #0056b3;
 }
 
+.event-info h2.invited {
+  font-size: 1.8rem;
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px;
+  color: white;
+  background-color: #8f00b3;
+}
+
 .event-info p {
   font-size: 1.1rem;
   margin-bottom: 10px;
@@ -43,6 +54,7 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
+
 
 .event-info .action-buttons {
   display: flex;
@@ -126,4 +138,35 @@
 .notification .status {
   font-size: 0.9rem;
   color: #666;
+}
+
+.event-info button.accept {
+  padding: 0.4em;
+  color: white;
+}
+
+.event-info button.accept:hover {
+  background-color: #6bd46b;
+}
+
+.event-info button.reject {
+  padding: 0.4em;
+  color: white;
+}
+
+.event-info button.reject:hover {
+  background-color: #ee3749;
+}
+
+.event-info button.leave {
+  background-color: #dc3545;
+  color: white;
+}
+
+.event-info button.leave:hover {
+  background-color: #990615;
+}
+
+.event-info .owner-info strong {
+  color: #8f00b3;
 }

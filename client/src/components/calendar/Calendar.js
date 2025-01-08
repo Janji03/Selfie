@@ -55,7 +55,7 @@ const Calendar = () => {
 
   const [events, setEvents] = useState([]);
   const [tasks, setTasks] = useState([]);
-  const [combinedEvents, setCombinedEvents] = useState([]);
+  const [combinedItems, setCombinedItems] = useState([]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -73,13 +73,12 @@ const Calendar = () => {
   const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const fetchEventsAndTasks = async () => {
+    const interval = setInterval(async () => {
+      if (isAuthenticated) {
         try {
           const fetchedEvents = await getEvents(userID);
-          const fetchedTasks = await getTasks(userID);
-
           const invitedEvents = await getInvitedEvents(userID);
+          const fetchedTasks = await getTasks(userID);
 
           // Convert the events and tasks to calendar timezone
           const convertedEvents = fetchedEvents.map((event) => ({
@@ -101,14 +100,16 @@ const Calendar = () => {
           setTasks(convertedTasks);
           
           const combined = [...combinedEvents, ...convertedTasks];
-          setCombinedEvents(combined);
+          setCombinedItems(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
         }
-      };
-      fetchEventsAndTasks();
-    }
-  }, [isAuthenticated, userID]);
+      }
+    }, 10000);
+  
+    return () => clearInterval(interval); 
+  }, [isAuthenticated, userID, events, tasks]);
+
 
   const getClassNamesForTask = (task) => {
     const classNames = ["task"]; 
@@ -191,7 +192,9 @@ const Calendar = () => {
           setTasks(tasksWithClasses);
 
           const combined = [...events, ...tasksWithClasses];
-          setCombinedEvents(combined);
+          setCombinedItems(combined);
+          
+          handleTriggerReRender();
 
         } catch (error) {
           console.error("Error fetching updated tasks:", error);
@@ -218,10 +221,10 @@ const Calendar = () => {
 
   useEffect(() => {
     if (currentView === "taskList") {
-      setCombinedEvents(tasks);
+      setCombinedItems(tasks);
     } else {
       const combined = [...events, ...tasks];
-      setCombinedEvents(combined);
+      setCombinedItems(combined);
     }
     const calendarApi = calendarRef.current.getApi();
     calendarApi.refetchEvents();
@@ -229,9 +232,9 @@ const Calendar = () => {
 
   const handleViewChange = ({ view }) => {
     if (view.type === "taskList") {
-      setCombinedEvents(tasks);
+      setCombinedItems(tasks);
     } else {
-      setCombinedEvents([...events, ...tasks]);
+      setCombinedItems([...events, ...tasks]);
     }
     setCurrentView(view.type);
   };
@@ -382,7 +385,7 @@ const Calendar = () => {
     setTasks(convertedTasks);
     
     const combined = [...convertedEvents, ...convertedTasks];
-    setCombinedEvents(combined);
+    setCombinedItems(combined);
   };
 
   const toolbarChunks = document.querySelectorAll(".fc-toolbar-chunk");
@@ -427,6 +430,9 @@ const Calendar = () => {
         {selectedEvent && (
           <EventInfo
             selectedEvent={selectedEvent}
+            setSelectedEvent={setSelectedEvent}
+            events={events}
+            setEvents={setEvents}
             selectedOccurrence={selectedOccurrence}
             handleEditEvent={handleEditEvent}
             handleDeleteEvent={handleDeleteEvent}
@@ -505,7 +511,7 @@ const Calendar = () => {
               ),
             },
           }}
-          events={combinedEvents}
+          events={combinedItems}
           timeZone={calendarTimeZone}
           now={time}
           nowIndicator={true}
@@ -520,6 +526,7 @@ const Calendar = () => {
           scrollTimeReset={false}
           dayMaxEventRows={2}
           eventMaxStack={3}
+          height={"95vh"}
           // editable={true}
           // eventResizableFromStart={true}
           // eventDurationEditable={true}
