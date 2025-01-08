@@ -116,7 +116,7 @@ const Calendar = () => {
         }
         
         try {
-          await redistributePomodoroTime(userID, time, setEvents);
+          await redistributePomodoroTime(userID, time, setEvents); //modifica sta roba salvando qui setevents come const invece di passarlo
         } catch (error) {
           console.error("Error during redistribution:", error);
         }

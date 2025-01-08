@@ -68,14 +68,13 @@
   font-size: 3vw;
   margin: 0;
   
-  margin-bottom: 3vh;
 }
 
 .study-form {
   padding: 20px;
   border-radius: 10px;
   height: auto;
-  width: 70%;
+  width: 60%;
   background-color: white;
   color: black;
 }
@@ -153,7 +152,6 @@
 
 .pomo-info-form label {
   font-family: "Figtree";
-  font-size: 5ù2vw;
 }
 
 .pomodoro-body{
@@ -161,6 +159,7 @@
 }
 
 .right-pomodoro{
+  width: 50%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -178,12 +177,13 @@
 
 .proposal-button {
   display: inline-block;
+  text-wrap: nowrap;
   background-color: #fff; 
   color: #001789; 
   font-family: 'Figtree';
-  font-size: 3vw; 
-  padding: 5px 10px; 
-  margin: 5px 2px; 
+  font-size: 2.3vw; 
+  padding: 10px 20px; 
+  margin: 10px 5px; 
   border: none; 
   border-radius: 8px; 
   cursor: pointer; 
@@ -201,6 +201,7 @@
   justify-content: space-evenly;
   align-items: center;
   margin-top: 0;
+  max-height: 45vh;
 }
 
 .or{
@@ -210,7 +211,7 @@
 .pomo-button{
   margin-top: 8px;
   padding: 5px;
-  font-size: 2.5vw;
+  font-size: 1.3vw;
   font-weight: 400;
   color: #008cff;
   border: 1px solid #008cff;
@@ -277,7 +278,7 @@
 }
 
 
-@media (max-width: 560px){
+@media (max-width: 600px){
 
   .pomodoro-body{
     flex-direction: column;
@@ -415,5 +416,18 @@
 .pomo-info-form input[type=number] {
   -moz-appearance: textfield;
 }
+
+.pomo-button{
+  font-size: 2.5vw;
+}
+
+.right-pomodoro{
+  width: 100%;
+}
   
+.proposal-button{
+  font-size: 3vw; 
+  padding: 5px 10px; 
+  margin: 5px 2px; 
+}
 }

@@ -267,3 +267,44 @@
 ::placeholder {
   font-family: "Poppins", sans-serif;
 }
+
+.form-proposal-event{
+  text-align: left;
+}
+
+.form-proposal-event button{
+  margin: 5px;
+  width: 100%;
+  font-size: 1.1rem;
+  text-align: left;
+  margin-left: 0;
+  padding-left: 5px;
+}
+
+.form-proposal-event h3{
+  margin: 0;
+  margin-right: 10px;
+}
+
+.form-proposal-heading{
+  display: flex;
+  justify-content: baseline;
+  align-items: center;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.form-proposal-heading i{
+  font-size: 1.2rem;
+  color: #011789;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.form-proposal-event label{
+  margin: 5px;
+  margin-left: 0;
+  font-size: 1rem;
+}

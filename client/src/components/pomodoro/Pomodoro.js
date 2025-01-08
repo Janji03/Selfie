@@ -69,13 +69,6 @@ const Pomodoro = () => {
       console.error("Errore aggiornamento sessione pomdooro:", error);
     }
     }
-    
-
-
-    /* setStudyTime(0);
-    setBreakTime(0);
-    setInitialCycles(0);
-    setTotalMinutes(0); */
 
     try {
       await createPomodoro(pomodoroData);
@@ -228,8 +221,7 @@ const Pomodoro = () => {
                             setisProposalOpen(false);
                           }}
                         >
-                          Studio: {proposal.study} minuti - Pausa:{" "}
-                          {proposal.break} minuti - Cicli: {proposal.cycles}
+                          <strong>Studio</strong>: {proposal.study} minuti, <br/> <strong>Pausa</strong>: {proposal.break} minuti, <strong>Cicli</strong>: {proposal.cycles}
                         </button>
                       )
                     )}
@@ -306,8 +298,10 @@ const Pomodoro = () => {
             )}
 
 
-            {(isAnimationRunning) && (
+            {(isAnimationRunning) ? (
               <PomodoroAnimation key={animationKey} studyTime={studyTime} breakTime={breakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak}/>
+            ): (
+              <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak}/>
             )}
 
              <div className="pomodoro-applyers">

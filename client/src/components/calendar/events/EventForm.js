@@ -8,6 +8,7 @@ import "../../../styles/Form.css";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const { time } = useTimeMachine();
+  const [areProposalsOpen, setAreProposalsOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     ...initialData,
@@ -274,7 +275,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               onChange={handleChange}
               className="checkbox-input"
             />
-            Is Pomodoro
+            <span className="checkbox-label">Is Pomodoro</span>
           </label>
         </div>
 
@@ -328,49 +329,68 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               />
             )}
 
+
+
             {/* Sezione Proposte Pomodoro */}
-            <div>
-              <h3>Pomodoro Proposals</h3>
-              {calculateProposals().map((proposal, index) => (
+            <div className="form-proposal-event">
+              <div className="form-proposal-heading">
+                <h3>Pomodoro Proposals</h3>
+                {areProposalsOpen ? 
+                  (<i class="bi bi-pencil-fill" onClick={() => setAreProposalsOpen(false)}></i>
+                ) : (
+                  <i class="bi bi-collection-play" onClick={() => setAreProposalsOpen(true)}></i>
+                )}
+                 
+              </div> 
+            {areProposalsOpen ? (
+              calculateProposals().map((proposal, index) => (
                 <button
+                  className="proposal-button"
                   key={index}
                   type="button"
                   onClick={() => handleProposalSelect(proposal)}
                 >
-                  Study: {proposal.study} min, Break: {proposal.break} min,
-                  Cycles: {proposal.cycles} <br />
+                  <strong>Study</strong>: {proposal.study} min, <strong>Break</strong>: {proposal.break} min, <strong>Cycles</strong>: {proposal.cycles} <br />
                 </button>
-              ))}
-            </div>
+              ))
+            ) : (
+              <>
+                {/* Modifica manuale delle impostazioni Pomodoro */}
+                <div>
+                  <label>Study Time (min):</label>
+                  <input
+                    type="number"
+                    name="studyTime"
+                    value={formData.pomodoroSettings.studyTime || ""}
+                    onChange={handleChangePomodoroSettings}
+                  />
+                </div>
 
-            {/* Modifica manuale delle impostazioni Pomodoro */}
-            <div>
-              <label>Study Time (min):</label>
-              <input
-                type="number"
-                name="studyTime"
-                value={formData.pomodoroSettings.studyTime || ""}
-                onChange={handleChangePomodoroSettings}
-              />
-            </div>
-            <div>
-              <label>Break Time (min):</label>
-              <input
-                type="number"
-                name="breakTime"
-                value={formData.pomodoroSettings.breakTime || ""}
-                onChange={handleChangePomodoroSettings}
-              />
-            </div>
-            <div>
-              <label>Cycles:</label>
-              <input
-                type="number"
-                name="cycles"
-                value={formData.pomodoroSettings.cycles || ""}
-                onChange={handleChangePomodoroSettings}
-              />
-            </div>
+                <div>
+                  <label>Break Time (min):</label>
+                  <input
+                    type="number"
+                    name="breakTime"
+                    value={formData.pomodoroSettings.breakTime || ""}
+                    onChange={handleChangePomodoroSettings}
+                  />
+                </div>
+
+                <div>
+                  <label>Cycles:</label>
+                  <input
+                    type="number"
+                    name="cycles"
+                    value={formData.pomodoroSettings.cycles || ""}
+                    onChange={handleChangePomodoroSettings}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+            
+            
           </>
         ) : (
           <div>

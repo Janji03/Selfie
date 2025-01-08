@@ -47,7 +47,7 @@
     width: 100%;
     height: 100%;
     background-color: #011789;
-    animation: timer-indicator-reverse calc(var(--timer-unit) * var(--pause-length)) var(--timer-delay) linear;
+    animation: timer-indicator-reverse calc(var(--timer-unit) * var(--pause-length))  linear;
   }
   
   @media (min-width: 600px) {
