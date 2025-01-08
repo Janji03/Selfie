@@ -63,7 +63,7 @@ const NotificationForm = ({ formData, setFormData }) => {
     if (error) {
       setError('');
     }
-  }, [formData]);
+  }, [formData, error]);
 
   return (
     <div>

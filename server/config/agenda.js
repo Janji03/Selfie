@@ -4,6 +4,7 @@ import config from './config.js';
 import defineNotificationJob from "../jobs/eventNotificationJob.js";
 import defineTaskNotificationJob from "../jobs/taskNotificationJob.js";
 import defineOverdueTaskJob from "../jobs/overdueTaskJob.js";
+import defineInviteNotificationJob from "../jobs/inviteNotificationJob.js"
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ const agenda = new Agenda({
 defineNotificationJob(agenda);
 defineTaskNotificationJob(agenda);
 defineOverdueTaskJob(agenda);
+defineInviteNotificationJob(agenda);
 
 // Graceful Shutdown
 const gracefulShutdown = async () => {

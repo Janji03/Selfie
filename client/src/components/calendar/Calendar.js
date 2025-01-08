@@ -6,6 +6,7 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
+import { DateTime } from "luxon";
 
 import { AuthContext } from "../../context/AuthContext";
 
@@ -27,7 +28,7 @@ import TaskHandler from "./tasks/TaskHandler";
 import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
-import { getEvents } from "../../services/eventService";
+import { getEvents, getInvitedEvents } from "../../services/eventService";
 import { getTasks } from "../../services/taskService";
 
 import DateUtilities from "./DateUtilities";
@@ -69,7 +70,7 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
   
-  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -78,14 +79,28 @@ const Calendar = () => {
           const fetchedEvents = await getEvents(userID);
           const fetchedTasks = await getTasks(userID);
 
+          const invitedEvents = await getInvitedEvents(userID);
+
           // Convert the events and tasks to calendar timezone
-          const convertedEvents = fetchedEvents.map((event) => convertEventTimes(event));
-          const convertedTasks = fetchedTasks.map((task) => convertEventTimes(task));
+          const convertedEvents = fetchedEvents.map((event) => ({
+            ...convertEventTimes(event),
+            classNames: ["event"], 
+          }));
+          const convertedInvitedEvents = invitedEvents.map((event) => ({
+            ...convertEventTimes(event),
+            classNames: ["invited-event"],
+          }));
+          const convertedTasks = fetchedTasks.map((task) => ({
+            ...convertEventTimes(task),
+            classNames: getClassNamesForTask(task), 
+          }));
           
-          setEvents(convertedEvents);
+          const combinedEvents = [...convertedEvents, ...convertedInvitedEvents]
+
+          setEvents(combinedEvents);
           setTasks(convertedTasks);
           
-          const combined = [...convertedEvents, ...convertedTasks];
+          const combined = [...combinedEvents, ...convertedTasks];
           setCombinedEvents(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
@@ -94,6 +109,31 @@ const Calendar = () => {
       fetchEventsAndTasks();
     }
   }, [isAuthenticated, userID]);
+
+  const getClassNamesForTask = (task) => {
+    const classNames = ["task"]; 
+
+    const isOverdue = task.extendedProps.isOverdue;
+    const isCompleted = task.extendedProps.status === "completed";
+    const completedAt = task.extendedProps.completedAt
+      ? DateTime.fromISO(task.extendedProps.completedAt)
+      : null;
+    const deadline = DateTime.fromISO(task.extendedProps.deadline);
+    const completedLate = isCompleted && completedAt && completedAt >= deadline;
+  
+    if (completedLate) {
+      classNames.push("task-late");
+    } else if (isCompleted) {
+      classNames.push("task-completed");
+    } else if (isOverdue) {
+      classNames.push("task-overdue");
+    } else {
+      classNames.push("task-pending");
+    }
+    
+    return classNames;
+  };
+  
 
   const {
     handleEventClick,
@@ -139,6 +179,28 @@ const Calendar = () => {
     calendarTimeZone,
   });
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      if (isAuthenticated) {
+        try {
+          const updatedTasks = await getTasks(userID);
+          const tasksWithClasses = updatedTasks.map((task) => ({
+            ...task,
+            classNames: getClassNamesForTask(task),
+          }));
+          setTasks(tasksWithClasses);
+
+          const combined = [...events, ...tasksWithClasses];
+          setCombinedEvents(combined);
+
+        } catch (error) {
+          console.error("Error fetching updated tasks:", error);
+        }
+      }
+    }, 60000); 
+
+    return () => clearInterval(interval); 
+  }, [isAuthenticated, userID, events]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -155,9 +217,7 @@ const Calendar = () => {
   };
 
   useEffect(() => {
-    if (currentView === "eventList") {
-      setCombinedEvents(events);
-    } else if (currentView === "taskList") {
+    if (currentView === "taskList") {
       setCombinedEvents(tasks);
     } else {
       const combined = [...events, ...tasks];
@@ -168,8 +228,8 @@ const Calendar = () => {
   }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
-    if (view.type === "eventList" || view.type === "taskList") {
-      setCombinedEvents(view.type === "eventList" ? events : tasks);
+    if (view.type === "taskList") {
+      setCombinedEvents(tasks);
     } else {
       setCombinedEvents([...events, ...tasks]);
     }
@@ -242,7 +302,6 @@ const Calendar = () => {
     if (
       view.type === "timeGridDay" ||
       view.type === "timeGridWeek" ||
-      view.type === "eventList" ||
       view.type === "taskList"
     ) {
       baseDate = new Date(view.currentStart);
@@ -281,6 +340,7 @@ const Calendar = () => {
     setIsFormOpen(true);
     setSelectedRange(null);
   };
+
 
   const isEventEditing = selectedEvent !== null;
   const isTaskEditing = selectedTask !== null;
@@ -325,11 +385,19 @@ const Calendar = () => {
     setCombinedEvents(combined);
   };
 
+  const toolbarChunks = document.querySelectorAll(".fc-toolbar-chunk");
+  if (toolbarChunks.length >= 3) {
+    toolbarChunks[0].classList.add("fc-toolbar-left");
+    toolbarChunks[1].classList.add("fc-toolbar-center");
+    toolbarChunks[2].classList.add("fc-toolbar-right");
+  }
+
   return (
     <div>
       <div className="time-machine-button">
         <TimeMachinePreview />
       </div>
+      <button onClick={handleChangeTimeZone} className="timezone-button"></button>
 
       <Modal
         isOpen={isFormOpen}
@@ -408,30 +476,33 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "today addEvent calendarTimeZone",
-            center: "prev title next",
-            right: "dayGridMonth,timeGridWeek,timeGridDay eventList,taskList",
+            left: "title addEvent,prev,today,next",
+            center: "dayGridMonth,timeGridWeek,timeGridDay,taskList",
+            right: "addEvent prev,today,next",
+          }}
+          buttonText={{
+            today: "Today",              
+            month: "Month",         
+            week: "Week",            
+            day: "Day",           
+            list: "Tasks",              
           }}
           customButtons={{
             addEvent: {
               text: "",
               click: handleAddItem,
             },
-            calendarTimeZone: {
-              text: "",
-              click: handleChangeTimeZone,
-            }
           }}
           views={{
-            eventList: {
-              type: "list",
-              duration: { month: 1 },
-              buttonText: "events",
-            },
             taskList: {
               type: "list",
               duration: { month: 1 },
-              buttonText: "tasks",
+              buttonText: "Tasks",
+              noEventsContent: () => (
+                <div style={{ textAlign: "center", padding: "10px" }}>
+                  🎉 No tasks found for this period! 🎉
+                </div>
+              ),
             },
           }}
           events={combinedEvents}
@@ -445,9 +516,15 @@ const Calendar = () => {
           select={handleSelectRange}
           stickyHeaderDates={true}
           handleWindowResize={true}
-          height={"100%"}
           scrollTime={"08:00:00"}
           scrollTimeReset={false}
+          dayMaxEventRows={2}
+          eventMaxStack={3}
+          // editable={true}
+          // eventResizableFromStart={true}
+          // eventDurationEditable={true}
+          // eventResize={handleItemResize}
+          // eventDragStop={handleItemDrop}
         />
       </div>
     </div>

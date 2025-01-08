@@ -95,16 +95,6 @@
   margin-top: 20px;
 }
 
-/* .form-button:hover {
-  background-color: #0066cc;
-  color: #fff;
-}
-
-.form-submit {
-  background-color: #007bff;
-  margin-right: 10px;
-} */
-
 .form-submit:hover {
   background-color: #0056b3;
 }
@@ -203,3 +193,77 @@
   border-radius: 5px;
 }
 
+.invited-users-container {
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.remove-user {
+  background-color: #dc3545;
+  margin-top: 0px;
+}
+
+.remove-user:hover {
+  background-color: #990615;
+}
+
+.invited-users-container ul {
+  list-style-type: none; 
+  padding: 0;
+}
+
+.suggested-user-item,
+.invited-user-item {
+  display: flex;
+  align-items: center; 
+  justify-content: space-between; 
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.suggested-user-item {
+  cursor: pointer;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column; 
+}
+
+.user-details strong {
+  font-size: 1rem; 
+}
+
+.user-email {
+  font-size: 0.85rem; 
+  color: gray; 
+}
+
+.status {
+  font-size: 0.85rem; 
+  padding: 4px 8px;
+  color: #007bff; 
+  font-weight: 500;
+}
+
+.status.accepted {
+  color: green;
+}
+
+.status.rejected {
+  color: red;
+}
+
+.status.pending {
+  color: #007bff;
+}
+
+
+
+::placeholder {
+  font-family: "Poppins", sans-serif;
+}

@@ -1,25 +1,23 @@
 import Note from "../models/Note.js";
+import User from '../models/User.js';
+import sendEmailNotification from '../utils/sendEmailNotification.js';
 
 // crea una nota
 export const createNote = async (req, res) => {
   const { title, content, categories, userID, visibility, accessList } = req.body;
 
   if (!title || !categories || categories.length === 0) {
-    return res
-      .status(400)
-      .json({ error: "Titolo e categorie sono obbligatori" });
+    return res.status(400).json({ error: "Titolo e categorie sono obbligatori" });
   }
 
   if (!content || content.trim() === "") {
     return res.status(400).json({ error: "Il contenuto non può essere vuoto" });
   }
 
-  // Validazione per visibility
   if (visibility && !['open', 'restricted', 'private'].includes(visibility)) {
     return res.status(400).json({ error: "Visibilità non valida" });
   }
 
-  // Se la visibilità è 'restricted', controlla che accessList sia presente
   if (visibility === 'restricted' && (!accessList || accessList.length === 0)) {
     return res.status(400).json({ error: "La lista di accesso è obbligatoria per visibilità 'restricted'" });
   }
@@ -30,17 +28,33 @@ export const createNote = async (req, res) => {
       content,
       categories,
       userID,
-      visibility: visibility || 'open', // Impostazione della visibilità predefinita su 'open'
-      accessList: accessList || [], // Impostazione di accessList vuota per visibilità predefinita
+      visibility: visibility || 'open',
+      accessList: accessList || [],
     });
 
     const savedNote = await newNote.save();
+
+    // Ottieni il nome dell'utente che ha creato la nota
+    const user = await User.findById(userID); // Recupera l'utente tramite userID
+    const userName = user ? user.name : "Utente sconosciuto"; // Fallback se l'utente non esiste
+
+    // Invia email se la nota è ristretta
+    if (visibility === 'restricted') {
+      const recipients = await User.find({ _id: { $in: accessList } }, 'email');
+      const emails = recipients.map(user => user.email);
+      const subject = `Nuova nota condivisa con te`;
+      const message = `L'utente ${userName} ti ha condiviso una nuova nota.  <a href="http://localhost:3001/notes"> Clicca per vederla </a>`;
+
+      for (const email of emails) {
+        await sendEmailNotification(email, subject, message);
+      }
+    }
+
     res.status(201).json(savedNote);
   } catch (error) {
     res.status(500).json({ error: "Errore nella creazione della nota" });
   }
 };
-
 
 // Ottieni tutte le note
 export const getNotes = async (req, res) => {
@@ -62,13 +76,11 @@ export const getNotes = async (req, res) => {
   }
 };
 
+
 // modifica una nota
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content, categories, visibility, accessList } = req.body;
-  const { userID } = req.query;
-
-  console.log("Received data:", { title, content, categories, visibility, accessList }); // Aggiungi il log qui
 
   if (!title || !categories || categories.length === 0) {
     return res.status(400).json({ error: "Titolo e categorie sono obbligatori" });
@@ -81,21 +93,32 @@ export const updateNote = async (req, res) => {
       return res.status(404).json({ error: "Nota non trovata" });
     }
 
-
-    // Modifica il contenuto e altre informazioni, ma solo se l'utente è il proprietario
     note.title = title;
     note.content = content;
     note.categories = categories;
 
-    // Solo il proprietario può modificare la visibilità
-    
-      if (visibility) note.visibility = visibility; // Modifica la visibilità
-      if (accessList) note.accessList = accessList; // Modifica l'accesso
-    
+    if (visibility) note.visibility = visibility;
+    if (accessList) note.accessList = accessList;
 
-    const updatedNote = await note.save(); // Salva la nota aggiornata
+    const updatedNote = await note.save();
+
+    // Ottieni il nome dell'utente che ha modificato la nota
+    const user = await User.findById(note.userID); // Recupera l'utente tramite userID
+    const userName = user ? user.name : "Utente sconosciuto"; // Fallback se l'utente non esiste
+
+    // Se la nota è ristretta e l'accessList è stata aggiornata, invia un'email
+    if (visibility === 'restricted' && accessList) {
+      const recipients = await User.find({ _id: { $in: accessList } }, 'email');
+      const emails = recipients.map(user => user.email);
+      const subject = `Nota aggiornata condivisa con te`;
+      const message = `L'utente ${userName} ha aggiornato una nota e l'ha condivisa con te. <a href="http://localhost:3001/notes">Accedi per vederla</a>`;
+
+      for (const email of emails) {
+        await sendEmailNotification(email, subject, message);
+      }
+    }
+
     res.status(200).json(updatedNote);
-
   } catch (error) {
     res.status(500).json({ error: "Errore nell'aggiornamento della nota" });
   }

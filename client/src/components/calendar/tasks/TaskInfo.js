@@ -7,9 +7,6 @@ const TaskInfo = ({
   handleDeleteTask,
   markTaskAsCompleted,
 }) => {
-  if (!selectedTask) {
-    return <div>Select a task to view its details</div>;
-  }
 
   const isOverdue = selectedTask.extendedProps.isOverdue;
   const isCompleted = selectedTask.extendedProps.status === "completed";
@@ -21,7 +18,7 @@ const TaskInfo = ({
   const deadline = DateTime.fromISO(selectedTask.extendedProps.deadline);
   const completedLate = isCompleted && completedAt && completedAt >= deadline;
 
-  const isAllDay = selectedTask.extendedProps.wasAllDay;
+  const isAllDay = selectedTask.extendedProps.isAllDay;
 
   const getBadgeClass = () => {
     if (completedLate) return "late";

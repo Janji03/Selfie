@@ -45,6 +45,19 @@ const ExtendedPropsSchema = new Schema(
       type: [NotificationSchema], 
       default: [],
     },
+    invitedUsers: [
+      {
+        userID: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected", "resend_requested"],
+          default: "pending",
+        },
+      },
+    ],
   },
   { _id: false }
 );

@@ -1,124 +1,27 @@
-/* General Button Styles */
-.calendar .fc-button {
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #001789;
-  padding: 10px 15px;
-  height: 45px; /* Fixed height for all buttons */
-  box-sizing: border-box;
+:root {
+  --fc-small-font-size: 0.8em;
+  --fc-page-bg-color: #f9f9f9;
+  --fc-border-color: #ddd;
+
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: #001789;
+  --fc-button-border-color: #001789;
+  --fc-button-hover-bg-color: #001789;
+  --fc-button-hover-border-color: #001789;
+  --fc-button-active-bg-color: #001789;
+  --fc-button-active-border-color: #001789;
+
+  --fc-event-text-color: #fff;
+  --fc-event-selected-overlay-color: rgba(0, 23, 137, 0.25);
+
+  --fc-more-link-bg-color: #f0f0f0;
+  --fc-more-link-text-color: #001789;
+
+  --fc-daygrid-event-dot-width: 0px;
+  --fc-list-event-dot-width: 0px;
 }
 
-/* Specific Button Backgrounds */
-.calendar .fc-button,
-.calendar .fc-prev-button,
-.calendar .fc-next-button,
-.calendar .fc-addEvent-button {
-  background-color: #001789;
-  color: white;
-}
-
-.calendar .fc-today-button,
-.calendar .fc-calendarTimeZone-button,
-.calendar .fc-dayGridMonth-button,
-.calendar .fc-timeGridWeek-button,
-.calendar .fc-timeGridDay-button,
-.calendar .fc-eventList-button,
-.calendar .fc-taskList-button {
-  background-color: #ffffff;
-  color: #001789;
-}
-
-/* Button Icons */
-.calendar .fc-button::before {
-  font-size: 18px;
-}
-
-.calendar .fc-today-button::before {
-  content: '\1F4C5'; /* Calendar Icon */
-}
-
-.calendar .fc-addEvent-button::before {
-  content: '\2795'; /* Plus Icon */
-}
-
-.calendar .fc-calendarTimeZone-button::before {
-  content: '\1F310'; /* Globe Icon */
-}
-
-/* Hover State */
-.calendar .fc-button:hover {
-  background-color: #f5f6fd;
-  color: #001789;
-  transform: scale(1.05);
-}
-
-/* Active State */
-.calendar .fc-button:active {
-  background-color: #e8efff;
-  color: #001789;
-  transform: scale(1);
-}
-
-/* Focus State */
-.calendar .fc-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
-}
-
-/* Toolbar-Specific Styles */
-.calendar .fc-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  flex-wrap: wrap; /* Allow wrapping on small screens */
-  gap: 10px; /* Spacing between elements */
-  padding: 10px;
-}
-
-.calendar .fc-toolbar-chunk {
-  flex-grow: 1;
-  flex-basis: 50;
-}
-
-.calendar .fc-toolbar-title {
-  font-size: 24px;
-  font-weight: 600;
-  color: #001789;
-  text-align: center;
-  margin: 0;
-  padding: 10px 0;
-  letter-spacing: 1px;
-}
-
-/* Time Machine Button */
-.time-machine-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  background-color: #284bff;
-  border-radius: 50%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.time-machine-button i {
-  color: white;
-  font-size: 22px;
-  cursor: pointer;
-}
-
-/* Calendar Styles */
+/* CALENDAR */
 .calendar {
   display: flex;
   flex-direction: column;
@@ -127,131 +30,395 @@
   background: linear-gradient(to bottom, #f5f6fd, #e8efff);
   font-family: "Poppins", sans-serif;
   color: #001789;
-  height: 97vh;
+  height: 100%;
+  min-width: 380px;
 }
 
 .calendar .fc {
   flex-grow: 1;
   width: 100%;
+  padding: 1em;
 }
 
-/* Left section */
-.calendar .fc-toolbar-left {
+/* Toolbar Base Style */
+.calendar .fc-header-toolbar {
   display: flex;
-  gap: 10px; /* Add spacing between buttons */
-  flex-wrap: wrap; /* Wrap buttons if needed */
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-/* Middle section (Title) */
-.calendar .fc-toolbar-title { 
-  text-align: center;
-  font-size: 18px;
+/* Title */
+.calendar .fc-toolbar-title {
+  font-size: 1.5rem;
   font-weight: bold;
+  color: #001789;
 }
 
-/* Right section */
-.calendar .fc-toolbar-right {
-  display: flex;
-  gap: 10px; /* Spacing between buttons */
-  flex-wrap: wrap; /* Wrap buttons if needed */
-  justify-content: flex-end; /* Align to the right */
-}
-
-/* Responsive adjustments for small screens */
-@media (max-width: 768px) {
-  .calendar .fc-toolbar {
-    flex-direction: column; /* Stack toolbar vertically */
-    align-items: stretch; /* Stretch to full width */
-  }
-
-  /* Group navigation buttons (Prev, Today, Next) in one row */
-  .calendar .fc-toolbar-left {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-    margin-bottom: 10px; /* Space below */
-  }
-
-  /* Move timezone selector to its own row */
-  .calendar .fc-toolbar-left .fc-calendarTimeZoneButton-button {
-    width: 100%; /* Full width */
-    margin-top: 5px; /* Add spacing above */
-  }
-
-  /* Title centered on its own row */
-  .calendar .fc-toolbar-title {
-    text-align: center;
-    font-size: 16px; /* Slightly smaller font */
-    margin-bottom: 10px; /* Space below */
-  }
-
-  /* View switch buttons grouped in 2 rows */
-  .calendar .fc-toolbar-right {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 buttons per row */
-    gap: 8px;
-    margin-top: 10px; /* Space above */
-  }
-}
-
-/* Optional: Make all buttons full-width on very small screens */
-@media (max-width: 480px) {
-  .calendar .fc-toolbar button {
-    width: 100%; /* Full width buttons for mobile */
-  }
-
-  .calendar .fc-toolbar-right {
-    grid-template-columns: 1fr; /* Stack buttons vertically */
-  }
-}
-
-/* Center the title and position Prev and Next buttons */
 .calendar .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px; /* Add spacing between elements */
+  font-size: 0.9em;
 }
 
-/* Align the title specifically */
-.calendar .fc-toolbar-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #001789;
-  margin: 0 10px; /* Space around the title */
+.calendar .fc-toolbar-left .fc-addEvent-button,
+.calendar .fc-toolbar-left .fc-button-group {
+  display: none;
 }
 
-/* Style the Prev and Next buttons */
-.calendar .fc-prev-button,
-.calendar .fc-next-button {
-  background-color: #001789;
-  color: white;
-  font-size: 16px;
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
+/* Responsive: Move views below on smaller screens */
+@media (max-width: 768px) {
+  .calendar .fc-header-toolbar {
+    flex-direction: column; 
+    align-items: flex-start;
+  }
+
+  .calendar .fc-toolbar-right {
+    display: none; 
+  }
+
+  .calendar .fc-toolbar-left {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; 
+  }
+
+  .calendar .fc-toolbar-left .fc-button-group {
+    display: inline-block;
+  }
+
+  .calendar .fc-toolbar-left .fc-addEvent-button {
+    display: inline-block;
+    margin-right: 10px;
+  }
+
+  .calendar .fc-toolbar-left .fc-button-group .fc-prev-button {
+    border-radius: 6px 0 0 6px;
+  }
+
+  .calendar .fc-toolbar-left .fc-button-group .fc-addEvent-button {
+    border-radius: 6px;
+  }
+
+  .calendar .fc-toolbar-center {
+    width: 100%;
+    margin-top: 10px;
+    justify-content: center;
+  }
+
+  .calendar .fc-toolbar-center .fc-button-group {
+    width: 100%;
+  }
+
+  .calendar .fc-toolbar-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #001789;
+  }
+}
+
+@media (max-width: 480px) {
+
+  .calendar .fc-header-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .calendar .fc-toolbar-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calendar .fc-toolbar-left .fc-button-group {
+    gap: 10px;
+    margin-left: 0px;
+  }
+
+  .calendar .fc-toolbar-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #001789;
+  }
+
+}
+
+
+/* Buttons */
+.calendar .fc-button {
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9em;
+  font-weight: bold;
+  border-radius: 6px; 
+  border: 1.8px solid #001789;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s, transform 0.3s;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6em 1.4em;
+  height: auto;
+  max-height: 3em;
+  box-sizing: border-box;
+  display: inline-flex;
+}
+
+.calendar .fc-button:hover, 
+.calendar .fc-button:active {
+  transform: scale(1.1);
+}
+
+.calendar .fc-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
+}
+
+.calendar .fc-button:disabled {
+  cursor: not-allowed;
+  background-color: #ffffff;
+  color: #001789;
+}
+
+.calendar .fc-calendarTimeZone-button,
+.calendar .fc-dayGridMonth-button,
+.calendar .fc-timeGridWeek-button,
+.calendar .fc-timeGridDay-button,
+.calendar .fc-taskList-button {
+  background-color: #ffffff;
+  color: #001789;
+}
+
+.calendar .fc-calendarTimeZone-button:hover,
+.calendar .fc-dayGridMonth-button:hover,
+.calendar .fc-timeGridWeek-button:hover,
+.calendar .fc-timeGridDay-button:hover,
+.calendar .fc-taskList-button:hover {
+  background-color: #001789;
+  color: #ffffff  ;
+  transform: scale(1.1);
+}
+
+.calendar .fc-prev-button {
+  background-color: #ffffff;
+  color: #001789;
+  border-radius: 6px;
+  border-right: 0px;
+  padding-right: 1px;
+  padding-left: 3px;
+}
+
+.calendar .fc-next-button {
+  background-color: #ffffff;
+  color: #001789;
+  border-radius: 6px;
+  border-left: 0px;
+  padding-left: 1px;
+  padding-right: 3px;
 }
 
 .calendar .fc-prev-button:hover,
 .calendar .fc-next-button:hover {
-  background-color: #0056b3;
+  background-color: #001789;
+  color: #ffffff;
   transform: scale(1.1);
 }
 
 .calendar .fc-prev-button:active,
 .calendar .fc-next-button:active {
   background-color: #003366;
-  transform: scale(1);
+  transform: scale(1.1);
 }
 
 .calendar .fc-prev-button:focus,
 .calendar .fc-next-button:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 23, 137, 0.5);
+  box-shadow: 0 0 0 2px rgba(0, 23, 137, 0.5);
 }
 
-.calendar .fc-day-today {
-  background-color: #a6caf1 !important;
+.calendar .fc-today-button {
+  background-color: #ffffff;
+  color: #001789;
+  border-right: 0px;
+  border-left: 0px;
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+.calendar .fc-today-button:hover {
+  background-color: #001789;
+  color: white;
+  border: 1px solid #001789;
+  transform: scale(1.1);
+}
+
+.calendar .fc-addEvent-button {
+  padding-right: 1.4em;
+  padding-left: 1.4em;
+}
+
+.calendar .fc-addEvent-button::before {
+  content: '\2795'; /* Plus Icon */
+}
+
+/* EVENTS */
+.fc-event {
+  font-family: "Poppins", sans-serif;
+  font-weight: bold;
+  border-radius: 6px;
+  border: 1px solid #4d4d4d;
+  color: white;
+  transition: transform 0.2s ease-in-out;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.fc-event:hover {
+  cursor: pointer;
+  transform: scale(1.04);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.fc-event.event {
+  background-color: #0056b3; 
+}
+
+.fc-event.event:hover {
+  background-color: #014894; 
+}
+
+.fc-event.task-overdue {
+  background-color: #dc3545; 
+}
+
+.fc-event.task-overdue:hover {
+  background-color: #cf1427; 
+}
+
+.fc-event.task-completed {
+  background-color: #28a745; 
+}
+
+.fc-event.task-completed:hover {
+  background-color: #23c148; 
+}
+
+.fc-event.task-late {
+  background-color: #ff9800; 
+}
+
+.fc-event.task-late:hover {
+  background-color: #e98d02; 
+}
+
+.fc-event.task-pending {
+  background-color: #007bff; 
+}
+
+.fc-event.task-pending:hover {
+  background-color: #348eed; 
+}
+
+.calendar .fc-event.fc-list-event:hover {
+  color: #001789;
+}
+
+.calendar.fc-list-event-title,
+.calendar.fc-list-event-time {
+  border: none;
+}
+
+.calendar .fc-list-event-graphic {
+  display: none;
+}
+
+/* GRID */
+.calendar .fc-scrollgrid,
+.calendar .fc-col-header-cell,
+.calendar .fc-timegrid-divider,
+.calendar .fc-scroller,
+.calendar .fc-list-day-cushion {
+  border: 1px solid #001789;
+}
+
+.calendar .fc-daygrid-day-bottom {
+  max-height: 50px;
+}
+
+.calendar .fc-day,
+.calendar .fc-timegrid-slot {
+  border: 1px solid #cbcff8;
+}
+
+.calendar .fc-day:hover,
+.calendar .fc-timegrid-slot:hover {
+  cursor: pointer;
+  background-color: #e0e2fb;
+}
+
+.fc-daygrid-day-number,
+.fc-timegrid-slot-label-cushion,
+.fc-timegrid-axis-cushion {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #001789;
+}
+
+.fc-col-header-cell-cushion {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  color: #001789;
+  font-weight: bold;
+}
+
+
+/* TIME MACHINE */
+.time-machine-button {
+  cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #284bff;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.time-machine-button i {
+  color: white;
+  font-size: 1.3em;
+}
+
+.time-machine-button:hover {
+  background-color: #001789;
+}
+
+.timezone-button {
+  cursor: pointer;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #284bff;
+  border-radius: 50%;
+  border: 1px solid #000000;
+  z-index: 100;
+  font-family: 'Poppins';
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.timezone-button::before {
+  content: '\1F310'; 
+  font-size: 1.3em;
+}
+
+.timezone-button:hover {
+  background-color: #001789;
 }
