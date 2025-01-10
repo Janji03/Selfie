@@ -2,6 +2,9 @@ import Event from "../models/Event.js";
 import User from "../models/User.js";
 import agenda from "../config/agenda.js";
 import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
+import nodemailer from "nodemailer";
+import config from "../config/config.js"
+import { createEvent } from "ics";
 
 // Estrai tutti gli eventi
 export const getEvents = async (req, res) => {
@@ -50,7 +53,7 @@ export const getEventById = async (req, res) => {
 };
 
 // Crea un evento
-export const createEvent = async (req, res) => {
+export const createNewEvent = async (req, res) => {
   const { eventData, userID } = req.body;
 
   try {
@@ -208,3 +211,42 @@ export const resendEventInvitation = async (req, res) => {
     res.status(500).send('Error resending reminder');
   }
 }
+
+
+export const sendEventAsICalendar = async (req, res) => {
+  try {
+    const { event, email } = req.body;
+
+    createEvent(event, async (error, value) => {
+      if (error) {
+        console.error("Error creating iCalendar event:", error);
+        return res.status(500).send("Failed to create iCalendar event.");
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: config.EMAIL_USER,
+          pass: config.EMAIL_PASS,
+        },
+      });
+
+      const mailOptions = {
+        from: config.EMAIL_USER,
+        to: email,
+        subject: "Exported Event",
+        icalEvent: {
+          filename: "event.ics",
+          method: "REQUEST", 
+          content: value, 
+        },
+      };
+
+      await transporter.sendMail(mailOptions);
+      res.status(200).send("Email sent successfully with iCalendar event.");
+    });
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    res.status(500).send("Failed to send email.");
+  }
+};

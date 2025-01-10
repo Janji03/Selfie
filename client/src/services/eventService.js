@@ -42,7 +42,7 @@ export const getEventById = async (id) => {
 };
 
 // Crea un nuovo evento
-export const createEvent = async (eventData, userID) => {
+export const createNewEvent = async (eventData, userID) => {
   try {
     const response = await axiosInstance.post(`events`, { eventData, userID });
     return response.data;
@@ -87,6 +87,15 @@ export const handleInvitationResponse = async (id, userID, responseType) => {
       return response.data;
     } 
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error: ", error);
   }
 };
+
+export const sendEventAsICalendar = async (id, email, event) => {
+  try {
+    const response = await axiosInstance.post(`events/${id}/ics`, { event, email });
+    return response.data;
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+}

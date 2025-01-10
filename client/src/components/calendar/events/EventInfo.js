@@ -8,16 +8,18 @@ import "../../../styles/EventInfo.css";
 const EventInfo = ({
   selectedEvent,
   setSelectedEvent,
-  events,
   setEvents,
   selectedOccurrence,
   handleEditEvent,
   handleDeleteEvent,
+  handleExportEvent,
 }) => {
   const { getRecurrenceSummary } = RecurrenceHandler();
 
-  const { id, userID, title, start, end, allDay, rrule, extendedProps } = selectedEvent;
-  const { location, description, timeZone, notifications, invitedUsers } = extendedProps;
+  const { id, userID, title, start, end, allDay, rrule, extendedProps } =
+    selectedEvent;
+  const { location, description, timeZone, notifications, invitedUsers } =
+    extendedProps;
 
   const currentUserID = localStorage.getItem("userID");
   const isOwner = userID === currentUserID;
@@ -36,7 +38,7 @@ const EventInfo = ({
         }
 
         const user = getUser(currentUserID);
-        setCurrentUser(user); 
+        setCurrentUser(user);
 
         if (invitedUsers && invitedUsers.length > 0) {
           const users = await Promise.all(
@@ -45,7 +47,14 @@ const EventInfo = ({
               if (invite.userID === currentUserID) {
                 setCurrentUserStatus(invite.status);
               }
-              return participant ? { id: invite.userID, name: participant.name, email: participant.email, status: invite.status } : null;
+              return participant
+                ? {
+                    id: invite.userID,
+                    name: participant.name,
+                    email: participant.email,
+                    status: invite.status,
+                  }
+                : null;
             })
           );
           setParticipants(users.filter(Boolean));
@@ -76,7 +85,9 @@ const EventInfo = ({
     setCurrentUserStatus(responseType === "accept" ? "accepted" : "rejected");
 
     if (responseType === "reject") {
-      setEvents((prevEvents) => prevEvents.filter((event) => event.id !== selectedEvent.id));
+      setEvents((prevEvents) =>
+        prevEvents.filter((event) => event.id !== selectedEvent.id)
+      );
       setSelectedEvent(null);
     }
   };
@@ -190,12 +201,17 @@ const EventInfo = ({
                         </button>
                       </>
                     ) : (
-                      <div className={`status ${currentUserStatus.toLowerCase()}`}>
+                      <div
+                        className={`status ${currentUserStatus.toLowerCase()}`}
+                      >
                         {currentUserStatus}
                       </div>
                     )}
                     {currentUserStatus === "accepted" && (
-                      <button className="leave" onClick={() => handleResponse("reject")}>
+                      <button
+                        className="leave"
+                        onClick={() => handleResponse("reject")}
+                      >
                         Leave
                       </button>
                     )}
@@ -211,24 +227,29 @@ const EventInfo = ({
         </div>
       )}
 
-      {isOwner && (
-        <div className="action-buttons">
-          <button className="edit" onClick={handleEditEvent}>
-            Edit Event
-          </button>
-          <button className="delete" onClick={() => handleDeleteEvent(null)}>
-            Delete Event
-          </button>
-          {selectedEvent.rrule && (
-            <button
-              className="delete-single"
-              onClick={() => handleDeleteEvent(selectedOccurrence)}
-            >
-              Delete Single Instance
+      <div className="action-buttons">
+        {isOwner && (
+          <>
+            <button className="edit" onClick={handleEditEvent}>
+              Edit Event
             </button>
-          )}
-        </div>
-      )}
+            <button className="delete" onClick={() => handleDeleteEvent(null)}>
+              Delete Event
+            </button>
+            {selectedEvent.rrule && (
+              <button
+                className="delete-single"
+                onClick={() => handleDeleteEvent(selectedOccurrence)}
+              >
+                Delete Single Instance
+              </button>
+            )}
+          </>
+        )}
+        <button className="export" onClick={handleExportEvent}>
+          Export Event
+        </button>
+      </div>
     </div>
   );
 };
