@@ -20,6 +20,8 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "ical": "^0.8.0",
+    "ical.js": "^2.1.0",
     "ics": "^3.8.1",
     "luxon": "^1.12.1",
     "marked": "^15.0.4",

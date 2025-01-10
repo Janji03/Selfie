@@ -70,8 +70,7 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } =
-    DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -112,7 +111,7 @@ const Calendar = () => {
 
       fetchEventsAndTasks();
     }
-  }, [isAuthenticated, userID, events, tasks]);
+  }, [isAuthenticated, userID]);
 
   useEffect(() => {
     const interval = setInterval(async () => {

@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { useTimeMachine } from "../../../context/TimeMachineContext";
 import RecurrenceForm from "./RecurrenceForm";
+import RecurrenceHandler from "./RecurrenceHandler"
 import NotificationForm from "./NotificationForm";
-import UserForm from "../UserForm"
+import UserForm from "../UserForm";
 import TimeZoneForm from "../TimeZoneForm";
+import ICAL from "ical.js";
+import { DateTime } from "luxon";
 import "../../../styles/Form.css";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
+  const { parseRRule } = RecurrenceHandler();
+
   const { time } = useTimeMachine();
 
   const [formData, setFormData] = useState({
@@ -89,6 +94,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         adjustedFormData.recurrence = null;
       }
 
+      console.log(adjustedFormData);
       onSubmit({ ...adjustedFormData });
     }
   };
@@ -126,27 +132,109 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       }));
     }
 
-      if (name === "startTime") {
+    if (name === "startTime") {
       const [hours, minutes] = value.split(":").map(Number);
       const newHours = (hours + 1) % 24;
       const updatedValue = `${newHours.toString().padStart(2, "0")}:${minutes
-          .toString()
-          .padStart(2, "0")}`;
-  
-        setFormData((prevFormData) => ({
-          ...prevFormData,
+        .toString()
+        .padStart(2, "0")}`;
+
+      setFormData((prevFormData) => ({
+        ...prevFormData,
         endTime: updatedValue,
-        }));
-      }
+      }));
+    }
   };
 
   const handleResetChanges = () => {
     setFormData({ ...initialData });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+  
+    if (file) {
+      const reader = new FileReader();
+  
+      reader.onload = (event) => {
+        const fileContent = event.target.result;
+  
+        try {
+          const parsedData = ICAL.parse(fileContent);
+          const component = new ICAL.Component(parsedData);
+          const vevent = component.getFirstSubcomponent("vevent");
+          const eventData = new ICAL.Event(vevent);
+
+          console.log(vevent);
+          console.log(eventData);
+
+          const start = DateTime.fromISO(new Date(eventData.startDate).toISOString(), { zone: "UTC" }).setZone(formData.timeZone).toISO();
+          const end = DateTime.fromISO(new Date(eventData.endDate).toISOString(), { zone: "UTC" }).setZone(formData.timeZone).toISO();
+
+          const startDate = start.split("T")[0];
+          const startTime = start.split("T")[1]?.slice(0, 5);
+          const endDate = end.split("T")[0];
+          const endTime = end.split("T")[1]?.slice(0, 5);
+
+          const isAllDay = startTime === "00:00" && endTime === "00:00";
+
+          const adjustedEndDate = isAllDay
+            ? DateTime.fromISO(endDate).minus({ days: 1 }).toISODate()
+            : endDate;
+
+          const rrule = vevent.getFirstPropertyValue("rrule");
+
+          let recurrence = null;
+          if (rrule) {
+            const rruleString = new ICAL.Recur(rrule).toString();
+  
+            recurrence = parseRRule(
+              rruleString,
+              false, 
+              start
+            );
+          }
+          
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            title: eventData.summary || "Imported Event",
+            allDay: isAllDay,
+            startDate: startDate,
+            startTime: startTime,
+            endDate: adjustedEndDate,
+            endTime: endTime, 
+            location: eventData.location || "",
+            description: eventData.description || "",
+            isRecurring: !!rrule,
+            recurrence: recurrence,
+          }));
+  
+          setErrors({});
+        } catch (error) {
+          console.error("Error parsing iCalendar file:", error);
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            file: "Failed to parse the iCalendar file.",
+          }));
+        }
+      };
+  
+      reader.readAsText(file);
+    }
+  };
+
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
+        <div>
+          <label className="form-label">Import iCalendar event:</label>
+          <input
+            type="file"
+            name="icsFile"
+            accept=".ics"
+            onChange={handleFileChange}
+          />
+        </div>
         <div>
           <label className="form-label">Title:</label>
           <input
@@ -283,7 +371,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
         <label className="form-label">Invite users</label>
         <UserForm formData={formData} setFormData={setFormData} />
-        
+
         <div>
           <label className="form-label">Time Zone:</label>
           <TimeZoneForm
