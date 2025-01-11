@@ -36,6 +36,19 @@ const ExtendedPropsSchema = new Schema(
       type: String,
       default: "task",
     },
+    invitedUsers: [
+      {
+        userID: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ["pending", "accepted", "rejected"],
+          default: "pending",
+        },
+      },
+    ],
   },
   { _id: false }
 );

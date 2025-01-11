@@ -29,7 +29,7 @@ import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
 import { getEvents, getInvitedEvents } from "../../services/eventService";
-import { getTasks } from "../../services/taskService";
+import { getTasks, getInvitedTasks } from "../../services/taskService";
 
 import DateUtilities from "./DateUtilities";
 
@@ -79,6 +79,7 @@ const Calendar = () => {
           const fetchedEvents = await getEvents(userID);
           const invitedEvents = await getInvitedEvents(userID);
           const fetchedTasks = await getTasks(userID);
+          const invitedTasks = await getInvitedTasks(userID);
 
           // Convert the events and tasks to calendar timezone
           const convertedEvents = fetchedEvents.map((event) => {
@@ -97,16 +98,25 @@ const Calendar = () => {
             ...convertEventTimes(task),
             classNames: getClassNamesForTask(task),
           }));
+          const convertedInvitedTasks = invitedTasks.map((task) => ({
+            ...convertEventTimes(task),
+            classNames: getClassNamesForTask(task),
+          }));
 
           const combinedEvents = [
             ...convertedEvents,
             ...convertedInvitedEvents,
           ];
 
-          setEvents(combinedEvents);
-          setTasks(convertedTasks);
+          const combinedTasks = [
+            ...convertedTasks,
+            ...convertedInvitedTasks,
+          ];
 
-          const combined = [...combinedEvents, ...convertedTasks];
+          setEvents(combinedEvents);
+          setTasks(combinedTasks);
+
+          const combined = [...combinedEvents, ...combinedTasks];
           setCombinedItems(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
@@ -124,6 +134,9 @@ const Calendar = () => {
           const fetchedEvents = await getEvents(userID);
           const invitedEvents = await getInvitedEvents(userID);
 
+          const fetchedTasks = await getTasks(userID);
+          const invitedTasks = await getInvitedTasks(userID);
+
           // Convert the events and tasks to calendar timezone
           const convertedEvents = fetchedEvents.map((event) => ({
             ...convertEventTimes(event),
@@ -134,14 +147,29 @@ const Calendar = () => {
             classNames: ["invited-event"],
           }));
 
+          const convertedTasks = fetchedTasks.map((task) => ({
+            ...convertEventTimes(task),
+            classNames: getClassNamesForTask(task),
+          }));
+          const convertedInvitedTasks = invitedTasks.map((task) => ({
+            ...convertEventTimes(task),
+            classNames: getClassNamesForTask(task),
+          }));
+
           const combinedEvents = [
             ...convertedEvents,
             ...convertedInvitedEvents,
           ];
 
-          setEvents(combinedEvents);
+          const combinedTasks = [
+            ...convertedTasks,
+            ...convertedInvitedTasks,
+          ];
 
-          const combined = [...combinedEvents, ...combinedItems];
+          setEvents(combinedEvents);
+          setTasks(combinedTasks);
+
+          const combined = [...combinedEvents, ...combinedTasks];
           setCombinedItems(combined);
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
@@ -263,12 +291,18 @@ const Calendar = () => {
     const processedEvents = events.map((event) => ({
       ...event,
       display: event.extendedProps?.markAsUnavailable ? 'background' : 'auto',
+      classNames: event.userID === userID ? ["event"] : ["invited-event"],
+    }));
+
+    const processedTasks = tasks.map((task) => ({
+     ...task,
+      classNames: getClassNamesForTask(task),
     }));
 
     if (currentView === "taskList") {
-      setCombinedItems(tasks);
+      setCombinedItems(processedTasks);
     } else {
-      const combined = [...processedEvents, ...tasks];
+      const combined = [...processedEvents, ...processedTasks];
       setCombinedItems(combined);
     }
     const calendarApi = calendarRef.current.getApi();
@@ -570,15 +604,10 @@ const Calendar = () => {
           handleWindowResize={true}
           scrollTime={"08:00:00"}
           scrollTimeReset={false}
-          dayMaxEventRows={2}
+          dayMaxEventRows={4}
           eventMaxStack={3}
-          height={"95vh"}
+          height="auto"
           selectMinDistance={1}
-          // editable={true}
-          // eventResizableFromStart={true}
-          // eventDurationEditable={true}
-          // eventResize={handleItemResize}
-          // eventDragStop={handleItemDrop}
         />
       </div>
     </div>

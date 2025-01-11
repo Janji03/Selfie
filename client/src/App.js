@@ -13,10 +13,8 @@ import TimeMachine from "./components/timemachine/TimeMachine";
 import ProtectedRoute from "./components/loginsignup/ProtectedRoute";
 import ForgotPassword from "./components/loginsignup/ForgotPassword";
 import ResetPassword from "./components/loginsignup/ResetPassword";
-import AcceptInvitation from "./components/calendar/events/invites/AcceptInvitation"; 
-import RejectInvitation from "./components/calendar/events/invites/RejectInvitation"; 
-import ResendInvitation from "./components/calendar/events/invites/ResendInvitation"; 
 import Inbox from "./components/profile/Inbox";
+import InvitationHandler from "./components/calendar/InvitationHandler";
 
 const App = () => {
   return (
@@ -84,9 +82,12 @@ const App = () => {
             />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/events/:id/accept" element={<AcceptInvitation />} />
-            <Route path="/events/:id/reject" element={<RejectInvitation />} />
-            <Route path="/events/:id/resend" element={<ResendInvitation />} />
+            <Route path="/events/:id/accept" element={<InvitationHandler action="accept" type="events"/>} />
+            <Route path="/events/:id/reject" element={<InvitationHandler action="rejct" type="events"/>} />
+            <Route path="/events/:id/resend" element={<InvitationHandler action="resend" type="events"/>} />
+            <Route path="/tasks/:id/accept" element={<InvitationHandler action="accept" type="tasks"/>} />
+            <Route path="/tasks/:id/reject" element={<InvitationHandler action="reject" type="tasks"/>} />
+            <Route path="/tasks/:id/resend" element={<InvitationHandler action="resend" type="tasks"/>} />
             <Route path="/" element={<Login />} />
             <Route path="*" element={<h1>404 - Page Not Found</h1>} />
           </Routes>
