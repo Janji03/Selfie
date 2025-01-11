@@ -14,6 +14,19 @@ export const getTasks = async (userID) => {
   }
 };
 
+export const getInvitedTasks = async (userID) => {
+  try {
+    const response = await axiosInstance.get(`tasks/invited`, {
+      params: { userID },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore durante il recupero delle task"
+    );
+  }
+};
+
 // Ottieni una task tramite il suo ID
 export const getTaskById = async (id) => {
   try {
@@ -61,5 +74,17 @@ export const deleteTask = async (id) => {
       error.response?.data?.message ||
         "Errore durante l'eliminazione della task'"
     );
+  }
+};
+
+export const handleInvitationResponse = async (id, userID, responseType) => {
+  try {
+    const response = await axiosInstance.put(`tasks/${id}/${responseType}`, {}, { params: { userID } });
+
+    if (response.status === 200) {
+      return response.data;
+    } 
+  } catch (error) {
+    console.error("Error: ", error);
   }
 };

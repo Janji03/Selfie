@@ -1,4 +1,5 @@
 import Task from "../models/Task.js";
+import User from "../models/User.js";
 import agenda from "../config/agenda.js";
 import scheduleTaskNotifications from "../scheduler/taskNotificationScheduler.js";
 
@@ -7,6 +8,24 @@ export const getTasks = async (req, res) => {
   const { userID } = req.query;
   try {
     const tasks = await Task.find({ userID, "extendedProps.temporary": false });
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nel recupero delle task" });
+  }
+};
+
+// Estrai tutte le task a cui è stato invitato
+export const getInvitedTasks = async (req, res) => {
+  const { userID } = req.query;
+  try {
+    const tasks = await Task.find({
+      "extendedProps.invitedUsers": {
+        $elemMatch: {
+          userID: userID,
+          status: { $ne: "rejected" }  
+        }
+      }
+    });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ error: "Errore nel recupero delle task" });
@@ -43,6 +62,20 @@ export const createTask = async (req, res) => {
 
     if (!savedTask.extendedProps.temporary) {
       await scheduleTaskNotifications(agenda, userID, savedTask);
+
+      if (taskData.extendedProps.invitedUsers.length > 0) {
+        for (const invitee of taskData.extendedProps.invitedUsers) {
+          const user = await User.findById(invitee.userID).select("name email");
+          if (!user) continue;
+      
+          await agenda.schedule("in 1 second", "send-invite-email", {
+            user: user,
+            item: newTask,
+            invitee: invitee,
+            type: "task"
+          });
+        }
+      }
     }
 
     res.status(201).json(savedTask);
@@ -98,3 +131,84 @@ export const deleteTask = async (req, res) => {
     res.status(500).json({ error: "Errore nell'eliminazione della task" });
   }
 };
+
+
+export const acceptTaskInvitation = async (req, res) => {
+
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const task = await Task.findOne({ id });
+    if (!task) return res.status(404).send('Task not found');
+
+    const invitee = task.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    if (invitee.status !== 'pending') {
+      return res.status(403).send('You cannot modify your response.');
+    }
+
+    invitee.status = 'accepted';
+    await task.save();
+
+    res.send(`You have successfully accepted the invitation for ${task.title}`);
+  } catch (error) {
+    res.status(500).send('Error accepting invitation');
+  }
+}
+
+export const rejectTaskInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const task = await Task.findOne({ id });
+    if (!task) return res.status(404).send('Task not found');
+
+    const invitee = task.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    invitee.status = 'rejected';
+    await task.save();
+
+    res.send(`You have successfully rejected the invitation for ${task.title}`);
+  } catch (error) {
+    res.status(500).send('Error rejecting invitation');
+  }
+}
+
+export const resendTaskInvitation = async (req, res) => {
+  const { userID } = req.query;
+  const { id } = req.params;
+
+  try {
+    const task = await Task.findOne({ id });
+    if (!task) return res.status(404).send('Task not found');
+
+    const invitee = task.extendedProps.invitedUsers.find(
+      (invitee) => invitee.userID === userID
+    );
+    if (!invitee) return res.status(404).send('Invitee not found');
+
+    invitee.status = 'pending';
+    await task.save();
+
+    const user = await User.findById(invitee.userID).select("name email");
+
+    await agenda.schedule("in 30 minutes", "send-invite-email", {
+      user: user,
+      item: task,
+      invitee: invitee,
+      type: "task"
+    });
+
+    res.send(`Reminder has been sent for the task: ${task.title}`);
+  } catch (error) {
+    res.status(500).send('Error resending reminder');
+  }
+}

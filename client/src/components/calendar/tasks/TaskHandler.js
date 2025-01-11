@@ -60,6 +60,7 @@ const TaskHandler = ({
         allDay: selectedTask.allDay,
         notifications: selectedTask.extendedProps.notifications,
         timeZone: selectedTask.extendedProps.timeZone,
+        invitedUsers: selectedTask.extendedProps.invitedUsers
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -121,6 +122,7 @@ const TaskHandler = ({
         deadline,
         notifications: data.notifications,
         timeZone: data.timeZone,
+        invitedUsers: data.invitedUsers,
       },
     };
 
@@ -162,6 +164,7 @@ const TaskHandler = ({
       allDay: false,
       notifications: false,
       timeZone: calendarTimeZone,
+      invitedUsers: [],
     });
   };
 

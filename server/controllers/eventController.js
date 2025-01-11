@@ -87,8 +87,9 @@ export const createNewEvent = async (req, res) => {
     
         await agenda.schedule("in 1 second", "send-invite-email", {
           user: user,
-          event: newEvent,
+          item: newEvent,
           invitee: invitee,
+          type: "event"
         });
       }
     }
@@ -216,8 +217,9 @@ export const resendEventInvitation = async (req, res) => {
 
     await agenda.schedule("in 30 minutes", "send-invite-email", {
       user: user,
-      event: event,
+      item: event,
       invitee: invitee,
+      type: "event"
     });
 
     res.send(`Reminder has been sent for the event: ${event.title}`);
