@@ -49,12 +49,12 @@ const Inbox = () => {
             recipients: selectedUsers,
             sender: userID,
         };
-
+    
         messageService.sendMessage(payload)
             .then(() => {
                 setNewMessage('');
                 setSelectedUsers([]);
-                alert('Message sent successfully');
+                alert('Message sent successfully and email notification delivered.');
             })
             .catch(error => console.error('Error sending message:', error));
     };
