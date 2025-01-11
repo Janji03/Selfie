@@ -28,6 +28,20 @@ export const getInvitedEvents = async (userID) => {
   }
 };
 
+// Ottieni tutti gli eventi unavailable
+export const getUnavailableEvents = async (userID) => {
+  try {
+    const response = await axiosInstance.get(`events/unavailable`, {
+      params: { userID },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore durante il recupero degli eventi"
+    );
+  }
+};
+
 
 // Ottieni un evento tramite il suo ID
 export const getEventById = async (id) => {

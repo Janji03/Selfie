@@ -9,7 +9,7 @@ import {
   createNewEvent,
   updateEvent,
   deleteEvent,
-  sendEventAsICalendar
+  sendEventAsICalendar,
 } from "../../../services/eventService";
 
 const EventHandler = ({
@@ -128,8 +128,9 @@ const EventHandler = ({
               ),
               endOccurrences: 2,
             },
+        markAsUnavailable: selectedEvent.extendedProps.markAsUnavailable,
         notifications: formattedNotifications,
-        invitedUsers: selectedEvent.extendedProps.invitedUsers
+        invitedUsers: selectedEvent.extendedProps.invitedUsers,
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -169,35 +170,34 @@ const EventHandler = ({
 
     const user = await getUser(userID);
     if (selectedEvent) {
-      const {
-        id,
-        title,
-        start,
-        end,
-        rrule,
-        exdate,
-        extendedProps,
-      } = selectedEvent;
-  
+      const { id, title, start, end, rrule, exdate, extendedProps } =
+        selectedEvent;
+
       const { location, description } = extendedProps;
 
       const event = {
-        start: DateTime.fromISO(start, { zone: "utc" }).toFormat("yyyyMMdd'T'HHmmss'Z'"),
-        end: DateTime.fromISO(end, { zone: "utc" }).toFormat("yyyyMMdd'T'HHmmss'Z'"),
+        start: DateTime.fromISO(start, { zone: "utc" }).toFormat(
+          "yyyyMMdd'T'HHmmss'Z'"
+        ),
+        end: DateTime.fromISO(end, { zone: "utc" }).toFormat(
+          "yyyyMMdd'T'HHmmss'Z'"
+        ),
         title: title,
         description: description,
         location: location,
       };
-      
+
       if (rrule) {
         const splitRRule = rrule.split(/:/);
-        const cleanedRRule = splitRRule[2];  
+        const cleanedRRule = splitRRule[2];
         event.recurrenceRule = cleanedRRule;
       }
-  
+
       if (exdate) {
-        const formattedExdate = exdate.map(date => {
-          return DateTime.fromISO(date, { zone: "utc" }).toFormat("yyyyMMdd'T'HHmmss'Z'");
+        const formattedExdate = exdate.map((date) => {
+          return DateTime.fromISO(date, { zone: "utc" }).toFormat(
+            "yyyyMMdd'T'HHmmss'Z'"
+          );
         });
         event.exclusionDates = formattedExdate;
       }
@@ -208,7 +208,7 @@ const EventHandler = ({
         console.error("Failed to export event:", error);
       }
     }
-  }
+  };
 
   const handleEventFormSubmit = async (data) => {
     const eventTimeZone = data.timeZone;
@@ -256,10 +256,15 @@ const EventHandler = ({
           recurrenceType:
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
-        invitedUsers: data.invitedUsers
+        invitedUsers: data.invitedUsers,
+        markAsUnavailable: data.markAsUnavailable
       },
       exdate: [],
     };
+
+    if (data.markAsUnavailable) {
+      newEvent.title = "Unavailable";
+    }
 
     try {
       if (isEditMode) {
@@ -278,6 +283,8 @@ const EventHandler = ({
         setSelectedEvent(convertedEvent);
       } else {
         const createdEvent = await createNewEvent(newEvent, userID);
+
+        console.log(createdEvent);
 
         // Convert from UTC to Local Timezone
         const convertedEvent = convertEventTimes(createdEvent);
@@ -328,7 +335,8 @@ const EventHandler = ({
         endOccurrences: 2,
       },
       notifications: [],
-      invitedUsers: []
+      invitedUsers: [],
+      markAsUnavailable: false,
     });
   };
 

@@ -35,6 +35,20 @@ export const getInvitedEvents = async (req, res) => {
   }
 };
 
+// Estrai tutti gli eventi a cui è stato invitato
+export const getUnavailableEvents = async (req, res) => {
+  const { userID } = req.query;
+  try {
+    const events = await Event.find({
+      userID: userID,
+      "extendedProps.markAsUnavailable": true
+    });
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nel recupero degli eventi" });
+  }
+};
+
 // Estrai un evento tramite il suo ID
 export const getEventById = async (req, res) => {
   const { id } = req.params;

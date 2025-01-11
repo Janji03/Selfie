@@ -58,6 +58,10 @@ const ExtendedPropsSchema = new Schema(
         },
       },
     ],
+    markAsUnavailable: {
+      type: Boolean,
+      default: false
+    }
   },
   { _id: false }
 );

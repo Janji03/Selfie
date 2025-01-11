@@ -81,10 +81,14 @@ const Calendar = () => {
           const fetchedTasks = await getTasks(userID);
 
           // Convert the events and tasks to calendar timezone
-          const convertedEvents = fetchedEvents.map((event) => ({
-            ...convertEventTimes(event),
-            classNames: ["event"],
-          }));
+          const convertedEvents = fetchedEvents.map((event) => {
+            const eventWithClassNames = {
+              ...convertEventTimes(event),
+              classNames: ["event"],
+              display: event.extendedProps?.markAsUnavailable ? 'background' : 'auto',
+            };    
+            return eventWithClassNames;
+          });
           const convertedInvitedEvents = invitedEvents.map((event) => ({
             ...convertEventTimes(event),
             classNames: ["invited-event"],
@@ -256,10 +260,15 @@ const Calendar = () => {
   };
 
   useEffect(() => {
+    const processedEvents = events.map((event) => ({
+      ...event,
+      display: event.extendedProps?.markAsUnavailable ? 'background' : 'auto',
+    }));
+
     if (currentView === "taskList") {
       setCombinedItems(tasks);
     } else {
-      const combined = [...events, ...tasks];
+      const combined = [...processedEvents, ...tasks];
       setCombinedItems(combined);
     }
     const calendarApi = calendarRef.current.getApi();
@@ -267,11 +276,6 @@ const Calendar = () => {
   }, [events, tasks, currentView]);
 
   const handleViewChange = ({ view }) => {
-    if (view.type === "taskList") {
-      setCombinedItems(tasks);
-    } else {
-      setCombinedItems([...events, ...tasks]);
-    }
     setCurrentView(view.type);
   };
 
@@ -290,6 +294,10 @@ const Calendar = () => {
         ...prevData,
         allDay: true,
       }));
+    }
+
+    if (info.jsEvent.target.classList.contains('fc-bg-event') || info.jsEvent.target.classList.contains('fc-event-title')) {
+      return;
     }
 
     setSelectedEvent(null);
@@ -565,6 +573,7 @@ const Calendar = () => {
           dayMaxEventRows={2}
           eventMaxStack={3}
           height={"95vh"}
+          selectMinDistance={1}
           // editable={true}
           // eventResizableFromStart={true}
           // eventDurationEditable={true}

@@ -2,6 +2,7 @@ import express from "express";
 import {
   getEvents,
   getInvitedEvents,
+  getUnavailableEvents,
   getEventById,
   createNewEvent,
   updateEvent,
@@ -16,6 +17,7 @@ const router = express.Router();
 
 router.get("/", getEvents);
 router.get("/invited", getInvitedEvents);
+router.get("/unavailable", getUnavailableEvents);
 router.get("/:id", getEventById);
 router.post("/", createNewEvent);
 router.put("/:id", updateEvent);
