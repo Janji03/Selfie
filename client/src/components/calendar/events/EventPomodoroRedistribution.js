@@ -1,4 +1,4 @@
-import { getEvents, updateEvent, createEvent } from "../../../services/eventService";
+import { getEvents, updateEvent, createNewEvent } from "../../../services/eventService";
 import { v4 as uuidv4 } from "uuid";
 
 const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
@@ -70,7 +70,7 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
             },
           },
         };
-        await createEvent(newEvent, userID); 
+        await createNewEvent(newEvent, userID); 
         setEvents((prevEvents) => [...prevEvents, newEvent]);
 
       } else {

@@ -10,7 +10,7 @@ import {
   acceptEventInvitation,
   rejectEventInvitation,
   resendEventInvitation,
-  updateCompletedCycles,,
+  updateCompletedCycles,
   sendEventAsICalendar
 } from "../controllers/eventController.js";
 

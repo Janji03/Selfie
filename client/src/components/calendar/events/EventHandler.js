@@ -130,7 +130,7 @@ const EventHandler = ({
             },
         markAsUnavailable: selectedEvent.extendedProps.markAsUnavailable,
         notifications: formattedNotifications,
-        invitedUsers: selectedEvent.extendedProps.invitedUsers,,
+        invitedUsers: selectedEvent.extendedProps.invitedUsers,
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -263,7 +263,7 @@ const EventHandler = ({
           cycles: data.pomodoroSettings.cycles,
           completedCycles: data.pomodoroSettings.completedCycles,
         },
-        invitedUsers: data.invitedUsers,,
+        invitedUsers: data.invitedUsers,
         markAsUnavailable: data.markAsUnavailable
       },
       exdate: [],
@@ -342,7 +342,7 @@ const EventHandler = ({
         endOccurrences: 2,
       },
       notifications: [],
-      invitedUsers: [],,
+      invitedUsers: [],
       markAsUnavailable: false,
     });
   };

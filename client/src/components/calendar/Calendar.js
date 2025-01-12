@@ -28,7 +28,7 @@ import TaskHandler from "./tasks/TaskHandler";
 import EventInfo from "./events/EventInfo";
 import TaskInfo from "./tasks/TaskInfo";
 
-import redistributePomodoroTime from "./events/EventPomodoroRedistribution"
+import redistributePomodoroTime from "./events/EventPomodoroRedistribution";
 
 import { getEvents, getInvitedEvents } from "../../services/eventService";
 import { getTasks, getInvitedTasks } from "../../services/taskService";
@@ -72,7 +72,8 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } = DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } =
+    DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -88,8 +89,10 @@ const Calendar = () => {
             const eventWithClassNames = {
               ...convertEventTimes(event),
               classNames: ["event"],
-              display: event.extendedProps?.markAsUnavailable ? 'background' : 'auto',
-            };    
+              display: event.extendedProps?.markAsUnavailable
+                ? "background"
+                : "auto",
+            };
             return eventWithClassNames;
           });
           const convertedInvitedEvents = invitedEvents.map((event) => ({
@@ -110,10 +113,7 @@ const Calendar = () => {
             ...convertedInvitedEvents,
           ];
 
-          const combinedTasks = [
-            ...convertedTasks,
-            ...convertedInvitedTasks,
-          ];
+          const combinedTasks = [...convertedTasks, ...convertedInvitedTasks];
 
           setEvents(combinedEvents);
           setTasks(combinedTasks);
@@ -125,6 +125,20 @@ const Calendar = () => {
         }
       };
 
+      const fetchAndRedistributeEvents = async () => {
+        if (isInitialMount.current) {
+          isInitialMount.current = false;
+          return;
+        }
+
+        try {
+          await redistributePomodoroTime(userID, time, setEvents); //modifica sta roba salvando qui setevents come const invece di passarlo
+        } catch (error) {
+          console.error("Error during redistribution:", error);
+        }
+      };
+
+      fetchAndRedistributeEvents();
       fetchEventsAndTasks();
     }
   }, [isAuthenticated, userID]);
@@ -163,10 +177,7 @@ const Calendar = () => {
             ...convertedInvitedEvents,
           ];
 
-          const combinedTasks = [
-            ...convertedTasks,
-            ...convertedInvitedTasks,
-          ];
+          const combinedTasks = [...convertedTasks, ...convertedInvitedTasks];
 
           setEvents(combinedEvents);
           setTasks(combinedTasks);
@@ -176,27 +187,8 @@ const Calendar = () => {
         } catch (error) {
           console.error("Error fetching events or tasks:", error);
         }
-      };
-
-      const fetchAndRedistributeEvents = async () => {
-        if (isInitialMount.current) {
-          isInitialMount.current = false;
-          return;
-        }
-        
-        try {
-          await redistributePomodoroTime(userID, time, setEvents); //modifica sta roba salvando qui setevents come const invece di passarlo
-        } catch (error) {
-          console.error("Error during redistribution:", error);
-        }
-        console.log('here');
-      };
-      
-      fetchAndRedistributeEvents();
-      fetchEventsAndTasks();
-      })
-    /* }, 10000); */
-
+      }
+    }, 10000);
     return () => clearInterval(interval);
   }, [isAuthenticated, userID, events, tasks]);
 
@@ -310,12 +302,12 @@ const Calendar = () => {
   useEffect(() => {
     const processedEvents = events.map((event) => ({
       ...event,
-      display: event.extendedProps?.markAsUnavailable ? 'background' : 'auto',
+      display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
       classNames: event.userID === userID ? ["event"] : ["invited-event"],
     }));
 
     const processedTasks = tasks.map((task) => ({
-     ...task,
+      ...task,
       classNames: getClassNamesForTask(task),
     }));
 
@@ -350,7 +342,10 @@ const Calendar = () => {
       }));
     }
 
-    if (info.jsEvent.target.classList.contains('fc-bg-event') || info.jsEvent.target.classList.contains('fc-event-title')) {
+    if (
+      info.jsEvent.target.classList.contains("fc-bg-event") ||
+      info.jsEvent.target.classList.contains("fc-event-title")
+    ) {
       return;
     }
 

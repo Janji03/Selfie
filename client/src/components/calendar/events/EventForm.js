@@ -375,20 +375,20 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 <span className="error-message">{errors.title}</span>
               )}
             </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  name="isPomodoro"
+                  checked={formData.isPomodoro}
+                  onChange={handleChange}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-label">Is Pomodoro</span>
+              </label>
+            </div>
           </div>
         )}
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              name="isPomodoro"
-              checked={formData.isPomodoro}
-              onChange={handleChange}
-              className="checkbox-input"
-            />
-            <span className="checkbox-label">Is Pomodoro</span>
-          </label>
-        </div>
 
         {formData.isPomodoro ? (
           <>
