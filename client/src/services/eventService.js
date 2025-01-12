@@ -28,6 +28,20 @@ export const getInvitedEvents = async (userID) => {
   }
 };
 
+// Ottieni tutti gli eventi unavailable
+export const getUnavailableEvents = async (userID) => {
+  try {
+    const response = await axiosInstance.get(`events/unavailable`, {
+      params: { userID },
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Errore durante il recupero degli eventi"
+    );
+  }
+};
+
 
 // Ottieni un evento tramite il suo ID
 export const getEventById = async (id) => {
@@ -42,7 +56,7 @@ export const getEventById = async (id) => {
 };
 
 // Crea un nuovo evento
-export const createEvent = async (eventData, userID) => {
+export const createNewEvent = async (eventData, userID) => {
   try {
     const response = await axiosInstance.post(`events`, { eventData, userID });
     return response.data;
@@ -78,6 +92,27 @@ export const deleteEvent = async (id) => {
     );
   }
 };
+
+export const handleInvitationResponse = async (id, userID, responseType) => {
+  try {
+    const response = await axiosInstance.put(`events/${id}/${responseType}`, {}, { params: { userID } });
+
+    if (response.status === 200) {
+      return response.data;
+    } 
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+};
+
+export const sendEventAsICalendar = async (id, email, event) => {
+  try {
+    const response = await axiosInstance.post(`events/${id}/ics`, { event, email });
+    return response.data;
+  } catch (error) {
+    console.error("Error: ", error);
+  }
+}
 
 //aggiorna cicli completati
 export const updateCompletedCycles = async (id, completedCycles) => {

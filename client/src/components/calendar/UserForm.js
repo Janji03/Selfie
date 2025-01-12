@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllUsersBasicInfo } from "../../services/userService";
+import { getUnavailableEvents } from "../../services/eventService";
+import { RRule } from "rrule";
 
 const UserForm = ({ formData, setFormData }) => {
   const [query, setQuery] = useState("");
@@ -28,22 +30,95 @@ const UserForm = ({ formData, setFormData }) => {
     }
   }, [query, users, formData.invitedUsers]);
 
-  const handleAddUser = (user) => {
-    if (
-      formData.invitedUsers.some((invitedUser) => invitedUser.userID === user._id)
-    ) {
-      setError("User already added.");
-    } else {
-      setFormData((prevFormData) => ({
-        ...prevFormData,
-        invitedUsers: [
-          ...prevFormData.invitedUsers,
-          { userID: user._id, status: "pending" }, 
-        ],
-      }));
-      setError("");
-      setQuery("");
-      setSuggestions([]);
+  const handleAddUser = async (user) => {
+    try {
+      const unavailableEvents = await getUnavailableEvents(user._id);
+
+      console.log(unavailableEvents);
+  
+      const isUnavailable = unavailableEvents.some((unavailableEvent) => {
+        let eventStart, eventEnd;
+
+        if (formData.allDay) {
+          const startDate = new Date(formData.startDate);
+          eventStart = new Date(startDate.setHours(0, 0, 0, 0)); 
+
+          const endDate = new Date(formData.endDate);
+          eventEnd = new Date(endDate.setHours(23, 59, 59, 999)); 
+        } else {
+          eventStart = new Date(`${formData.startDate}T${formData.startTime}`);
+          eventEnd = new Date(`${formData.endDate}T${formData.endTime}`);
+        }
+  
+        if (unavailableEvent.rrule) {
+          const rruleString = unavailableEvent.rrule;
+  
+          try {
+            const rruleInstance = RRule.fromString(rruleString);
+
+            console.log(eventStart);
+            console.log(eventEnd);
+            
+            const occurrences = rruleInstance.between(
+              eventStart,
+              eventEnd,
+              true 
+            );
+
+            console.log(occurrences);
+            
+            return occurrences.some((occurrenceStart) => {
+              const occurrenceEnd = new Date(
+                occurrenceStart.getTime() +
+                  (new Date(unavailableEvent.end) - new Date(unavailableEvent.start))
+              );
+  
+              return (
+                (eventStart >= occurrenceStart && eventStart <= occurrenceEnd) || 
+                (eventEnd >= occurrenceStart && eventEnd <= occurrenceEnd) || 
+                (eventStart <= occurrenceStart && eventEnd >= occurrenceEnd) 
+              );
+            });
+          } catch (error) {
+            console.error("Error parsing rrule string:", error);
+            return false; 
+          }
+        } else {
+          const unavailableStart = new Date(unavailableEvent.start);
+          const unavailableEnd = new Date(unavailableEvent.end);
+  
+          return (
+            (eventStart >= unavailableStart && eventStart <= unavailableEnd) || 
+            (eventEnd >= unavailableStart && eventEnd <= unavailableEnd) ||
+            (eventStart <= unavailableStart && eventEnd >= unavailableEnd) 
+          );
+        }
+      });
+  
+      if (isUnavailable) {
+        setError(`${user.name} is unavailable for this event.`);
+        return;
+      }
+  
+      if (
+        formData.invitedUsers.some((invitedUser) => invitedUser.userID === user._id)
+      ) {
+        setError("User already added.");
+      } else {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          invitedUsers: [
+            ...prevFormData.invitedUsers,
+            { userID: user._id, status: "pending" },
+          ],
+        }));
+        setError("");
+        setQuery("");
+        setSuggestions([]);
+      }
+    } catch (error) {
+      console.error("Error checking user availability:", error);
+      setError("Unable to verify user availability. Please try again.");
     }
   };
 

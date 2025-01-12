@@ -30,7 +30,7 @@
   background: linear-gradient(to bottom, #f5f6fd, #e8efff);
   font-family: "Poppins", sans-serif;
   color: #001789;
-  height: 100%;
+  height: 100vh;
   min-width: 380px;
 }
 
@@ -51,7 +51,7 @@
 
 /* Title */
 .calendar .fc-toolbar-title {
-  font-size: 1.5rem;
+  font-size: 1.5em;
   font-weight: bold;
   color: #001789;
 }
@@ -59,12 +59,26 @@
 .calendar .fc-toolbar-chunk {
   display: flex;
   align-items: center;
-  font-size: 0.9em;
+  font-size: 0.9rem;
 }
 
 .calendar .fc-toolbar-left .fc-addEvent-button,
 .calendar .fc-toolbar-left .fc-button-group {
   display: none;
+}
+
+
+@media (min-width: 1200px) {
+  .calendar .fc-toolbar-chunk {
+    display: flex;
+    align-items: center;
+    font-size: 1.3rem;
+  }
+  .calendar .fc-toolbar-title {
+    font-size: 1.7em;
+    font-weight: bold;
+    color: #001789;
+  }
 }
 
 /* Responsive: Move views below on smaller screens */
@@ -275,7 +289,6 @@
 
 .fc-event:hover {
   cursor: pointer;
-  transform: scale(1.04);
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -285,6 +298,14 @@
 
 .fc-event.event:hover {
   background-color: #014894; 
+}
+
+.fc-event.invited-event {
+  background-color: #8f00b3; 
+}
+
+.fc-event.invited-event:hover {
+  background-color: #a610b9; 
 }
 
 .fc-event.task-overdue {
@@ -343,6 +364,32 @@
 
 .calendar .fc-daygrid-day-bottom {
   max-height: 50px;
+}
+
+.calendar .fc-daygrid-day-frame {
+  height: 5em;
+  display: block;
+}
+
+.calendar .fc-dayGridMonth-view .fc-daygrid-day-frame {
+  height: 10em;
+}
+
+.calendar .fc-view {
+  border-bottom: 1px solid #001789;
+}
+
+.calendar .fc-dayGridMonth-view {
+  border-bottom: none;
+}
+
+.calendar .fc-taskList-view {
+  border-right: 1px solid #001789;
+  border-left: 1px solid #001789;
+}
+
+.calendar .fc-list-empty {
+  height: 5em;
 }
 
 .calendar .fc-day,

@@ -2,6 +2,9 @@ import Event from "../models/Event.js";
 import User from "../models/User.js";
 import agenda from "../config/agenda.js";
 import scheduleEventNotifications from "../scheduler/eventNotificationScheduler.js";
+import nodemailer from "nodemailer";
+import config from "../config/config.js"
+import { createEvent } from "ics";
 
 // Estrai tutti gli eventi
 export const getEvents = async (req, res) => {
@@ -32,6 +35,20 @@ export const getInvitedEvents = async (req, res) => {
   }
 };
 
+// Estrai tutti gli eventi a cui è stato invitato
+export const getUnavailableEvents = async (req, res) => {
+  const { userID } = req.query;
+  try {
+    const events = await Event.find({
+      userID: userID,
+      "extendedProps.markAsUnavailable": true
+    });
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ error: "Errore nel recupero degli eventi" });
+  }
+};
+
 // Estrai un evento tramite il suo ID
 export const getEventById = async (req, res) => {
   const { id } = req.params;
@@ -50,7 +67,7 @@ export const getEventById = async (req, res) => {
 };
 
 // Crea un evento
-export const createEvent = async (req, res) => {
+export const createNewEvent = async (req, res) => {
   const { eventData, userID } = req.body;
 
   console.log('eventData', eventData);
@@ -73,8 +90,9 @@ export const createEvent = async (req, res) => {
     
         await agenda.schedule("in 1 second", "send-invite-email", {
           user: user,
-          event: newEvent,
+          item: newEvent,
           invitee: invitee,
+          type: "event"
         });
       }
     }
@@ -207,10 +225,6 @@ export const rejectEventInvitation = async (req, res) => {
     );
     if (!invitee) return res.status(404).send('Invitee not found');
 
-    if (invitee.status !== 'pending') {
-      return res.status(403).send('You cannot modify your response.');
-    }
-
     invitee.status = 'rejected';
     await event.save();
 
@@ -240,8 +254,9 @@ export const resendEventInvitation = async (req, res) => {
 
     await agenda.schedule("in 30 minutes", "send-invite-email", {
       user: user,
-      event: event,
+      item: event,
       invitee: invitee,
+      type: "event"
     });
 
     res.send(`Reminder has been sent for the event: ${event.title}`);
@@ -249,3 +264,42 @@ export const resendEventInvitation = async (req, res) => {
     res.status(500).send('Error resending reminder');
   }
 }
+
+
+export const sendEventAsICalendar = async (req, res) => {
+  try {
+    const { event, email } = req.body;
+
+    createEvent(event, async (error, value) => {
+      if (error) {
+        console.error("Error creating iCalendar event:", error);
+        return res.status(500).send("Failed to create iCalendar event.");
+      }
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: config.EMAIL_USER,
+          pass: config.EMAIL_PASS,
+        },
+      });
+
+      const mailOptions = {
+        from: config.EMAIL_USER,
+        to: email,
+        subject: "Exported Event",
+        icalEvent: {
+          filename: "event.ics",
+          method: "REQUEST", 
+          content: value, 
+        },
+      };
+
+      await transporter.sendMail(mailOptions);
+      res.status(200).send("Email sent successfully with iCalendar event.");
+    });
+  } catch (error) {
+    console.error("Failed to send email:", error);
+    res.status(500).send("Failed to send email.");
+  }
+};

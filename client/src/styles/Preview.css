@@ -138,22 +138,7 @@
 }
 
 
-.calendar-preview {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
 
-.calendar-preview-mobile {
-  width: 100%;
-  color: #002aff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
 
 
 @media (max-width:1000px) and (min-width:765px){
@@ -290,4 +275,69 @@
     height: 7vh;
   }
 
+}
+
+.calendar-preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.fc {
+  height: 100%;
+  overflow-y: hidden;
+}
+
+.fc-view {
+  height: 80%;
+  cursor: pointer;
+}
+
+.fc-timeGridWeek-view,
+.fc-timeGridDay-view {
+  overflow-y: scroll !important; 
+}
+
+.fc-dayGridMonth-view .fc-view-harness,
+.fc-listDay-view .fc-view-harness {
+  overflow-y: hidden; 
+}
+
+.fc-view-harness {
+  height: 100%; 
+}
+
+
+.fc-daygrid-more-link,
+.fc-daygrid-event {
+  height: 1.5rem;
+}
+
+.fc-daygrid-day-frame {
+  height: 1.9rem;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden !important;
+}
+
+
+.fc-month-view .fc-event {
+  display: none;
+}
+
+
+.calendar-preview * {
+  color: #001789;
+}
+
+.calendar-preview-mobile {
+  width: 100%;
+  color: #002aff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

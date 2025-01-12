@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import { useTimeMachine } from "../../../context/TimeMachineContext";
 import RecurrenceForm from "./RecurrenceForm";
+import RecurrenceHandler from "./RecurrenceHandler";
 import NotificationForm from "./NotificationForm";
 import UserForm from "../UserForm";
 import TimeZoneForm from "../TimeZoneForm";
+import ICAL from "ical.js";
+import { DateTime } from "luxon";
 import "../../../styles/Form.css";
 
 const EventForm = ({ initialData, onSubmit, isEditMode }) => {
+  const { parseRRule } = RecurrenceHandler();
+
   const { time } = useTimeMachine();
   const [areProposalsOpen, setAreProposalsOpen] = useState(false);
 
@@ -209,6 +214,85 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     setFormData({ ...initialData });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const fileContent = event.target.result;
+
+        try {
+          const parsedData = ICAL.parse(fileContent);
+          const component = new ICAL.Component(parsedData);
+          const vevent = component.getFirstSubcomponent("vevent");
+          const eventData = new ICAL.Event(vevent);
+
+          console.log(vevent);
+          console.log(eventData);
+
+          const start = DateTime.fromISO(
+            new Date(eventData.startDate).toISOString(),
+            { zone: "UTC" }
+          )
+            .setZone(formData.timeZone)
+            .toISO();
+          const end = DateTime.fromISO(
+            new Date(eventData.endDate).toISOString(),
+            { zone: "UTC" }
+          )
+            .setZone(formData.timeZone)
+            .toISO();
+
+          const startDate = start.split("T")[0];
+          const startTime = start.split("T")[1]?.slice(0, 5);
+          const endDate = end.split("T")[0];
+          const endTime = end.split("T")[1]?.slice(0, 5);
+
+          const isAllDay = startTime === "00:00" && endTime === "00:00";
+
+          const adjustedEndDate = isAllDay
+            ? DateTime.fromISO(endDate).minus({ days: 1 }).toISODate()
+            : endDate;
+
+          const rrule = vevent.getFirstPropertyValue("rrule");
+
+          let recurrence = null;
+          if (rrule) {
+            const rruleString = new ICAL.Recur(rrule).toString();
+
+            recurrence = parseRRule(rruleString, false, start);
+          }
+
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            title: eventData.summary || "Imported Event",
+            allDay: isAllDay,
+            startDate: startDate,
+            startTime: startTime,
+            endDate: adjustedEndDate,
+            endTime: endTime,
+            location: eventData.location || "",
+            description: eventData.description || "",
+            isRecurring: !!rrule,
+            recurrence: recurrence,
+          }));
+
+          setErrors({});
+        } catch (error) {
+          console.error("Error parsing iCalendar file:", error);
+          setErrors((prevErrors) => ({
+            ...prevErrors,
+            file: "Failed to parse the iCalendar file.",
+          }));
+        }
+      };
+
+      reader.readAsText(file);
+    }
+  };
+
   // Funzione per calcolare le proposte di studio
   const calculateProposals = () => {
     const startTime = new Date(`${formData.startDate}T${formData.startTime}`);
@@ -253,19 +337,46 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     <div className="form-container">
       <form onSubmit={handleSubmit}>
         <div>
-          <label className="form-label">Title:</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            className="form-input"
-          />
-          {errors.title && (
-            <span className="error-message">{errors.title}</span>
-          )}
+          <label>
+            <input
+              type="checkbox"
+              name="markAsUnavailable"
+              checked={formData.markAsUnavailable}
+              onChange={handleChange}
+              className="checkbox-input"
+            />
+            <span className="checkbox-label">
+              Mark as Unavailable for group events
+            </span>
+          </label>
         </div>
-
+        {!formData.markAsUnavailable && (
+          <div>
+            <div>
+              <label className="form-label">Import iCalendar event:</label>
+              <input
+                type="file"
+                name="icsFile"
+                accept=".ics"
+                onChange={handleFileChange}
+                className="form-input"
+              />
+            </div>
+            <div>
+              <label className="form-label">Title:</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                className="form-input"
+              />
+              {errors.title && (
+                <span className="error-message">{errors.title}</span>
+              )}
+            </div>
+          </div>
+        )}
         <div>
           <label>
             <input
@@ -492,47 +603,48 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 handleChange={handleChange}
               />
             )}
+            {!formData.markAsUnavailable && (
+          <div>
             <div>
-              <label className="form-label">Location:</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="form-input"
-              />
-              {errors.location && (
-                <span className="error-message">{errors.location}</span>
-              )}
-            </div>
-            <div>
-              <label className="form-label">Description:</label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="form-textarea"
-              />
-              {errors.description && (
-                <span className="error-message">{errors.description}</span>
-              )}
-            </div>
-            <label className="form-label">Notifications</label>
-            <NotificationForm formData={formData} setFormData={setFormData} />
+                  <label className="form-label">Location:</label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className="form-input"
+                  />
+                  {errors.location && (
+                    <span className="error-message">{errors.location}</span>
+                  )}
+                </div>
+                <div>
+                  <label className="form-label">Description:</label>
+                  <textarea
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="form-textarea"
+                  />
+                  {errors.description && (
+                    <span className="error-message">{errors.description}</span>
+                  )}
+                </div>
+                <label className="form-label">Notifications</label>
+                <NotificationForm formData={formData} setFormData={setFormData} />
 
             <label className="form-label">Invite users</label>
             <UserForm formData={formData} setFormData={setFormData} />
-
-            <div>
-              <label className="form-label">Time Zone:</label>
-              <TimeZoneForm
-                initialTimeZone={formData.timeZone}
-                onSubmit={handleTimeZoneChange}
-              />
-            </div>
           </div>
         )}
 
+        <div>
+          <label className="form-label">Time Zone:</label>
+          <TimeZoneForm
+            initialTimeZone={formData.timeZone}
+            onSubmit={handleTimeZoneChange}
+          />
+        </div>
         <button type="submit" className="form-button form-submit">
           {isEditMode ? "Save Changes" : "Add Event"}
         </button>

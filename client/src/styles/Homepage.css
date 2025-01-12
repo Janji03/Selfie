@@ -432,6 +432,10 @@ color: rgb(114, 114, 114);
     display: block;
   }
 
+  .calendar-preview-tablet {
+    height: 95%;
+  }
+
   .elem-grid:hover{
     background-color: #fff;
   }

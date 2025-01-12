@@ -52,7 +52,7 @@ const ExtendedPropsSchema = new Schema(
         },
         status: {
           type: String,
-          enum: ["pending", "accepted", "rejected", "resend_requested"],
+          enum: ["pending", "accepted", "rejected"],
           default: "pending",
         },
       },
@@ -91,6 +91,10 @@ const ExtendedPropsSchema = new Schema(
         default: null,
       },
     },
+    markAsUnavailable: {
+      type: Boolean,
+      default: false
+    }
   },
   { _id: false }
 );

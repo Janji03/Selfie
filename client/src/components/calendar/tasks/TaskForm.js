@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import UserForm from "../UserForm";
 import TimeZoneForm from "../TimeZoneForm";
 import "../../../styles/Form.css";
 
@@ -143,6 +144,8 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
             <span className="checkbox-label">Overdue Notifications</span>
           </label>
         </div>
+        <label className="form-label">Invite users</label>
+        <UserForm formData={formData} setFormData={setFormData} />
         {/* Time Zone */}
         <div>
           <label className="form-label">Time Zone:</label>

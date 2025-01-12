@@ -2,12 +2,14 @@ import { v4 as uuidv4 } from "uuid";
 import { DateTime } from "luxon";
 import RecurrenceHandler from "./RecurrenceHandler";
 import DateUtilities from "../DateUtilities";
+import { getUser } from "../../../services/userService";
 
 import {
   getEventById,
-  createEvent,
+  createNewEvent,
   updateEvent,
   deleteEvent,
+  sendEventAsICalendar,
 } from "../../../services/eventService";
 
 const EventHandler = ({
@@ -126,8 +128,9 @@ const EventHandler = ({
               ),
               endOccurrences: 2,
             },
+        markAsUnavailable: selectedEvent.extendedProps.markAsUnavailable,
         notifications: formattedNotifications,
-        invitedUsers: selectedEvent.extendedProps.invitedUsers,
+        invitedUsers: selectedEvent.extendedProps.invitedUsers,,
       });
       setIsEditMode(true);
       setIsFormOpen(true);
@@ -158,6 +161,51 @@ const EventHandler = ({
         setSelectedOccurrence(null);
       } catch (error) {
         console.error("Error deleting event:", error);
+      }
+    }
+  };
+
+  const handleExportEvent = async () => {
+    const userID = localStorage.getItem("userID");
+
+    const user = await getUser(userID);
+    if (selectedEvent) {
+      const { id, title, start, end, rrule, exdate, extendedProps } =
+        selectedEvent;
+
+      const { location, description } = extendedProps;
+
+      const event = {
+        start: DateTime.fromISO(start, { zone: "utc" }).toFormat(
+          "yyyyMMdd'T'HHmmss'Z'"
+        ),
+        end: DateTime.fromISO(end, { zone: "utc" }).toFormat(
+          "yyyyMMdd'T'HHmmss'Z'"
+        ),
+        title: title,
+        description: description,
+        location: location,
+      };
+
+      if (rrule) {
+        const splitRRule = rrule.split(/:/);
+        const cleanedRRule = splitRRule[2];
+        event.recurrenceRule = cleanedRRule;
+      }
+
+      if (exdate) {
+        const formattedExdate = exdate.map((date) => {
+          return DateTime.fromISO(date, { zone: "utc" }).toFormat(
+            "yyyyMMdd'T'HHmmss'Z'"
+          );
+        });
+        event.exclusionDates = formattedExdate;
+      }
+
+      try {
+        await sendEventAsICalendar(id, user.email, event);
+      } catch (error) {
+        console.error("Failed to export event:", error);
       }
     }
   };
@@ -215,12 +263,15 @@ const EventHandler = ({
           cycles: data.pomodoroSettings.cycles,
           completedCycles: data.pomodoroSettings.completedCycles,
         },
-        invitedUsers: data.invitedUsers,
+        invitedUsers: data.invitedUsers,,
+        markAsUnavailable: data.markAsUnavailable
       },
       exdate: [],
     };
 
-    console.log(newEvent);
+    if (data.markAsUnavailable) {
+      newEvent.title = "Unavailable";
+    }
 
     try {
       if (isEditMode) {
@@ -238,7 +289,9 @@ const EventHandler = ({
         setEvents(updatedEvents);
         setSelectedEvent(convertedEvent);
       } else {
-        const createdEvent = await createEvent(newEvent, userID);
+        const createdEvent = await createNewEvent(newEvent, userID);
+
+        console.log(createdEvent);
 
         // Convert from UTC to Local Timezone
         const convertedEvent = convertEventTimes(createdEvent);
@@ -289,7 +342,8 @@ const EventHandler = ({
         endOccurrences: 2,
       },
       notifications: [],
-      invitedUsers: [],
+      invitedUsers: [],,
+      markAsUnavailable: false,
     });
   };
 
@@ -297,6 +351,7 @@ const EventHandler = ({
     handleEventClick,
     handleEditEvent,
     handleDeleteEvent,
+    handleExportEvent,
     handleEventFormSubmit,
     initializeEventForm,
   };
