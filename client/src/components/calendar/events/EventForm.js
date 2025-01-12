@@ -348,7 +348,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   className="proposal-button"
                   key={index}
                   type="button"
-                  onClick={() => handleProposalSelect(proposal)}
+                  onClick={() => {
+                    handleProposalSelect(proposal)
+                    setAreProposalsOpen(false)
+                  }}
                 >
                   <strong>Study</strong>: {proposal.study} min, <strong>Break</strong>: {proposal.break} min, <strong>Cycles</strong>: {proposal.cycles} <br />
                 </button>
