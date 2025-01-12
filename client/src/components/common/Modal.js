@@ -20,3 +20,4 @@ const Modal = ({ isOpen, onClose, children, title, zIndex }) => {
 };
 
 export default Modal;
+

@@ -126,7 +126,7 @@ const Pomodoro = () => {
 
 
   useEffect(() => {
-    if (pomodoroSettings && timeLeft == 0 && !isRunning) { //in modo che sia applicato solo all'inizio per settarli e poi se modificati non ritornano cosi
+    if (pomodoroSettings && timeLeft == 0 && !isRunning) { //in modo che sia applicato solo all'inizio per settarli e poi se modificati non ritornano cosi controlla comunque
       setStudyTime(pomodoroSettings.studyTime)
       setBreakTime(pomodoroSettings.breakTime)
       setInitialCycles(pomodoroSettings.cycles)

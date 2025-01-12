@@ -657,8 +657,12 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             Reset Changes
           </button>
         )}
+        </div>
+        )}
+        
+      
       </form>
-    </div>
+    </div>  
   );
 };
 
