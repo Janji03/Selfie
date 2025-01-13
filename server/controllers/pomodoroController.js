@@ -1,4 +1,5 @@
 import Pomodoro from "../models/Pomodoro.js";
+import sendEmailNotification from "../../server/utils/sendEmailNotification.js"
 
 // Funzione per creare un nuovo Pomodoro
 export const createPomodoro = async (req, res) => {
@@ -41,3 +42,35 @@ export const getUserPomodoros = async (req, res) => {
       });
   }
 };
+
+
+export const sendPomodoroEmail = async (req, res) => {
+  const { email, settings } = req.body;
+
+  if (!email || !settings) {
+    return res.status(400).json({ message: "Email e impostazioni sono obbligatorie." });
+  }
+
+  try {
+    const { studyTime, breakTime, cycles } = settings;
+    const dynamicLink = `http://localhost:3000/pomodoro?studyTime=${studyTime}&breakTime=${breakTime}&cycles=${cycles}`;
+
+    const subject = "Ti hanno condiviso delle impostazioni Pomodoro";
+    const message = `
+      <p>Ecco le impostazioni del timer Pomodoro:</p>
+      <ul>
+        <li><strong>Tempo di studio:</strong> ${studyTime} minuti</li>
+        <li><strong>Tempo di pausa:</strong> ${breakTime} minuti</li>
+        <li><strong>Cicli:</strong> ${cycles}</li>
+      </ul>
+      <p><a href="${dynamicLink}">Clicca qui per iniziare il Pomodoro</a></p>
+    `;
+
+    await sendEmailNotification(email, subject, message);
+    res.status(200).json({ success: true, message: "Email inviata con successo!" });
+  } catch (error) {
+    console.error("Errore durante l'invio dell'email:", error);
+    res.status(500).json({ success: false, message: "Errore durante l'invio dell'email." });
+  }
+};
+

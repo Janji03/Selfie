@@ -4,27 +4,31 @@ import {
   getUserPomodoros,
 } from "../../services/pomodoroService";
 import PomodoroAnimation from "./PomodoroAnimation";
+import PomodoroEmailSender from "./PomodoroEmailSender";
 import { updateCompletedCycles, updateEvent } from "../../services/eventService";
 import { useLocation } from "react-router-dom";
 import "../../styles/Pomodoro.css";
 import pomodoroIcon from "../pomodoro/pomodoro.png";
+import { useSearchParams } from "react-router-dom";
 
-
+//bugghetti: animazione pomodoro con modifica, calculate proposals, controlla il nuovo useffect, titolo se proviene da calendario, vedi se aggiungere lo stop, controlla ricomincia questo
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
+  const [initialStudyTime, setInitialStudyTime] = useState(0);
+  const [initialBreakTime, setInitialBreakTime] = useState(0);
   const [remainingcycles, setRemainingCycles] = useState(0);
   const [initialCycles, setInitialCycles] = useState(0);
   const [totalMinutes, setTotalMinutes] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
   const [onBreak, setOnBreak] = useState(false);
-  const [nPomodoro, setNPomodoro] = useState(0);
   const [sessionNumber, setSessionNumber] = useState(0);
   const [isAnimationRunning, setIsAnimationRunning] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [isProposalOpen, setisProposalOpen] = useState(false);
 
+  const [searchParams] = useSearchParams();
   const userID = localStorage.getItem("userID");
 
 
@@ -41,6 +45,9 @@ const Pomodoro = () => {
     setSessionNumber(sessionNumber + 1)
     setIsAnimationRunning(true)
     setAnimationKey((prevKey) => prevKey + 1);
+    setInitialBreakTime(breakTime)
+    setInitialStudyTime(studyTime)
+
     
 
     const pomodoroData = {
@@ -80,7 +87,7 @@ const Pomodoro = () => {
 
 
 
-  const handleGet = async () => {
+  /* const handleGet = async () => {
     try {
       const listaPomodoro = await getUserPomodoros(nPomodoro, userID);
       console.log("Get pomodoro okay");
@@ -88,7 +95,7 @@ const Pomodoro = () => {
     } catch (error) {
       console.error("Get pomodoro non okay: ", error);
     }
-  };
+  }; */
 
 
 
@@ -123,15 +130,25 @@ const Pomodoro = () => {
     }
   };
 
-
-
   useEffect(() => {
-    if (pomodoroSettings && timeLeft == 0 && !isRunning) { //in modo che sia applicato solo all'inizio per settarli e poi se modificati non ritornano cosi controlla comunque
+    if (searchParams) {
+      const studyTime = searchParams.get("studyTime");
+      const breakTime = searchParams.get("breakTime");
+      const cycles = searchParams.get("cycles");
+      setStudyTime(Number(studyTime));
+      setBreakTime(Number(breakTime));
+      setInitialCycles(Number(cycles));
+    }
+
+    if (pomodoroSettings) { //in modo che sia applicato solo all'inizio per settarli e poi se modificati non ritornano cosi controlla comunque
       setStudyTime(pomodoroSettings.studyTime)
       setBreakTime(pomodoroSettings.breakTime)
       setInitialCycles(pomodoroSettings.cycles)
       }
-    
+  },[])
+
+
+  useEffect(() => {  
     if (isRunning) {
       if (timeLeft > 0) {
         const interval = setInterval(() => {
@@ -164,7 +181,7 @@ const Pomodoro = () => {
         }
       }
     }
-  }, [isRunning, timeLeft, pomodoroSettings]);
+  }, [isRunning, timeLeft]);
 
   return (
     <div>
@@ -245,7 +262,8 @@ const Pomodoro = () => {
                       min={1}
                       value={studyTime}
                       required
-                      onChange={(e) => setStudyTime(Number(e.target.value))}
+                      onChange={(e) => {
+                        setStudyTime(Number(e.target.value))}}
                     />{" "}
                     <br />
                   </div>
@@ -298,15 +316,15 @@ const Pomodoro = () => {
             )}
 
 
-            {(isAnimationRunning) ? (
-              <PomodoroAnimation key={animationKey} studyTime={studyTime} breakTime={breakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak}/>
+            {(isAnimationRunning ) ? (
+              <PomodoroAnimation key={animationKey} studyTime={initialStudyTime} breakTime={initialBreakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak}/>
             ): (
               <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak}/>
             )}
 
-             <div className="pomodoro-applyers">
-            <button onClick={() => {
-              setTimeLeft(1)}
+            <div className="pomodoro-applyers">
+              <button onClick={() => {
+              setTimeLeft(0)}
               }
               className="pomo-button"
               >Vai al prossimo</button>
@@ -323,9 +341,9 @@ const Pomodoro = () => {
               className="pomo-button">Ricomincia questo</button>
 
 
-            <button onClick={handleSubmit}
-            className="pomo-button"
-            >
+              <button onClick={handleSubmit}
+              className="pomo-button"
+              >
               Ricomincia tutto</button>
 
 
@@ -336,8 +354,8 @@ const Pomodoro = () => {
               }}
               className="pomo-button"
               >Fine tutto</button> 
-              </div>
-
+            </div>
+              <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
           </div>
         </div>
 

@@ -26,3 +26,14 @@ export const getUserPomodoros = async (nPomodoro, userID) => {
     throw error;
   }
 };
+
+
+export const sendPomodoroEmail = async (email, settings) => {
+  try {
+    const res = await axiosInstance.post('/pomodoro/send-email', { email, settings });
+    return res.data;
+  } catch (error) {
+    console.error("Errore durante l'invio dell'email:", error);
+    throw error;
+  }
+};
