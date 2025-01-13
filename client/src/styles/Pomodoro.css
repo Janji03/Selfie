@@ -18,9 +18,8 @@
 .pomodoro-logo {
   font-family: "Poppins", sans-serif;
   color: #001789;
-  width: auto;
-  font-size: 20px;
-  padding-left: 15px;
+  font-size: 25px;
+  margin-top: 0;
 }
 
 .pomodoro-nav {
@@ -48,7 +47,7 @@
 .left-pomodoro {
   background-color: #001789;
   width: 50%;
-  height: 92vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,33 +79,8 @@
 }
 
 .pomo-info-form {
-  margin: 10px 0;
+  margin-top: 10px;
   position: relative;
-}
-
-.but-plus,
-.but-min {
-  background-color: transparent;
-  border: 0;
-  font-size: 40px;
-  font-family: "Poppins", sans-serif;
-  margin-right: 8px;
-  position: absolute;
-  top: 12%; /*rivedere*/
-  cursor: pointer;
-}
-
-.but-plus {
-  right: 10%;
-}
-
-.but-min {
-  right: 0;
-}
-
-.but-plus:hover,
-.but-min:hover {
-  color: #001789;
 }
 
 .but-start, .pomo-button {
@@ -131,6 +105,7 @@
 
 .pomodoro-applyers{
   display: flex;
+  align-items: center;
 }
 
 .pomo-info-form input {
@@ -178,6 +153,7 @@
 .proposal-button {
   display: inline-block;
   text-wrap: nowrap;
+  max-height: 14vh;
   background-color: #fff; 
   color: #001789; 
   font-family: 'Figtree';
@@ -187,8 +163,8 @@
   border: none; 
   border-radius: 8px; 
   cursor: pointer; 
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-  transition: all 0.3s ease; 
+  box-shadow: rgba(9, 30, 66, 0.25) 0px 1px 1px, rgba(9, 30, 66, 0.13) 0px 0px 1px 1px;
+        transition: all 0.3s ease; 
 }
 
 .proposal-button:hover {
@@ -201,7 +177,6 @@
   justify-content: space-evenly;
   align-items: center;
   margin-top: 0;
-  max-height: 45vh;
 }
 
 .or{
@@ -230,6 +205,24 @@
 
 .pomodoro-applyers{
   gap: 3px;
+}
+
+.share-button, .pause-start-button{
+  margin-top: 10px;
+  color: #001789;
+  cursor: pointer;
+  
+}
+
+.pause-start-button{
+  font-size: 5vw;
+  margin-left: 25px;
+}
+
+.share-button{
+  font-size: 2.5vw;
+  margin-right: 25px;
+
 }
 
 

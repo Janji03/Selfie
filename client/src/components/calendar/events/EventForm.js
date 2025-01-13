@@ -453,7 +453,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 )}
                  
               </div> 
-            {areProposalsOpen ? (
+             {areProposalsOpen ? (
               calculateProposals().map((proposal, index) => (
                 <button
                   className="proposal-button"
@@ -501,9 +501,20 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 </div>
               </>
             )}
-          </div>
 
-            
+            <button type="submit" className="form-button form-submit">
+              {isEditMode ? "Save Changes" : "Add Event"}
+            </button>
+            {isEditMode && (
+            <button
+            type="button"
+            onClick={handleResetChanges}
+            className="form-button form-reset"
+            >
+            Reset Changes
+            </button>
+            )}
+           </div>
             
           </>
         ) : (

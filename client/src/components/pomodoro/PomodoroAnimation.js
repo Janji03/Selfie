@@ -1,13 +1,10 @@
 import React from 'react';
 import '../../../src/styles/PomodoroAnimation.css';
 
-const PomodoroAnimation = ({ studyTime, breakTime, cycles, convertTime, timeLeft, onBreak }) => {
-
-  
-
+const PomodoroAnimation = ({ studyTime, breakTime, cycles, convertTime, timeLeft, onBreak, isRunning }) => {
   return (
     <div
-      className={`timer-animation-countdown ${onBreak ? 'break-mode' : 'study-mode'}`}
+      className={`timer-animation-countdown ${onBreak ? 'break-mode' : 'study-mode'} ${isRunning ? '' : 'paused'}`}
       style={{
         '--timer-length': studyTime * 60,
         '--pause-length': breakTime * 60,

@@ -25,7 +25,7 @@ const PomodoroEmailSender = ({ studyTime, breakTime, cycles }) => {
 
   return (
     <div>
-      <button onClick={() => setIsModalOpen(true)}>Condividi impostazioni Pomodoro</button>
+      <i onClick={() => setIsModalOpen(true)} className="bi bi-box-arrow-up share-button"></i>
 
       {isModalOpen && (
         <Modal
@@ -49,8 +49,8 @@ const PomodoroEmailSender = ({ studyTime, breakTime, cycles }) => {
             <div>
               <h3>Impostazioni Pomodoro:</h3>
               <ul>
-                <li><strong>Tempo di studio:</strong> {studyTime} minuti</li>
-                <li><strong>Tempo di pausa:</strong> {breakTime} minuti</li>
+                <li><strong>Tempo di studio:</strong> {studyTime} min</li>
+                <li><strong>Tempo di pausa:</strong> {breakTime} min</li>
                 <li><strong>Cicli:</strong> {cycles}</li>
               </ul>
             </div>

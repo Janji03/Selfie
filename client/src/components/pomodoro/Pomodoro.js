@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   createPomodoro,
   getUserPomodoros,
@@ -10,8 +10,10 @@ import { useLocation } from "react-router-dom";
 import "../../styles/Pomodoro.css";
 import pomodoroIcon from "../pomodoro/pomodoro.png";
 import { useSearchParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
-//bugghetti: animazione pomodoro con modifica, calculate proposals, controlla il nuovo useffect, titolo se proviene da calendario, vedi se aggiungere lo stop, controlla ricomincia questo
+
+//bugghetti: accesso da mail, se hai voglia aggiungi profilo e selfie, personalizzabile
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
@@ -31,6 +33,7 @@ const Pomodoro = () => {
   const [searchParams] = useSearchParams();
   const userID = localStorage.getItem("userID");
 
+  const { isAuthenticated } = useContext(AuthContext);
 
   const location = useLocation();
   const { id, title, pomodoroSettings, selectedEvent } = location.state || {};
@@ -45,6 +48,7 @@ const Pomodoro = () => {
     setSessionNumber(sessionNumber + 1)
     setIsAnimationRunning(true)
     setAnimationKey((prevKey) => prevKey + 1);
+
     setInitialBreakTime(breakTime)
     setInitialStudyTime(studyTime)
 
@@ -163,13 +167,13 @@ const Pomodoro = () => {
           if (!onBreak) {
             alert("inizio pausa");
             setRemainingCycles((prevCycles) => prevCycles - 1); //riduci cicli
-            setTimeLeft(breakTime * 60); //pausa
+            setTimeLeft(initialBreakTime * 60); //pausa
             if(pomodoroSettings && sessionNumber > 0){
               handleCycleCompletion(id, ((initialCycles-remainingcycles)+1));
             }
           } else {
             alert("inizio studio");
-            setTimeLeft(studyTime * 60);
+            setTimeLeft(initialStudyTime * 60);
           }
           setOnBreak(!onBreak);
         } else {
@@ -186,18 +190,6 @@ const Pomodoro = () => {
   return (
     <div>
       <div className="pomodoro">
-        <div className="pomodoro-header">
-          <div className="pomodoro-logo">
-            <h1>Selfie</h1>
-          </div>
-          <div className="pomodoro-nav">
-            <h4 className="pomodoro-nav-page">Pomodoro</h4>
-            <h4>Note</h4>
-            <h4>Calendario</h4>
-            <i className="bi bi-person-fill"></i>
-          </div>
-        </div>
-
         <div className="pomodoro-body">
           <div className="left-pomodoro">
             <img src={pomodoroIcon}></img>
@@ -292,7 +284,6 @@ const Pomodoro = () => {
                       value={initialCycles}
                       required
                       onChange={(e) => {
-                        setRemainingCycles(Number(e.target.value));
                         setInitialCycles(Number(e.target.value));
                       }}
                     />{" "}
@@ -312,14 +303,14 @@ const Pomodoro = () => {
           <div className="right-pomodoro">
           
             {pomodoroSettings && (
-              <h2>{title}</h2>
+              <h2 className="pomodoro-logo">{title}</h2>
             )}
 
 
-            {(isAnimationRunning ) ? (
-              <PomodoroAnimation key={animationKey} studyTime={initialStudyTime} breakTime={initialBreakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak}/>
+            {(isAnimationRunning) ? (
+              <PomodoroAnimation key={animationKey} studyTime={initialStudyTime} breakTime={initialBreakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak} isRunning={isRunning}/>
             ): (
-              <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak}/>
+              <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak} isRunning={isRunning}/>
             )}
 
             <div className="pomodoro-applyers">
@@ -332,8 +323,8 @@ const Pomodoro = () => {
               
               <button onClick={() => {
                 if(onBreak){
-                  setTimeLeft(breakTime * 60)
-                } else {setTimeLeft(studyTime * 60)
+                  setTimeLeft(initialBreakTime * 60)
+                } else {setTimeLeft(initialStudyTime * 60)
                 }
                 setAnimationKey((prevKey) => prevKey + 1);
                 alert('ricomincia questo ciclo')
@@ -350,12 +341,24 @@ const Pomodoro = () => {
               <button onClick={() => {
                   setIsRunning(false);
                   setIsAnimationRunning(false);
+                  setTimeLeft(0)
+                  setRemainingCycles(0)
                   alert('ciclo terminato forzato')
               }}
               className="pomo-button"
               >Fine tutto</button> 
             </div>
-              <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
+
+              <div className="pomodoro-applyers">
+                <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
+              {isRunning ? (
+                <i className="bi bi-pause-circle-fill pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
+              ) : (
+                <i className="bi bi-play-circle-fill  pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
+              )}
+              </div>
+              
+              
           </div>
         </div>
 
