@@ -4,6 +4,8 @@ import PomodoroPreview from "../preview/PomodoroPreview";
 import NotesPreview from "../preview/NotesPreview";
 import TimeMachinePreview from "../preview/TimeMachinePreview";
 import CalendarPreview from "../preview/CalendarPreview";
+import { Link } from "react-router-dom";
+
 
 const Homepage = () => {
   const [isCalendarPreviewOpen, setIsCalendarPreviewOpen] = useState(false);
@@ -117,11 +119,10 @@ const Homepage = () => {
 
   return (
     <div>
-
       <div className="homepage-top">
         <div className="homepage-header">
           <h1>Selfie</h1>
-          <i className="bi bi-person-fill"></i>
+          <Link to="/profile"><i className="bi bi-person-fill" ></i></Link> 
         </div>
         <div className="homepage-subheader">
           <p>

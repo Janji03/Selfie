@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   createPomodoro,
-  getUserPomodoros,
 } from "../../services/pomodoroService";
 import PomodoroAnimation from "./PomodoroAnimation";
 import PomodoroEmailSender from "./PomodoroEmailSender";
@@ -13,7 +12,7 @@ import { useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 
-//bugghetti: accesso da mail, se hai voglia aggiungi profilo e selfie, personalizzabile
+//bugghetti: accesso da mail, se hai voglia aggiungi profilo e selfie, personalizzabile, abbellire
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
@@ -135,7 +134,8 @@ const Pomodoro = () => {
   };
 
   useEffect(() => {
-    if (searchParams) {
+    if(isAuthenticated){
+      if (searchParams) {
       const studyTime = searchParams.get("studyTime");
       const breakTime = searchParams.get("breakTime");
       const cycles = searchParams.get("cycles");
@@ -149,6 +149,7 @@ const Pomodoro = () => {
       setBreakTime(pomodoroSettings.breakTime)
       setInitialCycles(pomodoroSettings.cycles)
       }
+    }
   },[])
 
 
