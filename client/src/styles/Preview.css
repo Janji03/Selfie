@@ -13,24 +13,103 @@
   justify-content: space-evenly;
 }
 
+.pomodoro-elements p{
+  width: 40%;
+}
+
+.pomodoro-elements input{
+  height: auto;
+  padding: 5px 0;
+  width: 45px;
+  font-size: 16px;
+  font-family: 'Figtree';
+  text-align: center; 
+  border: unset;
+  border-radius: 4px;
+  outline-color: rgb(84 105 212 / 0.5);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(60, 66, 87, 0.16) 0px 0px 0px 1px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0) 0px 0px 0px 0px;
+}
+
+  /* Chrome, Safari, Edge, Opera */
+  .pomodoro-elements input::-webkit-outer-spin-button,
+  .pomodoro-elements input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  /* Firefox */
+  .pomodoro-elements input[type=number] {
+    -moz-appearance: textfield;
+  }
+  
+
 .pomodoro-preview img {
   height: auto;
   width: 13%;
 }
 
+.button-container {
+  position: absolute;
+  top: 5%;
+  right: 3%; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-pomoprev-choice {
+  display: flex;
+  padding: 3px 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #001789;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'Poppins';
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.button-pomoprev-choice:not(:last-child) {
+  border-right: none;
+}
+
+.button-pomoprev-choice:first-child {
+  border-radius: 10px 0 0 10px;
+}
+.button-pomoprev-choice:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.button-pomoprev-choice:hover {
+  background-color: #e0e0e0;
+  color: #000;
+}
+
+.button-pomoprev-choice.active {
+  background-color: #284bff;
+  color: #fff;
+  font-weight: bold;
+}
+
+
 
 .pomo-link,
 .note-link,
 .calendar-link {
-  width: 35%;
   margin-top: 20px;
   padding: 2%;
   font-family: "Poppins";
   font-size: 15px;
   font-weight: 700;
   background-color: #fff;
-  border: solid 1px #002aff;
-  color: #002aff;
+  border: solid 1px #002aff !important;
+  color: #002aff !important;
   text-decoration: none;
   border-radius: 10px;
   cursor: pointer;
@@ -41,19 +120,17 @@
 .note-link:hover,
 .calendar-link:hover {
   background-color: #001789;
-  color: white;
+  color: white !important;
 }
 
 
-/* Style the note icon */
 .note-icon {
-  width: 30px;  /* Adjust the size of the icon */
-  height: 30px; /* Adjust the size of the icon */
-  margin-right: 10px; /* Add space between the icon and text */
-  vertical-align: middle; /* Align the icon with the text */
+  width: 30px; 
+  height: 30px; 
+  margin-right: 10px; 
+  vertical-align: middle; 
 }
 
-/* Existing styling for note-preview */
 .note-preview {
   display: flex;
   flex-direction: column;
@@ -65,28 +142,28 @@
 .note-preview h3 {
   margin: 0;
   font-family: "Figtree";
-  color: #284bff;
+  color: #001789;
   font-size: 1.5rem;
 }
 
 .note-list {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   list-style-type: none;
   margin: 0;
   padding: 0;
   height: auto;
   width: 100%;
   margin-top: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .note-item {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  width: calc(33.33% - 10px);
-  margin: 0 5px;
+  width: calc(28% - 10px);
+  margin: 0 5px 10px 5px;
   background-color: #e3ecff78;
   padding: 10px;
   border-radius: 10px;
@@ -137,6 +214,20 @@
   color: #fff;
 }
 
+.note-preview .settings{
+  font-size: 15px;
+  color: #002aff;
+}
+
+.note-preview .settings input{
+  font-family: 'Poppins';
+  margin-bottom: 6px;
+}
+
+.note-preview .settings select{
+  font-family: 'Poppins';
+}
+
 
 
 
@@ -146,6 +237,10 @@
     font-size: 1rem;
     text-align: center;
     justify-content: space-between;
+  }
+
+  .pomodoro-elements p{
+    width: auto;
   }
 
   .pomodoro-preview{
@@ -162,7 +257,7 @@
   }
 }
 
-@media (max-width:765px) and (min-width:580px){
+@media (max-width:765px) and (min-width:580px) {
   .pomodoro-elements{
     font-size: 1rem;
     flex-direction: column;
@@ -170,6 +265,11 @@
 
   .pomodoro-elements p{
     margin: 10px 0;
+    width: auto;
+  }
+
+  .pomodoro-elements input{
+    height: 2vh
   }
 
   .pomodoro-preview-tablet{
@@ -199,44 +299,127 @@
   }
 }
 
-@media (max-width:900px) and (min-width:580px){
+@media (max-width:1000px) and (min-width:580px){
+
+  .notes-preview-tablet{
+    width: 100%;
+    max-height: 95%;
+  }
   
   .note-link{
     width: auto;
-    margin-top: 12px;
+    margin-top: 5px;
   }
 
-  .note-item:nth-child(3){
-    display: none;
-  }
 
-  .note-preview h3{
-    display: none;
-  }
-
-  .note-list{
-    justify-content: center;
-    margin: 0;
-  }
-}
-
-
-@media (max-width:1000px) and (min-width:900px){
-  .note-preview h3{
-    display: none;
-  }
-
-  .note-list{
-    margin: 0;
-  }
-
-  .note-link{
+  .note-preview{
     text-align: center;
-    margin-top: 10px;
   }
+
+  .note-item{
+    max-height: 8vh;
+    flex: 0 0 auto;
+    width: 175px;
+    margin-bottom: 0;
+    margin-top: 5px;
+  }
+
+  .note-preview h3{
+    display: none;
+  }
+
+  .note-list{
+    flex-direction: row;
+    justify-content: flex-start;
+    margin: 0;
+    flex-wrap: nowrap;
+    display: inline-flex;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .note-content h2{
+    font-size: 17px;
+  }
+
+  .note-content h4{
+    font-size:14px
+  }
+
+  .note-icon{
+    display: none;
+  }
+
+  .note-preview .settings{
+    font-size: 12px;
+    text-wrap: nowrap;
+  }
+
+  .note-preview .settings input{
+    width: 15%;
+    font-size: 10px;
+  }
+
+  .note-preview .settings select{
+    font-size: 10px;
+    width: 40%;
+    font-family: 'Poppins';
+  }
+
+  .calendar-link{
+    margin-bottom: 5%;
+  }
+
+  .calendar-preview-tablet{
+    text-align: center;
+  }
+
+  .view-select{
+    margin: 5px 0;
+    font-size: 12px;
+    text-wrap: nowrap;
+  }
+
+  .view-select label{
+    color: #002aff !important;
+  }
+
+  .view-select select{
+    color: #000;
+    width: 60% !important;
+  }
+
+  .fc .fc-toolbar.fc-header-toolbar{
+    margin-bottom: 5px;
+    font-size: 15px;
+    text-wrap: nowrap;
+  }
+
+  .fc-col-header-cell-cushion{
+    font-size: 10px !important;
+  }
+
+  .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion{
+    font-size: 13px !important;
+  }
+
+  .elem-grid.full-width{
+    padding: 0 10px;
+  }
+
+  .fc-event{
+    font-size: 12px !important;
+  }
+
 }
 
-@media (max-width:580px){
+
+
+
+
+
+
+@media (max-width:579px){
   .pomo-link, .note-link{
     width: auto;
     margin: 0;
@@ -248,23 +431,68 @@
     margin-top: 3vh;
   }
 
+  .home-grid{
+    width: 100%;
+  }
+
   .pomodoro-elements p{
     background-color: #ebefff;
     padding: 3%;
     border-radius: 8px;
+    width: auto;
+    text-wrap: nowrap;
+    font-size: 0.9em;
   }
 
   .home-preview .section-description{
     padding: 0 20px ;
   }
 
+
   .home-preview .section-description .subtitle{
     margin-top: 0;
     margin-bottom: 4vh;
+    font-size: 0.8em;
+  }
+
+  .home-preview .section-description .title{
+    font-size: 2em;
   }
 
   .notes-preview-mobile .section-description .title, .pomodoro-preview-mobile .section-description .title{
     margin: 0;
+  }
+
+  .notes-preview-mobile{
+    height: auto;
+    margin-top: 5%;
+    padding: 5% 0;
+  }
+
+  .note-list{
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+
+  .note-item{
+    width: calc(42% - 10px);
+    margin-bottom: 10px;
+  }
+
+  .note-preview .settings{
+    font-size: 15px;
+    color: #002aff;
+  }
+
+  .note-preview .settings input {
+    font-family: 'Poppins';
+    width: 15%;
+    margin-bottom: 6px;
+  }
+
+  .note-preview .settings select, .view-select select{
+    font-family: 'Poppins';
+    width: 40%;
   }
 
   .note-preview h3{
@@ -275,7 +503,79 @@
     height: 7vh;
   }
 
+  .pomodoro-preview{
+    position: relative;
+  }
+
+  .button-container{
+    width: 100%;
+    justify-content: end;
+  }
+
+  .calendar-link{
+    margin-bottom: 5%;
+  }
+
+  .calendar-preview-mobile .title{
+    margin-bottom: 0;
+  }
+
+  .calendar-preview-mobile .subtitle{
+    margin-top: 0;
+    color: #001789;
+    padding:0 10px;
+  }
+
+  .view-select{
+    margin: 5px 0;
+  }
+
+  .view-select label{
+    color: #002aff !important;
+  }
+
+  .view-select select{
+    color: #000
+  }
+
+  .fc .fc-toolbar.fc-header-toolbar{
+    margin-bottom: 5px
+  }
+
+  .fc-col-header-cell-cushion{
+    font-size: 10px !important;
+  }
+
+  .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion{
+    font-size: 10px !important;
+  }
+
+  .calendar-preview{
+    width: 90% !important;
+  }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .calendar-preview {
   display: flex;
@@ -334,10 +634,43 @@
 }
 
 .calendar-preview-mobile {
-  width: 100%;
+  width: 90%;
   color: #002aff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: auto;
+  margin-top: 5%;
+}
+
+.view-select label{
+  color: #002aff !important;
+}
+
+.view-select{
+  text-wrap: nowrap;
+  margin-bottom: 5px;
+}
+
+.fc-col-header-cell-cushion{
+  color: #002aff !important;
+}
+
+.fc-daygrid-day-number{
+  color: #002aff !important;
+}
+
+ .view-select select{
+  font-family: 'Poppins';
+  width: 60%;
+  color: #000
+}
+
+.fc .fc-toolbar.fc-header-toolbar{
+  margin-bottom: 5px
+}
+
+.fc-timegrid-axis-cushion{
+  font-size: 8px;
 }

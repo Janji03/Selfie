@@ -22,6 +22,10 @@ const Homepage = () => {
             className="bi bi-x-lg"
             onClick={() => setIsCalendarPreviewOpen(false)}
           ></i>
+          <h1 className="title">CALENDARIO</h1>
+              <p className="subtitle">
+                <strong>Gestisci </strong>i tuoi eventi con facilità: <em>visualizza</em>, <em>organizza</em> e <em>pianifica </em>le attività in un'interfaccia intuitiva.
+              </p>
           <CalendarPreview />
         </div>
       );
@@ -57,7 +61,7 @@ const Homepage = () => {
             onClick={() => setIsPomodoroPreviewOpen(false)}
           ></i>
             <div className="section-description">
-              <h1 className="title">Pomodoro Technique</h1>
+              <h1 className="title">POMODORO TECHNIQUE</h1>
               <p className="subtitle">
                 Aumenta la tua produttività con la tecnica{" "}
                 <strong>Pomodoro</strong>. Lavora in sessioni di{" "}

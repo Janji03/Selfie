@@ -82,9 +82,9 @@ const CalendarPreview = () => {
       <div className="view-select">
         <label htmlFor="view-select">Seleziona vista:</label>
         <select id="view-select" value={currentView} onChange={handleViewChange}>
-          <option value="dayGridMonth">Vista Mensile</option>
-          <option value="timeGridWeek">Vista Settimanale</option>
-          <option value="timeGridDay">Vista Giornaliera</option>
+          <option value="dayGridMonth">Mensile</option>
+          <option value="timeGridWeek">Settimanale</option>
+          <option value="timeGridDay">Giornaliera</option>
         </select>
       </div>
 

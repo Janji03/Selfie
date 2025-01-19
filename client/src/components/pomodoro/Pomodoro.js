@@ -12,7 +12,7 @@ import { useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 
-//bugghetti: accesso da mail, se hai voglia aggiungi profilo e selfie, personalizzabile, abbellire
+//bugghetti: se hai voglia aggiungi profilo e selfie, personalizzabile, abbellire
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);

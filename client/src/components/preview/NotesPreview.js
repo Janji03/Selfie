@@ -59,18 +59,18 @@ const NotesPreview = () => {
       {/* Input per il numero di note con solo le frecce per modificarlo */}
       <div className="settings">
         <label>
-          Numero di note da visualizzare:
+          Numero di note da visualizzare: 
           <input
             type="number"
             value={noteCount}
             onChange={(e) => setNoteCount(Number(e.target.value))}
             min="1"
-            max="10"
+            max="5"
             step="1"
             // Impedisce l'inserimento diretto, permettendo solo le frecce su e giù
             onKeyDown={(e) => e.preventDefault()}
           />
-        </label>
+        </label><br/>
         
         {/* Selettore per la visibilità */}
         <label>
