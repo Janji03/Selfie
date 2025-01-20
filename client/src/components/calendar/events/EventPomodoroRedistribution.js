@@ -58,7 +58,7 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
         const newEvent = {
           ...rest,
           id: uuidv4(),
-          title: event.title + ' - da recuperare', //prova
+          title: event.title + ' - da recuperare',
           start: start.toISOString(), 
           end: end.toISOString(), 
           extendedProps: {
@@ -79,20 +79,26 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
         const { studyTime: eventStudyTime, breakTime: eventBreakTime, cycles: eventCycles } = event.extendedProps.pomodoroSettings;
 
         const combinedStudyTime = Math.round(
-            (studyTime * remainingCycles + eventStudyTime * eventCycles) /
+            ((studyTime/nextPomodorosOnDate.length) * remainingCycles + eventStudyTime * eventCycles) /
             (remainingCycles + eventCycles)
         );
 
         const combinedBreakTime = Math.round(
-            (breakTime * remainingCycles + eventBreakTime * eventCycles) /
+            ((breakTime/nextPomodorosOnDate.length) * remainingCycles + eventBreakTime * eventCycles) /
             (remainingCycles + eventCycles)
         );
 
         const totalDuration = (combinedStudyTime + combinedBreakTime) * (remainingCycles + eventCycles);
 
+        const startDate = new Date(event.start);
+
+        const newEndDate = new Date(startDate.getTime() + totalDuration * 60 * 1000);
+
         const updateOnDateEvent = {
             ...event,
+            title: event.title + ' - aggiunto recupero',
             duration: minutesToTime(totalDuration),
+            end: newEndDate.toISOString(),
             extendedProps: {
             ...event.extendedProps,
             pomodoroSettings: {

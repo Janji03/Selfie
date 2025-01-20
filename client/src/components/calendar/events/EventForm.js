@@ -13,7 +13,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const { parseRRule } = RecurrenceHandler();
 
   const { time } = useTimeMachine();
-  const [areProposalsOpen, setAreProposalsOpen] = useState(false);
+  const [areProposalsOpen, setAreProposalsOpen] = useState(true);
 
   const [formData, setFormData] = useState({
     ...initialData,
@@ -501,7 +501,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 </div>
               </>
             )}
-
+        </div>
             <button type="submit" className="form-button form-submit">
               {isEditMode ? "Save Changes" : "Add Event"}
             </button>
@@ -514,7 +514,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             Reset Changes
             </button>
             )}
-           </div>
+           
             
           </>
         ) : (

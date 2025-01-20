@@ -98,6 +98,19 @@
   background-color: #007bff;
 }
 
+.event-info button.go-to-pomodoro {
+  background-color: #007bff39;
+}
+
+.event-info button.go-to-pomodoro a{
+  color: #000;
+  text-decoration: none;
+}
+
+.event-info button.go-to-pomodoro:hover {
+  background-color: #007bff91;
+}
+
 /* Notifications Section */
 .notifications-container {
   /* margin-top: 20px; */

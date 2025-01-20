@@ -55,7 +55,7 @@ const PomodoroEmailSender = ({ studyTime, breakTime, cycles }) => {
               </ul>
             </div>
 
-            <button onClick={handleSendEmail}>Invia</button>
+            <button onClick={handleSendEmail} className="btn-email-sender">Invia</button>
           </div>
         </Modal>
       )}

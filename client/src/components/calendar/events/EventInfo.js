@@ -256,7 +256,7 @@ const EventInfo = ({
 
         {selectedEvent.extendedProps.isPomodoro && (
           <div>
-            <button>
+            <button className="go-to-pomodoro">
               <Link
                 to="/pomodoro"
                 state={{

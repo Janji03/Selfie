@@ -222,7 +222,11 @@
 .share-button{
   font-size: 2.5vw;
   margin-right: 25px;
+}
 
+.btn-email-sender{
+  margin-top: 0;
+  padding: 1%;
 }
 
 
