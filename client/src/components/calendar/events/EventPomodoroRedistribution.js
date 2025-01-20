@@ -1,10 +1,11 @@
 import { getEvents, updateEvent, createNewEvent } from "../../../services/eventService";
 import { v4 as uuidv4 } from "uuid";
 
-const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
+const redistributePomodoroTime = async (userID, currentDate) => {
   try {
     const events = await getEvents(userID); //ottiei eventi
 
+    const createdPomodoros = [];
     
     const uncompletedPomodoros = events.filter((event) => { //returna i pomodori non completati
       const { completedCycles, cycles } = event.extendedProps.pomodoroSettings || {};
@@ -71,7 +72,7 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
           },
         };
         await createNewEvent(newEvent, userID); 
-        setEvents((prevEvents) => [...prevEvents, newEvent]);
+        createdPomodoros.push(newEvent);
 
       } else {
 
@@ -126,7 +127,7 @@ const redistributePomodoroTime = async (userID, currentDate, setEvents) => {
 
       await updateEvent(updatedPastEvent.id, updatedPastEvent);
     }
-
+    return createdPomodoros;
   } catch (error) {
     console.error("Errore durante la ridistribuzione dei pomodori:", error);
   }

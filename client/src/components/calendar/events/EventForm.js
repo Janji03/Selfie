@@ -97,6 +97,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       // Logica specifica per eventi Pomodoro
       if (adjustedFormData.isPomodoro) {
         adjustedFormData.pomodoroSettings.completedCycles = 0;
+        adjustedFormData.allDay = false;
       }
 
       if (

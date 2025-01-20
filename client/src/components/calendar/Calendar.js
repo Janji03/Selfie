@@ -132,7 +132,8 @@ const Calendar = () => {
         }
 
         try {
-          await redistributePomodoroTime(userID, time, setEvents); //modifica sta roba salvando qui setevents come const invece di passarlo
+          const createdPomodoros = await redistributePomodoroTime(userID, time); //modifica sta roba salvando qui setevents come const invece di passarlo
+          setEvents((prevEvents) => [...prevEvents, createdPomodoros]);
         } catch (error) {
           console.error("Error during redistribution:", error);
         }
