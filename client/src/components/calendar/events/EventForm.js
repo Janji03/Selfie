@@ -159,6 +159,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       }));
     }
 
+    if (name === "endTime") {
+      setAreProposalsOpen(true)
+    }
+
     if (name === "startTime") {
       const [hours, minutes] = value.split(":").map(Number);
       const newHours = (hours + 1) % 24;
@@ -420,8 +424,11 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 value={formData.endTime}
                 onChange={handleChange}
               />
+              
             </div>
-
+              {errors.endTime && (
+                <span className="error-message">{errors.endTime}</span>
+              )}
             <div>
               <label>
                 <input
@@ -476,6 +483,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   <input
                     type="number"
                     name="studyTime"
+                    min={1}
                     value={formData.pomodoroSettings.studyTime || ""}
                     onChange={handleChangePomodoroSettings}
                   />
@@ -486,6 +494,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   <input
                     type="number"
                     name="breakTime"
+                    min={1}
                     value={formData.pomodoroSettings.breakTime || ""}
                     onChange={handleChangePomodoroSettings}
                   />
@@ -496,13 +505,18 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   <input
                     type="number"
                     name="cycles"
+                    min={1}
                     value={formData.pomodoroSettings.cycles || ""}
                     onChange={handleChangePomodoroSettings}
                   />
                 </div>
+                
               </>
             )}
         </div>
+            {errors.pomodoroSettings && (
+                <span className="error-message">{errors.pomodoroSettings}</span>
+              )}
             <button type="submit" className="form-button form-submit">
               {isEditMode ? "Save Changes" : "Add Event"}
             </button>
