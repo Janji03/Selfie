@@ -90,18 +90,6 @@ const Pomodoro = () => {
 
 
 
-  /* const handleGet = async () => {
-    try {
-      const listaPomodoro = await getUserPomodoros(nPomodoro, userID);
-      console.log("Get pomodoro okay");
-      console.log(listaPomodoro);
-    } catch (error) {
-      console.error("Get pomodoro non okay: ", error);
-    }
-  }; */
-
-
-
   const calculateProposals = () => {
     const breakTime = Math.floor(totalMinutes * 0.2);
     const studyTime = totalMinutes - breakTime;
@@ -198,7 +186,7 @@ const Pomodoro = () => {
             <form className="study-form" onSubmit={handleSubmit}>
               <div className="pomo-info-form">
                 <label htmlFor="total-time" className="long-label">Tempo complessivo:</label>
-                <label htmlFor="total-time" className="short-label">How long do you want to study?</label>
+                <label htmlFor="total-time" className="short-label">Quanto tempo vuoi studiare?</label>
                 <input
                   type="number"
                   id="total-time"
@@ -319,7 +307,7 @@ const Pomodoro = () => {
               setTimeLeft(0)}
               }
               className="pomo-button"
-              >Vai al prossimo</button>
+              >Prossima fase</button>
 
               
               <button onClick={() => {
@@ -330,13 +318,13 @@ const Pomodoro = () => {
                 setAnimationKey((prevKey) => prevKey + 1);
                 alert('ricomincia questo ciclo')
               }}
-              className="pomo-button">Ricomincia questo</button>
+              className="pomo-button">Ricomincia fase</button>
 
 
               <button onClick={handleSubmit}
               className="pomo-button"
               >
-              Ricomincia tutto</button>
+              Ricomincia sessione</button>
 
 
               <button onClick={() => {
@@ -347,7 +335,7 @@ const Pomodoro = () => {
                   alert('ciclo terminato forzato')
               }}
               className="pomo-button"
-              >Fine tutto</button> 
+              >Concludi Sessione</button> 
             </div>
 
               <div className="pomodoro-applyers">

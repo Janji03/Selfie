@@ -165,6 +165,10 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       }));
     }
 
+    if (name === "endTime") {
+      setAreProposalsOpen(true)
+    }
+
     if (name === "startTime") {
       const [hours, minutes] = value.split(":").map(Number);
       const newHours = (hours + 1) % 24;
@@ -432,8 +436,11 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 value={formData.endTime}
                 onChange={handleChange}
               />
+              
             </div>
-
+              {errors.endTime && (
+                <span className="error-message">{errors.endTime}</span>
+              )}
             <div>
               <label>
                 <input
@@ -495,6 +502,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                       name="studyTime"
                       value={formData.pomodoroSettings.studyTime || ""}
                       onChange={handleChangePomodoroSettings}
+                      min={1}
                     />
                   </div>
 
@@ -505,6 +513,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                       name="breakTime"
                       value={formData.pomodoroSettings.breakTime || ""}
                       onChange={handleChangePomodoroSettings}
+                      min={1}
                     />
                   </div>
 
@@ -515,6 +524,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                       name="cycles"
                       value={formData.pomodoroSettings.cycles || ""}
                       onChange={handleChangePomodoroSettings}
+                      min={1}
                     />
                   </div>
                 </>
