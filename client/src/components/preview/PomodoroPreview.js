@@ -23,7 +23,6 @@ const PomodoroPreview = () => {
         } else {
           setLastPomodoro(null);
         }
-        console.log("Get pomodoro okay");
       } catch (error) {
         console.error("Get pomodoro non okay: ", error);
       }
@@ -32,7 +31,6 @@ const PomodoroPreview = () => {
     const getNextPomodoro = async () => {
       try { //per qualche motivo la ripete 4 votle
         const listaEventiPomodoro = await getEvents(userID);
-        console.log(listaEventiPomodoro)
         const currentDate = new Date();
     
         // Filtra gli eventi per ottenere solo i pomodori futuri e non completati
@@ -47,7 +45,6 @@ const PomodoroPreview = () => {
     
         const prossimoPomodoro = pomodoriFuturi.sort((a, b) => new Date(a.end) - new Date(b.end))[0];
         setNextPomodoro(prossimoPomodoro);
-        console.log("Prossimo pomodoro ok");
          
       } catch (error) {
         console.error("Errore nel recupero del prossimo pomodoro:", error);

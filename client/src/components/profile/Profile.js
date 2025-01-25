@@ -6,7 +6,6 @@ import Modal from '../common/Modal';
 import EditProfileForm from './EditProfileForm';
 import "../../styles/Profile.css";
 import DefaultIcon from '../../assets/default.png';
-import Inbox from './Inbox'; 
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -51,9 +50,8 @@ const Profile = () => {
 
   const toggleEditModal = () => setIsEditModalOpen((prev) => !prev);
 
-  // Navigate to Inbox
   const handleOpenInbox = () => {
-    navigate('/inbox'); // Redirect to the Inbox page
+    navigate('/inbox'); 
   };
 
   const handleInputChange = (e) => {
@@ -115,22 +113,23 @@ const Profile = () => {
           />}
           <p className="profile-info"><strong>Email:</strong> {user?.email}</p>
           <p className="profile-info"><strong>Bio:</strong> {user?.bio}</p>
-          <p className="profile-info"><strong>Birthday:</strong> {user?.birthday}</p>
-          <p className="profile-info"><strong>Sex:</strong> {user?.sex}</p>
+          <p className="profile-info"><strong>Compleanno:</strong> {user?.birthday}</p>
+          <p className="profile-info"><strong>Sesso:</strong> {user?.sex}</p>
         </div>
 
         <div className="profile-actions">
-          <button className="button edit-button" onClick={toggleEditModal}>Edit Profile</button>
-          <button className="button delete-button" onClick={handleDelete}>Delete Profile</button>
+          <button className="button edit-button" onClick={toggleEditModal}>Modifica</button>
+          
+          <button className="button inbox-button" onClick={handleOpenInbox}>Apri Inbox</button>
+          
           <button className="button logout-button" onClick={handleLogout}>Logout</button>
 
-          {/* Navigate to Inbox */}
-          <button className="button inbox-button" onClick={handleOpenInbox}>Open Inbox</button>
+          <button className="button delete-button" onClick={handleDelete}>Elimina profilo</button>
         </div>
 
         {error && <p className="error-message">{error}</p>}
 
-        <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Edit Profile" zIndex={1000}>
+        <Modal isOpen={isEditModalOpen} onClose={toggleEditModal} title="Modifica Profilo" zIndex={1000}>
           <EditProfileForm
             formData={formData}
             handleInputChange={handleInputChange}

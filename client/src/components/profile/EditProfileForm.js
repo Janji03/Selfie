@@ -1,10 +1,11 @@
 import React from "react";
+import "../../styles/Form.css"
 
 const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handleFormSubmit, onCancel }) => {
   return (
-    <form className="edit-profile-form" onSubmit={handleFormSubmit}>
+    <form className="form-container" onSubmit={handleFormSubmit}>
       <div>
-        <label htmlFor="name">Name:</label>
+        <label className="form-label">Nome:</label>
         <input
           type="text"
           id="name"
@@ -12,19 +13,21 @@ const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handle
           value={formData?.name || ""}
           onChange={handleInputChange}
           placeholder="Name"
+          className="form-input"
         />
       </div>
       <div>
-        <label htmlFor="profilePicture">Profile Picture:</label>
+        <label className="form-label">Foto profilo:</label>
         <input
           type="file"
           id="profilePicture"
           name="profilePicture"
           onChange={handleFileChange}
+          className="form-input"
         />
       </div>
       <div>
-        <label htmlFor="bio">Bio:</label>
+        <label className="form-label">Bio:</label>
         <input
           type="text"
           id="bio"
@@ -32,34 +35,37 @@ const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handle
           value={formData?.bio || ""}
           onChange={handleInputChange}
           placeholder="Bio"
+          className="form-input"
         />
       </div>
       <div>
-        <label htmlFor="birthday">Birthday:</label>
+        <label className="form-label">Compleanno:</label>
         <input
           type="date"
           id="birthday"
           name="birthday"
           value={formData?.birthday ? formData.birthday.split("T")[0] : ""}
           onChange={handleInputChange}
+          className="form-input"
         />
       </div>
       <div>
-        <label htmlFor="sex">Sex:</label>
+        <label className="form-label">Sesso:</label>
         <select
           id="sex"
           name="sex"
           value={formData?.sex || "prefer not to say"}
           onChange={handleInputChange}
+          className="form-input"
         >
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="prefer not to say">Prefer Not to Say</option>
+          <option value="male">Uomo</option>
+          <option value="female">Donna</option>
+          <option value="prefer not to say">Preferisco non specificare</option>
         </select>
       </div>
-      <button type="submit">Save Changes</button>
-      <button type="button" onClick={onCancel}>
-        Cancel
+      <button type="submit" className="form-button form-submit">Salva</button>
+      <button type="button" className="form-button form-reset" onClick={onCancel}>
+        Cancella
       </button>
     </form>
   );

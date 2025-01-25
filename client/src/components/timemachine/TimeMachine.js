@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTimeMachine } from "../../context/TimeMachineContext";
-import TimeMachineStyle from "../../styles/TimeMachine.css";
+import "../../styles/TimeMachine.css";
 import { updateTimeMachine, resetTimeMachine } from "../../services/timeMachineService";
 
 const formatDateTime = (date) => {
@@ -24,7 +24,9 @@ const update = async (userID, newTime) => {
   try {
     await updateTimeMachine(userID, newTime);
   } catch (error) {
-    console.error("Error while updating the time machine:", error.message);
+    throw new Error(
+      error.response?.data?.message || "Errore durante l'aggiornamento della time machine"
+    );
   }
 };
 
@@ -32,14 +34,15 @@ const reset = async (userID) => {
   try {
     await resetTimeMachine(userID);
   } catch (error) {
-    console.error("Error while resetting the time machine:", error.message);
+    throw new Error(
+      error.response?.data?.message || "Errore durante il reset della time machine"
+    );
   }
 };
 
 const TimeMachine = () => {
   const userID = localStorage.getItem("userID");
-  const { time, setTime, isTimeMachineActive, setIsTimeMachineActive } =
-    useTimeMachine();
+  const { time, setTime, isTimeMachineActive, setIsTimeMachineActive } = useTimeMachine();
   const [inputTime, setInputTime] = useState(formatDateTimeForInput(time));
 
   const handleInputChange = (event) => {
@@ -87,18 +90,18 @@ const TimeMachine = () => {
           value={inputTime}
         />
         {isInputDifferent && (
-          <button onClick={handleUpdateTime} className="update-button">Update</button>
+          <button onClick={handleUpdateTime} className="update-button">Aggiorna</button>
         )}
-        <button onClick={resetToLocalTime} className="reset-button">Reset to Local Time</button>
+        <button onClick={resetToLocalTime} className="reset-button">Resetta</button>
       </div>
       
       {isTimeMachineActive ? (
         <h3>
-          Time machine <span className="tm-active">ACTIVE</span>
+          Time machine <span className="tm-active">attivata</span>
         </h3>
       ) : (
         <h3>
-          Time machine <span className="tm-not-active">NOT ACTIVE</span>
+          Time machine <span className="tm-not-active">disattivata</span>
         </h3>
       )}
     </div>

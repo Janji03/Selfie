@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-// Ottieni tutti le task associate all'utente loggato
+// Ottieni tutte le task associate ad un utente
 export const getTasks = async (userID) => {
   try {
     const response = await axiosInstance.get(`tasks`, {
@@ -14,6 +14,7 @@ export const getTasks = async (userID) => {
   }
 };
 
+// Ottieni tutte le task a cui l'utente è stato invitato
 export const getInvitedTasks = async (userID) => {
   try {
     const response = await axiosInstance.get(`tasks/invited`, {
@@ -77,14 +78,22 @@ export const deleteTask = async (id) => {
   }
 };
 
+// Gestisce la risposta all'invito di una task di gruppo
 export const handleInvitationResponse = async (id, userID, responseType) => {
   try {
-    const response = await axiosInstance.put(`tasks/${id}/${responseType}`, {}, { params: { userID } });
+    const response = await axiosInstance.put(
+      `tasks/${id}/${responseType}`,
+      {},
+      { params: { userID } }
+    );
 
     if (response.status === 200) {
       return response.data;
-    } 
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    throw new Error(
+      error.response?.data?.message ||
+        "Errore durante la gestione della risposta all'invito"
+    );
   }
 };

@@ -20,20 +20,26 @@ const InvitationHandler = ({ action, type }) => {
           }
         );
 
+        const mappedAction = {
+          accept: "accettato",
+          decline: "rifiutato",
+          resend: "posticipato"
+        };
+
         if (response.status === 200) {
           alert(
-            `You have successfully ${action}ed the invitation!`
+            `Hai correttamente ${mappedAction[action]} l'invito!`
           );
         } else if (response.status === 403) {
           alert(
-            "You cannot modify your response. Please contact the host if changes are needed."
+            "Non puoi modificare la risposta. Contatta il creatore dell'evento per essere reinvitato."
           );
         } else {
-          alert(`Error ${action}ing invitation.`);
+          alert(`Errore durante la gestione dell'invito.`);
         }
       } catch (error) {
-        console.error("Error:", error);
-        alert(`An error occurred while ${action}ing the invitation.`);
+        console.error("Errore:", error);
+        alert(`Errore durante la gestione dell'invito.`);
       }
       window.close();
     };
@@ -41,7 +47,7 @@ const InvitationHandler = ({ action, type }) => {
     handleInvitation();
   }, [id, userID, navigate, type, action]);
 
-  return <div>Processing...</div>;
+  return <div>Caricamento...</div>;
 };
 
 

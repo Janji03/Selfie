@@ -33,6 +33,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
   const MAX_LOCATION_LENGTH = 50;
   const MAX_DESCRIPTION_LENGTH = 200;
 
+  // Funzione per controllare se i campi del form sono validi
   const validateForm = () => {
     const newErrors = {};
     const {
@@ -48,47 +49,50 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     } = formData;
 
     if (title.length > MAX_TITLE_LENGTH) {
-      newErrors.title = `Event title can only be max ${MAX_TITLE_LENGTH} characters.`;
+      newErrors.title = `Il titolo puo' essere al massimo di ${MAX_TITLE_LENGTH} caratteri.`;
     }
 
     if (isPomodoro) {
       const { studyTime, breakTime, cycles } = formData.pomodoroSettings;
       if (!studyTime || !breakTime || !cycles) {
         newErrors.pomodoroSettings =
-          "Study time, break time, and cycles are required for Pomodoro.";
+          "Tempo di studio, tempo di pausa e numero di cicli sono richiesti.";
       }
     }
 
     if (location.length > MAX_LOCATION_LENGTH) {
-      newErrors.location = `Event location can be max ${MAX_LOCATION_LENGTH} characters.`;
+      newErrors.location = `La posizione puo' essere al massimo ${MAX_LOCATION_LENGTH} caratteri.`;
     }
 
     if (description.length > MAX_DESCRIPTION_LENGTH) {
-      newErrors.description = `Event description can be max ${MAX_DESCRIPTION_LENGTH} characters.`;
+      newErrors.description = `La descrizione puo' essere al massimo ${MAX_DESCRIPTION_LENGTH} caratteri.`;
     }
 
     const startDateTime = new Date(`${startDate}T${startTime}`);
     const endDateTime = new Date(`${endDate}T${endTime}`);
 
     if (new Date(startDate) > new Date(endDate)) {
-      newErrors.endDate = "End date must be after start date.";
+      newErrors.endDate =
+        "Il giorno di fine non puo' essere precedente al giorno di inizio.";
     }
 
     const timeDifference = endDateTime - startDateTime;
     const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
 
     if (daysDifference > MAX_DATE_RANGE_DAYS) {
-      newErrors.endDate = `Event cannot last more than ${MAX_DATE_RANGE_DAYS} days.`;
+      newErrors.endDate = `Un evento non puo' durare più di ${MAX_DATE_RANGE_DAYS} giorni.`;
     }
 
     if (!allDay && startDate === endDate && startDateTime >= endDateTime) {
-      newErrors.endTime = "End time must be after start time.";
+      newErrors.endTime =
+        "Il tempo di fine non puo' essere precedente al tempo di inizio.";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+  // Funzione per gestire il submit del form
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -126,6 +130,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     }
   };
 
+  // Funzine per gestire il cambio del fuso orario dell'evento
   const handleTimeZoneChange = (selectedTimeZone) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -133,6 +138,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     }));
   };
 
+  // Funzione per gestire i cambiamenti dei campi del form
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     const [mainKey, subKey] = name.split(".");
@@ -211,10 +217,12 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
     });
   };
 
+  // Funzione per gestire il reset dei cambiamenti del form
   const handleResetChanges = () => {
     setFormData({ ...initialData });
   };
 
+  // Funzione per gestire l'import di un evento da un file iCalendar
   const handleFileChange = (e) => {
     const file = e.target.files[0];
 
@@ -229,9 +237,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
           const component = new ICAL.Component(parsedData);
           const vevent = component.getFirstSubcomponent("vevent");
           const eventData = new ICAL.Event(vevent);
-
-          console.log(vevent);
-          console.log(eventData);
 
           const start = DateTime.fromISO(
             new Date(eventData.startDate).toISOString(),
@@ -282,10 +287,13 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
           setErrors({});
         } catch (error) {
-          console.error("Error parsing iCalendar file:", error);
+          console.error(
+            "Errore durante l'importazione dell'evento iCalendar:",
+            error
+          );
           setErrors((prevErrors) => ({
             ...prevErrors,
-            file: "Failed to parse the iCalendar file.",
+            file: "Errore durante l'importazione dell'evento iCalendar.",
           }));
         }
       };
@@ -331,12 +339,12 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
         cycles: proposal.cycles,
       },
     }));
-    console.log(formData);
   };
 
   return (
     <div className="form-container">
       <form onSubmit={handleSubmit}>
+        {/* Periodo non disponibile per eventi di gruppo */}
         <div>
           <label>
             <input
@@ -347,14 +355,15 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               className="checkbox-input"
             />
             <span className="checkbox-label">
-              Mark as Unavailable for group events
+              Segna non disponibile per eventi di gruppo
             </span>
           </label>
         </div>
         {!formData.markAsUnavailable && (
           <div>
+            {/* Import evento iCalendar */}
             <div>
-              <label className="form-label">Import iCalendar event:</label>
+              <label className="form-label">Importa evento iCalendar:</label>
               <input
                 type="file"
                 name="icsFile"
@@ -363,19 +372,22 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 className="form-input"
               />
             </div>
+            {/* Titolo */}
             <div>
-              <label className="form-label">Title:</label>
+              <label className="form-label">Titolo:</label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
                 className="form-input"
+                placeholder="Inserisci titolo"
               />
               {errors.title && (
                 <span className="error-message">{errors.title}</span>
               )}
             </div>
+            {/* Pomodoro */}
             <div>
               <label>
                 <input
@@ -385,7 +397,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   onChange={handleChange}
                   className="checkbox-input"
                 />
-                <span className="checkbox-label">Is Pomodoro</span>
+                <span className="checkbox-label">Evento Pomodoro</span>
               </label>
             </div>
           </div>
@@ -395,7 +407,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
           <>
             {/* Campi specifici per il Pomodoro */}
             <div>
-              <label>Start Date:</label>
+              <label>Giorno di inizio:</label>
               <input
                 type="date"
                 name="startDate"
@@ -404,7 +416,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               />
             </div>
             <div>
-              <label>Start Time:</label>
+              <label>Orario di inizio:</label>
               <input
                 type="time"
                 name="startTime"
@@ -413,7 +425,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               />
             </div>
             <div>
-              <label>End Time:</label>
+              <label>Orario di fine:</label>
               <input
                 type="time"
                 name="endTime"
@@ -430,7 +442,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   checked={formData.isRecurring}
                   onChange={handleChange}
                 />
-                Is Recurring
+                Ripeti:
               </label>
             </div>
             {formData.isRecurring && (
@@ -441,85 +453,89 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               />
             )}
 
-
-
             {/* Sezione Proposte Pomodoro */}
             <div className="form-proposal-event">
               <div className="form-proposal-heading">
-                <h3>Pomodoro Proposals</h3>
-                {areProposalsOpen ? 
-                  (<i class="bi bi-pencil-fill" onClick={() => setAreProposalsOpen(false)}></i>
+                <h3>Proposte Pomodoro</h3>
+                {areProposalsOpen ? (
+                  <i
+                    className="bi bi-pencil-fill"
+                    onClick={() => setAreProposalsOpen(false)}
+                  ></i>
                 ) : (
-                  <i class="bi bi-collection-play" onClick={() => setAreProposalsOpen(true)}></i>
+                  <i
+                    className="bi bi-collection-play"
+                    onClick={() => setAreProposalsOpen(true)}
+                  ></i>
                 )}
-                 
-              </div> 
-             {areProposalsOpen ? (
-              calculateProposals().map((proposal, index) => (
-                <button
-                  className="proposal-button"
-                  key={index}
-                  type="button"
-                  onClick={() => {
-                    handleProposalSelect(proposal)
-                    setAreProposalsOpen(false)
-                  }}
-                >
-                  <strong>Study</strong>: {proposal.study} min, <strong>Break</strong>: {proposal.break} min, <strong>Cycles</strong>: {proposal.cycles} <br />
-                </button>
-              ))
-            ) : (
-              <>
-                {/* Modifica manuale delle impostazioni Pomodoro */}
-                <div>
-                  <label>Study Time (min):</label>
-                  <input
-                    type="number"
-                    name="studyTime"
-                    value={formData.pomodoroSettings.studyTime || ""}
-                    onChange={handleChangePomodoroSettings}
-                  />
-                </div>
+              </div>
+              {areProposalsOpen ? (
+                calculateProposals().map((proposal, index) => (
+                  <button
+                    className="proposal-button"
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      handleProposalSelect(proposal);
+                      setAreProposalsOpen(false);
+                    }}
+                  >
+                    <strong>Studio</strong>: {proposal.study} min,{" "}
+                    <strong>Pausa</strong>: {proposal.break} min,{" "}
+                    <strong>Cicli</strong>: {proposal.cycles} <br />
+                  </button>
+                ))
+              ) : (
+                <>
+                  {/* Modifica manuale delle impostazioni Pomodoro */}
+                  <div>
+                    <label>Tempo di studio (min):</label>
+                    <input
+                      type="number"
+                      name="studyTime"
+                      value={formData.pomodoroSettings.studyTime || ""}
+                      onChange={handleChangePomodoroSettings}
+                    />
+                  </div>
 
-                <div>
-                  <label>Break Time (min):</label>
-                  <input
-                    type="number"
-                    name="breakTime"
-                    value={formData.pomodoroSettings.breakTime || ""}
-                    onChange={handleChangePomodoroSettings}
-                  />
-                </div>
+                  <div>
+                    <label>Tempo di pausa (min):</label>
+                    <input
+                      type="number"
+                      name="breakTime"
+                      value={formData.pomodoroSettings.breakTime || ""}
+                      onChange={handleChangePomodoroSettings}
+                    />
+                  </div>
 
-                <div>
-                  <label>Cycles:</label>
-                  <input
-                    type="number"
-                    name="cycles"
-                    value={formData.pomodoroSettings.cycles || ""}
-                    onChange={handleChangePomodoroSettings}
-                  />
-                </div>
-              </>
-            )}
-        </div>
+                  <div>
+                    <label>Cicli:</label>
+                    <input
+                      type="number"
+                      name="cycles"
+                      value={formData.pomodoroSettings.cycles || ""}
+                      onChange={handleChangePomodoroSettings}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
             <button type="submit" className="form-button form-submit">
-              {isEditMode ? "Save Changes" : "Add Event"}
+              {isEditMode ? "Salva" : "Aggiungi"}
             </button>
             {isEditMode && (
-            <button
-            type="button"
-            onClick={handleResetChanges}
-            className="form-button form-reset"
-            >
-            Reset Changes
-            </button>
+              <button
+                type="button"
+                onClick={handleResetChanges}
+                className="form-button form-reset"
+              >
+                Cancella
+              </button>
             )}
-           
-            
           </>
         ) : (
           <div>
+            {/* All Day */}
             <div>
               <label>
                 <input
@@ -529,11 +545,11 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   onChange={handleChange}
                   className="checkbox-input"
                 />
-                <span className="checkbox-label">All Day</span>
+                <span className="checkbox-label">Tutto il giorno</span>
               </label>
             </div>
             <div>
-              <label className="form-label">Start Date:</label>
+              <label className="form-label">Giorno di inizio:</label>
               <input
                 type="date"
                 name="startDate"
@@ -545,7 +561,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             </div>
             {!formData.allDay && (
               <div>
-                <label className="form-label">Start Time:</label>
+                <label className="form-label">Orario di inizio:</label>
                 <input
                   type="time"
                   name="startTime"
@@ -556,7 +572,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               </div>
             )}
             <div>
-              <label className="form-label">End Date:</label>
+              <label className="form-label">Giorno di fine:</label>
               <input
                 type="date"
                 name="endDate"
@@ -576,7 +592,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             </div>
             {!formData.allDay && (
               <div>
-                <label className="form-label">End Time:</label>
+                <label className="form-label">Orario di fine:</label>
                 <input
                   type="time"
                   name="endTime"
@@ -605,7 +621,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                   onChange={handleChange}
                   className="checkbox-input"
                 />
-                <span className="checkbox-label">Is Recurring</span>
+                <span className="checkbox-label">Ripeti:</span>
               </label>
             </div>
             {formData.isRecurring && (
@@ -616,65 +632,77 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               />
             )}
             {!formData.markAsUnavailable && (
-          <div>
-            <div>
-                  <label className="form-label">Location:</label>
+              <div>
+                {/* Posizione */}
+                <div>
+                  <label className="form-label">Posizione:</label>
                   <input
                     type="text"
                     name="location"
                     value={formData.location}
                     onChange={handleChange}
                     className="form-input"
+                    placeholder="Inserisci posizione"
                   />
                   {errors.location && (
                     <span className="error-message">{errors.location}</span>
                   )}
                 </div>
+                {/* Descrizione */}
                 <div>
-                  <label className="form-label">Description:</label>
+                  <label className="form-label">Descrizione:</label>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
                     className="form-textarea"
+                    placeholder="Inserisci descrizione"
                   />
                   {errors.description && (
                     <span className="error-message">{errors.description}</span>
                   )}
                 </div>
-                <label className="form-label">Notifications</label>
-                <NotificationForm formData={formData} setFormData={setFormData} />
+                {/* Notifiche */}
+                <label className="form-label">Notifiche</label>
+                <NotificationForm
+                  formData={formData}
+                  setFormData={setFormData}
+                />
 
-            <label className="form-label">Invite users</label>
-            <UserForm formData={formData} setFormData={setFormData} />
+                {/* Invito utenti */}
+                <label className="form-label">Invita utenti</label>
+                <UserForm formData={formData} setFormData={setFormData} />
+              </div>
+            )}
+
+            {/* Fuso Orario */}
+            <div>
+              <label className="form-label">Fuso Orario:</label>
+              <TimeZoneForm
+                initialTimeZone={formData.timeZone}
+                onSubmit={handleTimeZoneChange}
+              />
+            </div>
+            {/* Bottone submit */}
+
+            <button type="submit" className="form-button form-submit">
+              {isEditMode ? "Salva" : "Aggiungi"}
+            </button>
+
+            {/* Bottone reset (solo edit mode) */}
+            {isEditMode && (
+              <button
+                type="button"
+                onClick={handleResetChanges}
+                className="form-button form-reset"
+              >
+                Cancella
+              </button>
+            )}
           </div>
         )}
-
-        <div>
-          <label className="form-label">Time Zone:</label>
-          <TimeZoneForm
-            initialTimeZone={formData.timeZone}
-            onSubmit={handleTimeZoneChange}
-          />
-        </div>
-        <button type="submit" className="form-button form-submit">
-          {isEditMode ? "Save Changes" : "Add Event"}
-        </button>
-        {isEditMode && (
-          <button
-            type="button"
-            onClick={handleResetChanges}
-            className="form-button form-reset"
-          >
-            Reset Changes
-          </button>
-        )}
-        </div>
-        )}
-        
-      
       </form>
-    </div>  
+    </div>
   );
 };
 

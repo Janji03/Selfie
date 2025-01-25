@@ -37,9 +37,12 @@ const EventHandler = ({
     calendarTimeZone,
   });
 
+  // Funzione per gestire il click su un evento
   const handleEventClick = async (info, clickedItemId) => {
     try {
       const clickedEvent = await getEventById(clickedItemId);
+      console.log("Clicked event:", clickedEvent);
+      // Se clicco su un evento ricorrente, prendo l'istanza
       if (clickedEvent && clickedEvent.rrule) {
         setSelectedOccurrence(info.event.start);
       }
@@ -49,8 +52,10 @@ const EventHandler = ({
     }
   };
 
+  // Funzione per gestire la modifica di un evento
   const handleEditEvent = () => {
     if (selectedEvent) {
+      // Riempo l'event form con i dati della task selezionata
       let rruleParsed = null;
       if (selectedEvent.rrule) {
         rruleParsed = parseRRule(
@@ -137,9 +142,11 @@ const EventHandler = ({
     }
   };
 
+  // Funzione per gestire la cancellazione di un evento
   const handleDeleteEvent = async (eventOccurrenceDate = null) => {
     if (selectedEvent) {
       try {
+        // Se voglio cancellare un'istanza di evento ricorrente, allora aggiungo la data a exdate
         if (eventOccurrenceDate) {
           const exdate = selectedEvent.exdate ? [...selectedEvent.exdate] : [];
           exdate.push(eventOccurrenceDate.toISOString());
@@ -165,6 +172,7 @@ const EventHandler = ({
     }
   };
 
+  // Funzione per gestire l'esportazione di un evento in formato iCalendar
   const handleExportEvent = async () => {
     const userID = localStorage.getItem("userID");
 
@@ -210,11 +218,13 @@ const EventHandler = ({
     }
   };
 
+  // Funzione per gestire il submit del'event form (per creazione o modifica di un evento)
   const handleEventFormSubmit = async (data) => {
     const eventTimeZone = data.timeZone;
     const eventStartDateTime = `${data.startDate}T${data.startTime}:00`;
     const eventEndDateTime = `${data.endDate}T${data.endTime}:00`;
 
+    // Converto inizio e fine dell'evento in UTC
     const utcStart = DateTime.fromISO(eventStartDateTime, {
       zone: eventTimeZone,
     })
@@ -224,8 +234,9 @@ const EventHandler = ({
       .toUTC()
       .toISO();
 
+    // Creo la stringa RRule per l'evento
     const rruleString = handleRecurrence(data.recurrence, utcStart);
-
+        
     const duration = calculateDuration(
       data.allDay,
       eventStartDateTime,
@@ -239,6 +250,7 @@ const EventHandler = ({
       };
     });
 
+    // Creo il nuovo evento con i dati inviati dal form
     const newEvent = {
       id: uuidv4(),
       title: data.title,
@@ -274,10 +286,11 @@ const EventHandler = ({
     }
 
     try {
+      // Se stavo modificando un evento, chiamo l'API update event
       if (isEditMode) {
         const updatedEvent = await updateEvent(selectedEvent.id, newEvent);
 
-        // Convert from UTC to Local Timezone
+        // Converto l'evento da UTC al fuso orario del calendario
         const convertedEvent = convertEventTimes(updatedEvent);
 
         const updatedEvents = events.map((event) =>
@@ -289,11 +302,10 @@ const EventHandler = ({
         setEvents(updatedEvents);
         setSelectedEvent(convertedEvent);
       } else {
+        // Se stavo creando un evento, chiamo l'API create new event
         const createdEvent = await createNewEvent(newEvent, userID);
 
-        console.log(createdEvent);
-
-        // Convert from UTC to Local Timezone
+        // Converto l'evento da UTC al fuso orario del calendario
         const convertedEvent = convertEventTimes(createdEvent);
 
         setEvents([...events, convertedEvent]);
@@ -305,6 +317,7 @@ const EventHandler = ({
     }
   };
 
+  // Funzione per inizializzare l'event form in base alla data e ora selezionata
   const initializeEventForm = (startDateTime) => {
     const startTime = startDateTime.includes("T")
       ? startDateTime.split("T")[1].slice(0, 5)

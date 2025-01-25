@@ -6,6 +6,7 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
+
 import { DateTime } from "luxon";
 
 import { AuthContext } from "../../context/AuthContext";
@@ -72,100 +73,32 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { decrementOneDay, roundTime, convertEventTimes, addThirtyMinutes } =
-    DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const fetchEventsAndTasks = async () => {
-        try {
-          const fetchedEvents = await getEvents(userID);
-          const invitedEvents = await getInvitedEvents(userID);
-          const fetchedTasks = await getTasks(userID);
-          const invitedTasks = await getInvitedTasks(userID);
-
-          // Convert the events and tasks to calendar timezone
-          const convertedEvents = fetchedEvents.map((event) => {
-            const eventWithClassNames = {
-              ...convertEventTimes(event),
-              classNames: ["event"],
-              display: event.extendedProps?.markAsUnavailable
-                ? "background"
-                : "auto",
-            };
-            return eventWithClassNames;
-          });
-          const convertedInvitedEvents = invitedEvents.map((event) => ({
-            ...convertEventTimes(event),
-            classNames: ["invited-event"],
-          }));
-          const convertedTasks = fetchedTasks.map((task) => ({
-            ...convertEventTimes(task),
-            classNames: getClassNamesForTask(task),
-          }));
-          const convertedInvitedTasks = invitedTasks.map((task) => ({
-            ...convertEventTimes(task),
-            classNames: getClassNamesForTask(task),
-          }));
-
-          const combinedEvents = [
-            ...convertedEvents,
-            ...convertedInvitedEvents,
-          ];
-
-          const combinedTasks = [...convertedTasks, ...convertedInvitedTasks];
-
-          setEvents(combinedEvents);
-          setTasks(combinedTasks);
-
-          const combined = [...combinedEvents, ...combinedTasks];
-          setCombinedItems(combined);
-        } catch (error) {
-          console.error("Error fetching events or tasks:", error);
-        }
-      };
-
-      const fetchAndRedistributeEvents = async () => {
-        if (isInitialMount.current) {
-          isInitialMount.current = false;
-          return;
-        }
-
-        try {
-          await redistributePomodoroTime(userID, time);
-          const allEvents = await getEvents(userID);
-          setEvents(allEvents);
-          
-        } catch (error) {
-          console.error("Error during redistribution:", error);
-        }
-      };
-
-      fetchAndRedistributeEvents();
-      fetchEventsAndTasks();
-    }
-  }, [isAuthenticated, userID]);
-
-  useEffect(() => {
-    const interval = setInterval(async () => {
+    const fetchAndSetData = async () => {
       if (isAuthenticated) {
         try {
+          await redistributePomodoroTime(userID, time);
+  
           const fetchedEvents = await getEvents(userID);
           const invitedEvents = await getInvitedEvents(userID);
-
+  
           const fetchedTasks = await getTasks(userID);
           const invitedTasks = await getInvitedTasks(userID);
-
-          // Convert the events and tasks to calendar timezone
+  
           const convertedEvents = fetchedEvents.map((event) => ({
             ...convertEventTimes(event),
             classNames: ["event"],
+            display: event.extendedProps?.markAsUnavailable
+              ? "background"
+              : "auto",
           }));
           const convertedInvitedEvents = invitedEvents.map((event) => ({
             ...convertEventTimes(event),
             classNames: ["invited-event"],
           }));
-
+  
           const convertedTasks = fetchedTasks.map((task) => ({
             ...convertEventTimes(task),
             classNames: getClassNamesForTask(task),
@@ -174,27 +107,42 @@ const Calendar = () => {
             ...convertEventTimes(task),
             classNames: getClassNamesForTask(task),
           }));
-
-          const combinedEvents = [
-            ...convertedEvents,
-            ...convertedInvitedEvents,
-          ];
-
+  
+          const combinedEvents = [...convertedEvents, ...convertedInvitedEvents];
           const combinedTasks = [...convertedTasks, ...convertedInvitedTasks];
-
+  
           setEvents(combinedEvents);
           setTasks(combinedTasks);
-
+  
           const combined = [...combinedEvents, ...combinedTasks];
           setCombinedItems(combined);
+  
+          // Aggiorna gli eventi di fullCalendar
+          if (isInitialMount.current) {
+            isInitialMount.current = false;
+            handleTriggerReRender();
+            return;
+          }
+
+          const calendarApi = calendarRef.current.getApi();
+          calendarApi.refetchEvents();
+
         } catch (error) {
-          console.error("Error fetching events or tasks:", error);
+          console.error("Errore durante il recupero di eventi o task:", error);
         }
       }
-    }, 10000);
+    };
+  
+    // Chiama la funzione immediatamente quando il componente viene montato
+    fetchAndSetData();
+  
+    // Esegui ogni 10 secondi
+    const interval = setInterval(fetchAndSetData, 10000);
+  
     return () => clearInterval(interval);
-  }, [isAuthenticated, userID, events, tasks]);
+  }, [isAuthenticated, userID]);
 
+  // Funzione per attribuire le classi CSS alle task in base a scadenza/completamento
   const getClassNamesForTask = (task) => {
     const classNames = ["task"];
 
@@ -264,45 +212,30 @@ const Calendar = () => {
     calendarTimeZone,
   });
 
+  // Quando viene aggiornato il valore della timemachine, forza il re-render del calendario
   useEffect(() => {
-    const interval = setInterval(async () => {
-      if (isAuthenticated) {
-        try {
-          const updatedTasks = await getTasks(userID);
-          const tasksWithClasses = updatedTasks.map((task) => ({
-            ...task,
-            classNames: getClassNamesForTask(task),
-          }));
-          setTasks(tasksWithClasses);
 
-          const combined = [...events, ...tasksWithClasses];
-          setCombinedItems(combined);
-
-          handleTriggerReRender();
-        } catch (error) {
-          console.error("Error fetching updated tasks:", error);
-        }
-      }
-    }, 60000);
-
-    return () => clearInterval(interval);
-  }, [isAuthenticated, userID, events]);
-
-  useEffect(() => {
+    // Se è la prima volta che viene montata la componente, allora salta l'esecuzione
     if (isInitialMount.current) {
       isInitialMount.current = false;
       return;
     }
 
+    // Invoca la funzione per controllare (lato front-end) se ci sono task in ritardo
     checkForOverdueTasks();
+
+    // Esegue il re-render del calendario
     handleTriggerReRender();
   }, [isTimeMachineActive]);
 
+  // Funzione che esegue il re-render del calendario
   const handleTriggerReRender = () => {
     setCalendarRenderKey((prevKey) => prevKey + 1);
   };
 
+  // Quando vengono modificati gli state di eventi o task oppure quando viene cambiata la view del calendario, aggiorno lo state eventi di fullCalendar
   useEffect(() => {
+
     const processedEvents = events.map((event) => ({
       ...event,
       display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
@@ -314,23 +247,26 @@ const Calendar = () => {
       classNames: getClassNamesForTask(task),
     }));
 
+    // Se viene selezionata la view taskList allora utilizzo solo le task
     if (currentView === "taskList") {
       setCombinedItems(processedTasks);
     } else {
       const combined = [...processedEvents, ...processedTasks];
       setCombinedItems(combined);
     }
+
+    // Aggiorna gli eventi di fullCalendar
     const calendarApi = calendarRef.current.getApi();
     calendarApi.refetchEvents();
   }, [events, tasks, currentView]);
 
-  const handleViewChange = ({ view }) => {
-    setCurrentView(view.type);
-  };
-
+  // Funzione per gestire il click su una cella del calendario
   const handleDateClick = (info) => {
+
+    // Estraggo data e ora della cella cliccata
     const startDateTime = info.dateStr;
 
+    // Inizializzo il form evento e task
     initializeEventForm(startDateTime);
     initializeTaskForm(startDateTime);
 
@@ -345,10 +281,11 @@ const Calendar = () => {
       }));
     }
 
+    // Se clicco su un evento o una task, non aprire il form
     if (
-      info.jsEvent.target.classList.contains("fc-bg-event") ||
+      info.jsEvent.target.classList.contains("fc-bg-event") || 
       info.jsEvent.target.classList.contains("fc-event-title")
-    ) {
+      ) {
       return;
     }
 
@@ -359,10 +296,14 @@ const Calendar = () => {
     setIsFormOpen(true);
   };
 
+  // Funzione per gestire il click su un evento o una task
   const handleItemClick = async (info) => {
     setIsFormOpen(false);
+    // Estraggo il tipo di oggetto selezionato (event o task) e il suo ID
     const clickedItemType = info.event._def.extendedProps.itemType;
     const clickedItemId = info.event._def.publicId;
+    
+    // Setto il tab in base all'oggetto selezionato
     if (clickedItemType === "event") {
       setCurrentFormTab("event");
       handleEventClick(info, clickedItemId);
@@ -372,14 +313,17 @@ const Calendar = () => {
     }
   };
 
+  // Funzione per gestire la selezione di un range di date o tempo
   const handleSelectRange = (info) => {
+
+    // Estraggo la data e tempo iniziale e finale del range selezionato
     let startDateTime = info.startStr;
     let endDateTime = info.endStr;
-
+    
     let allday = info.allDay;
+
     if (info.allDay) {
-      startDateTime = startDateTime += "T00:00:00";
-      decrementOneDay(endDateTime);
+      startDateTime += "T00:00:00";
       allday = true;
     }
 
@@ -390,27 +334,31 @@ const Calendar = () => {
     });
   };
 
+  // Funzione per gestire l'aggiunta di un evento o una task dopo aver cliccato il bottone "+"
   const handleAddItem = () => {
+
+    // Metto di default il tab del form a "event"
     setCurrentFormTab("event");
     const calendarApi = calendarRef.current.getApi();
+
+    // Estraggo la view corrente del calendario
     const view = calendarApi.view;
 
-    let baseDate;
+    // Se sono nella view mensile o taskList, utilizzo la data e tempo corrente
+    const baseDate =
+      view.type === "timeGridDay" ||
+      view.type === "timeGridWeek" 
+      ? new Date(view.currentStart)
+      : new Date(time);
+    
     let startDateTime;
 
-    if (
-      view.type === "timeGridDay" ||
-      view.type === "timeGridWeek" ||
-      view.type === "taskList"
-    ) {
-      baseDate = new Date(view.currentStart);
-    } else {
-      baseDate = new Date(time);
-    }
-
+    // Se ho selezionato un range, utilizzo la data e tempo del range
     if (selectedRange) {
       initializeEventForm(selectedRange.start);
       initializeTaskForm(selectedRange.start);
+
+      // Se ho selezionato allDay, metto a true il campo allDay dei form
       if (selectedRange.allDay) {
         setEventFormInitialData((prevData) => ({
           ...prevData,
@@ -421,6 +369,7 @@ const Calendar = () => {
           ...prevData,
           allDay: true,
         }));
+
       } else {
         setEventFormInitialData((prevData) => ({
           ...prevData,
@@ -428,9 +377,12 @@ const Calendar = () => {
           endTime: selectedRange.end.split("T")[1].slice(0, 5),
         }));
       }
+
     } else {
+      // Arrotondo le ore e i minuti
       baseDate.setHours(new Date(time).getHours());
       startDateTime = roundTime(baseDate).toISOString();
+
       initializeEventForm(startDateTime);
       initializeTaskForm(startDateTime);
     }
@@ -440,11 +392,14 @@ const Calendar = () => {
     setSelectedRange(null);
   };
 
+  // Variabili per indicare se l'utente sta modificando un evento o una task
   const isEventEditing = selectedEvent !== null;
   const isTaskEditing = selectedTask !== null;
 
+  // Funzione per mostrare a schermo il form per l'aggiunta/modifica di un evento o di una task
   const renderForm = () => {
     if (currentFormTab === "event") {
+      // Se il tab corrente è su "event", mostro il form per l'aggiunta/modifica di un evento
       return (
         <EventForm
           initialData={eventFormInitialData}
@@ -453,6 +408,7 @@ const Calendar = () => {
         />
       );
     } else {
+      // Se il tab corrente è su "task", mostro il form per l'aggiunta/modifica di una task
       return (
         <div>
           <TaskForm
@@ -465,24 +421,17 @@ const Calendar = () => {
     }
   };
 
-  const handleChangeTimeZone = () => {
-    setIsTZFormOpen(true);
-  };
-
+  // Funzione per gestire il cambio di fuso orario del calendario
   const handleTZFormSubmit = (newTimeZone) => {
     setCalendarTimeZone(newTimeZone);
     setIsTZFormOpen(false);
 
-    const convertedEvents = events.map((event) => convertEventTimes(event));
-    const convertedTasks = tasks.map((task) => convertEventTimes(task));
-
-    setEvents(convertedEvents);
-    setTasks(convertedTasks);
-
-    const combined = [...convertedEvents, ...convertedTasks];
-    setCombinedItems(combined);
+    // Converto data e ora di eventi e task nel nuovo fuso orario 
+    const convertedCombined = combinedItems.map((item) => convertEventTimes(item));
+    setCombinedItems(convertedCombined);
   };
 
+  // Aggiungo delle classi CSS per rendere la toolbar responsive
   const toolbarChunks = document.querySelectorAll(".fc-toolbar-chunk");
   if (toolbarChunks.length >= 3) {
     toolbarChunks[0].classList.add("fc-toolbar-left");
@@ -496,7 +445,7 @@ const Calendar = () => {
         <TimeMachinePreview />
       </div>
       <button
-        onClick={handleChangeTimeZone}
+        onClick={() => setIsTZFormOpen(true)}
         className="timezone-button"
       ></button>
 
@@ -507,7 +456,7 @@ const Calendar = () => {
           if (isTaskEditing) setCurrentFormTab("task");
           else if (isEventEditing) setCurrentFormTab("event");
         }}
-        title={currentFormTab === "event" ? "Event" : "Task"}
+        title={currentFormTab === "event" ? "Evento" : "Task"}
         zIndex={1100}
       >
         <TabSwitcher
@@ -521,8 +470,8 @@ const Calendar = () => {
 
       <Modal
         isOpen={!!selectedEvent}
-        onClose={() => setSelectedEvent(null)}
-        title={"Event"}
+        onClose={() => {setSelectedEvent(null); setSelectedOccurrence(null)}}
+        title={"Evento"}
         zIndex={1000}
       >
         {selectedEvent && (
@@ -547,6 +496,8 @@ const Calendar = () => {
         {selectedTask && (
           <TaskInfo
             selectedTask={selectedTask}
+            setSelectedTask={setSelectedTask}
+            setTasks={setTasks}
             handleEditTask={handleEditTask}
             handleDeleteTask={handleDeleteTask}
             markTaskAsCompleted={() => markTaskAsCompleted(selectedTask.id)}
@@ -557,7 +508,7 @@ const Calendar = () => {
       <Modal
         isOpen={isTZFormOpen}
         onClose={() => setIsTZFormOpen(false)}
-        title={"Timezone"}
+        title={"Fuso Orario"}
         zIndex={1000}
       >
         <TimeZoneForm
@@ -585,11 +536,11 @@ const Calendar = () => {
             right: "addEvent prev,today,next",
           }}
           buttonText={{
-            today: "Today",
-            month: "Month",
-            week: "Week",
-            day: "Day",
-            list: "Tasks",
+            today: "Oggi",
+            month: "Mese",
+            week: "Settimana",
+            day: "Giorno",
+            list: "Task",
           }}
           customButtons={{
             addEvent: {
@@ -604,7 +555,7 @@ const Calendar = () => {
               buttonText: "Tasks",
               noEventsContent: () => (
                 <div style={{ textAlign: "center", padding: "10px" }}>
-                  🎉 No tasks found for this period! 🎉
+                  Non ci sono task in questo periodo! 
                 </div>
               ),
             },
@@ -613,7 +564,7 @@ const Calendar = () => {
           timeZone={calendarTimeZone}
           now={time}
           nowIndicator={true}
-          datesSet={handleViewChange}
+          datesSet={({ view }) => setCurrentView(view.type)}
           dateClick={handleDateClick}
           eventClick={handleItemClick}
           selectable={true}

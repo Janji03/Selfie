@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { DateTime } from "luxon";
 import { getUser } from "../../../services/userService";
-import { handleInvitationResponse } from "../../../services/taskService"; // Similar to eventService
+import { handleInvitationResponse } from "../../../services/taskService"; 
 import "../../../styles/TaskInfo.css";
 
 const TaskInfo = ({
   selectedTask,
+  setSelectedTask,
+  setTasks,
   handleEditTask,
   handleDeleteTask,
   markTaskAsCompleted,
@@ -17,6 +19,7 @@ const TaskInfo = ({
   const [participants, setParticipants] = useState([]);
   const [currentUserStatus, setCurrentUserStatus] = useState("pending");
 
+  // Funzione per estrarre le informazioni sui partecipanti della task
   useEffect(() => {
     const fetchTaskData = async () => {
       try {
@@ -32,6 +35,7 @@ const TaskInfo = ({
               if (invite.userID === currentUserID) {
                 setCurrentUserStatus(invite.status);
               }
+              // Estraggo nome, email e lo stato di accettazione per il partecipante
               return user
                 ? {
                     id: invite.userID,
@@ -61,11 +65,19 @@ const TaskInfo = ({
   const deadline = DateTime.fromISO(selectedTask.extendedProps.deadline);
   const completedLate = isCompleted && completedAt && completedAt >= deadline;
 
-  const isAllDay = selectedTask.extendedProps.isAllDay;
+  const isAllDay = selectedTask.allDay;
 
+  // Funzione per gestire la risposta all'invito
   const handleResponse = async (responseType) => {
     await handleInvitationResponse(selectedTask.id, currentUserID, responseType);
     setCurrentUserStatus(responseType === "accept" ? "accepted" : "rejected");
+
+    if (responseType === "reject") {
+      setTasks((prevTasks) =>
+        prevTasks.filter((task) => task.id !== selectedTask.id)
+      );
+      setSelectedTask(null);
+    }
   };
 
   const getBadgeClass = () => {
@@ -77,7 +89,7 @@ const TaskInfo = ({
 
   return (
     <div className="task-info">
-      {/* Task Title */}
+      {/* Titolo */}
       <h2 className={getBadgeClass()}>{selectedTask.title}</h2>
 
       {/* Deadline */}
@@ -88,92 +100,102 @@ const TaskInfo = ({
           : deadline.toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
-      {/* All Day Indicator */}
+      {/* All Day */}
       {isAllDay && (
         <p className="all-day-indicator">
-          <strong>All Day Task</strong>
+          <strong>Intera giornata</strong>
         </p>
       )}
 
-      {/* Overdue notifications */}
+      {/* Notifiche */}
       <p>
-        <strong>Overdue notifications:</strong>{" "}
-        {selectedTask.extendedProps.notifications ? "enabled" : "disabled"}
+        <strong>Notifiche:</strong>{" "}
+        {selectedTask.extendedProps.notifications ? "attivate" : "disattivate"}
       </p>
 
-      {/* Time Zone */}
+      {/* Fuso orario */}
       {selectedTask.extendedProps?.timeZone && (
         <p>
-          <strong>Time Zone:</strong> {selectedTask.extendedProps.timeZone}
+          <strong>Fuso orario:</strong> {selectedTask.extendedProps.timeZone}
         </p>
       )}
 
-      {/* Owner Info */}
+      {/* Creatore della task */}
       {!isOwner && ownerUser && (
         <p>
-          <strong>Task Owner: </strong>
+          <strong>Proprietario: </strong>
           {ownerUser.name} ({ownerUser.email})
         </p>
       )}
 
-      {/* Invited Users */}
+      {/* Utenti invitati */}
       {participants.length > 0 && (
         <div className="invited-users-container">
-          <h3>Invited Users:</h3>
+          <h3>Utenti invitati:</h3>
           <ul>
             {participants.map((user, index) => (
               <li key={index} className="invited-user-item">
-                <div className="user-details">
+              <div className="user-details">
+                <div>
                   <strong>{user.name}</strong>
-                  <div className="user-email">{user.email}</div>
+                  <div className="user-email">{user.email}</div>{" "}
                 </div>
-                {user.id === currentUserID ? (
-                  <div className="response-buttons">
-                    {currentUserStatus === "pending" ? (
-                      <>
-                        <button
-                          className="accept"
-                          onClick={() => handleResponse("accept")}
-                          title="Accept"
-                        >
-                          ✔️
-                        </button>
-                        <button
-                          className="reject"
-                          onClick={() => handleResponse("reject")}
-                          title="Reject"
-                        >
-                          ❌
-                        </button>
-                      </>
-                    ) : (
-                      <div
-                        className={`status ${currentUserStatus.toLowerCase()}`}
+              </div>
+              {user.id === currentUserID ? (
+                <div className="response-buttons">
+                  {currentUserStatus === "pending" ? (
+                    <>
+                      <button
+                        className="accept"
+                        onClick={() => handleResponse("accept")}
+                        title="Accept"
                       >
-                        {currentUserStatus}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className={`status ${user.status.toLowerCase()}`}>
-                    {user.status}
-                  </div>
-                )}
-              </li>
+                        ✔️
+                      </button>
+                      <button
+                        className="reject"
+                        onClick={() => handleResponse("reject")}
+                        title="Reject"
+                      >
+                        ❌
+                      </button>
+                    </>
+                  ) : (
+                    <div
+                      className={`status ${currentUserStatus.toLowerCase()}`}
+                    >
+                      {currentUserStatus}
+                    </div>
+                  )}
+                  {currentUserStatus === "accepted" && (
+                    <button
+                      className="leave"
+                      onClick={() => handleResponse("reject")}
+                    >
+                      Abbandona
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className={`status ${user.status.toLowerCase()}`}>
+                  {user.status}
+                </div>
+              )}
+            </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Action Buttons */}
+      {/* Bottoni */}
       <div className="action-buttons">
         {isOwner && (
           <>
             <button className="edit" onClick={handleEditTask}>
-              Edit Task
+              Modifica
             </button>
             <button className="delete" onClick={handleDeleteTask}>
-              Delete Task
+              Elimina
             </button>
           </>
         )}
@@ -181,7 +203,7 @@ const TaskInfo = ({
           className={isCompleted ? "pending" : "completed"}
           onClick={markTaskAsCompleted}
         >
-          {isCompleted ? "Mark as Pending" : "Mark as Completed"}
+          {isCompleted ? "Segna come non completa" : "Segna come completa"}
         </button>
       </div>
     </div>

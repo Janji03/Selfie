@@ -80,14 +80,38 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password/:token" element={<ResetPassword />} />
-            <Route path="/events/:id/accept" element={<InvitationHandler action="accept" type="events"/>} />
-            <Route path="/events/:id/reject" element={<InvitationHandler action="rejct" type="events"/>} />
-            <Route path="/events/:id/resend" element={<InvitationHandler action="resend" type="events"/>} />
-            <Route path="/tasks/:id/accept" element={<InvitationHandler action="accept" type="tasks"/>} />
-            <Route path="/tasks/:id/reject" element={<InvitationHandler action="reject" type="tasks"/>} />
-            <Route path="/tasks/:id/resend" element={<InvitationHandler action="resend" type="tasks"/>} />
+            <Route 
+              path="/forgot-password" 
+              element={ <ForgotPassword />} 
+            />
+            <Route 
+              path="/reset-password/:token" 
+              element={<ResetPassword /> } 
+            />
+            <Route
+              path="/events/:id/accept"
+              element={<InvitationHandler action="accept" type="events" />}
+            />
+            <Route
+              path="/events/:id/reject"
+              element={<InvitationHandler action="rejct" type="events" />}
+            />
+            <Route
+              path="/events/:id/resend"
+              element={<InvitationHandler action="resend" type="events" />}
+            />
+            <Route
+              path="/tasks/:id/accept"
+              element={<InvitationHandler action="accept" type="tasks" />}
+            />
+            <Route
+              path="/tasks/:id/reject"
+              element={<InvitationHandler action="reject" type="tasks" />}
+            />
+            <Route
+              path="/tasks/:id/resend"
+              element={<InvitationHandler action="resend" type="tasks" />}
+            />
             <Route path="/" element={<Login />} />
             <Route path="*" element={<h1>404 - Page Not Found</h1>} />
           </Routes>

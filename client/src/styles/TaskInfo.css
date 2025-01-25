@@ -104,3 +104,13 @@
 .task-info button.mark-status:hover {
   background-color: #43a047;
 }
+
+
+.task-info button.leave {
+  background-color: #dc3545;
+  color: white;
+}
+
+.task-info button.leave:hover {
+  background-color: #990615;
+}

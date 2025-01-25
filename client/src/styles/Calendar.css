@@ -19,6 +19,12 @@
 
   --fc-daygrid-event-dot-width: 0px;
   --fc-list-event-dot-width: 0px;
+  
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(to bottom, #f5f6fd, #e8efff); 
 }
 
 /* CALENDAR */
@@ -27,11 +33,10 @@
   flex-direction: column;
   align-items: flex-start;
   padding: 20px;
-  background: linear-gradient(to bottom, #f5f6fd, #e8efff);
   font-family: "Poppins", sans-serif;
   color: #001789;
-  height: 100vh;
   min-width: 380px;
+  background: linear-gradient(to bottom, #f5f6fd, #e8efff); 
 }
 
 .calendar .fc {
@@ -47,6 +52,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  padding-bottom: 20px;
 }
 
 /* Title */
@@ -372,7 +378,7 @@
 }
 
 .calendar .fc-dayGridMonth-view .fc-daygrid-day-frame {
-  height: 10em;
+  height: 9em;
 }
 
 .calendar .fc-view {

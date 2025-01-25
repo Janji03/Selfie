@@ -33,6 +33,7 @@ const EventInfo = ({
   const [participants, setParticipants] = useState([]);
   const [currentUserStatus, setCurrentUserStatus] = useState("pending");
 
+  // Funzione per estrarre le informazioni sui partecipanti dell'evento
   useEffect(() => {
     const fetchParticipants = async () => {
       try {
@@ -72,18 +73,19 @@ const EventInfo = ({
   }, []);
 
   const timeOptions = {
-    0: "At the time of the event",
-    5: "5 minutes before",
-    10: "10 minutes before",
-    15: "15 minutes before",
-    30: "30 minutes before",
-    60: "1 hour before",
-    120: "2 hours before",
-    1440: "1 day before",
-    2880: "2 days before",
-    10080: "1 week before",
+    0: "Quando inizia l'evento",
+    5: "5 minuti prima",
+    10: "10 minuti prima",
+    15: "15 minuti prima",
+    30: "30 minuti prima",
+    60: "1 ora prima",
+    120: "2 ore prima",
+    1440: "1 giorno prima",
+    2880: "2 giorni prima",
+    10080: "1 settimana prima",
   };
 
+  // Funzione per gestire la risposta all'invito
   const handleResponse = async (responseType) => {
     await handleInvitationResponse(id, currentUserID, responseType);
     setCurrentUserStatus(responseType === "accept" ? "accepted" : "rejected");
@@ -98,56 +100,69 @@ const EventInfo = ({
 
   return (
     <div className="event-info">
+      {/* Titolo */}
       <h2 className={`${isOwner ? "" : "invited"}`}>{title}</h2>
+      
+      {!rrule && (
+        <>
+          {/* Inizio */}
+          <p>
+            <strong>Inizio:</strong>{" "}
+            {allDay
+              ? DateTime.fromISO(start, { zone: "UTC" })
+                  .setZone(timeZone)
+                  .toLocaleString(DateTime.DATE_SHORT)
+              : DateTime.fromISO(start, { zone: "UTC" })
+                  .setZone(timeZone)
+                  .toLocaleString(DateTime.DATETIME_FULL)}
+          </p>
 
-      <p>
-        <strong>Start:</strong>{" "}
-        {allDay
-          ? DateTime.fromISO(start, { zone: "UTC" })
-              .setZone(timeZone)
-              .toLocaleString(DateTime.DATE_SHORT)
-          : DateTime.fromISO(start, { zone: "UTC" })
-              .setZone(timeZone)
-              .toLocaleString(DateTime.DATETIME_FULL)}
-      </p>
-      <p>
-        <strong>End:</strong>{" "}
-        {allDay
-          ? DateTime.fromISO(end, { zone: "UTC" })
-              .setZone(timeZone)
-              .toLocaleString(DateTime.DATE_SHORT)
-          : DateTime.fromISO(end, { zone: "UTC" })
-              .setZone(timeZone)
-              .toLocaleString(DateTime.DATETIME_FULL)}
-      </p>
+          {/* Fine */}
+          <p>
+            <strong>Fine:</strong>{" "}
+            {allDay
+              ? DateTime.fromISO(end, { zone: "UTC" })
+                  .setZone(timeZone)
+                  .toLocaleString(DateTime.DATE_SHORT)
+              : DateTime.fromISO(end, { zone: "UTC" })
+                  .setZone(timeZone)
+                  .toLocaleString(DateTime.DATETIME_FULL)}
+          </p>
+        </>
+      )}
 
+      {/* All Day */}
       {allDay && (
         <p className="all-day-indicator">
-          <strong>All Day Event</strong>
+          <strong>Intera giornata</strong>
         </p>
       )}
 
+      {/* Posizione */}
       {location && (
         <p className="location">
-          <strong>Location:</strong> {location}
+          <strong>Luogo:</strong> {location}
         </p>
       )}
 
+      {/* Descrizione */}
       {description && (
         <p className="description">
-          <strong>Description:</strong> {description}
+          <strong>Descrizione:</strong> {description}
         </p>
       )}
 
+      {/* Ricorrenza */}
       {rrule && (
         <p className="recurrence">
-          <strong>Repeats:</strong> {getRecurrenceSummary(rrule)}
+          <strong>Ripeti:</strong> {getRecurrenceSummary(rrule)}
         </p>
       )}
 
+      {/* Notifiche */}
       {notifications.length > 0 && (
         <div className="notifications-container">
-          <h3>Notifications:</h3>
+          <h3>Notifiche:</h3>
           <ul>
             {notifications.map((notification, index) => (
               <li key={index} className="notification">
@@ -158,24 +173,27 @@ const EventInfo = ({
         </div>
       )}
 
+      {/* Fuso orario */}
       {timeZone && (
         <p className="timezone">
-          <strong>Time Zone:</strong> {timeZone}
+          <strong>Fuso Orario:</strong> {timeZone}
         </p>
       )}
 
+      {/* Creatore dell'evento */}
       {!isOwner && ownerUser && (
         <div className="owner-info">
           <p>
-            <strong>Event Owner: </strong>
+            <strong>Proprietario: </strong>
             {ownerUser.name} ({ownerUser.email})
           </p>
         </div>
       )}
 
+      {/* Utenti invitati */}
       {invitedUsers.length > 0 && (
         <div className="invited-users-container">
-          <h3>Invited Users:</h3>
+          <h3>Utenti invitati:</h3>
           <ul>
             {participants.map((user, index) => (
               <li key={index} className="invited-user-item">
@@ -216,7 +234,7 @@ const EventInfo = ({
                         className="leave"
                         onClick={() => handleResponse("reject")}
                       >
-                        Leave
+                        Abbandona
                       </button>
                     )}
                   </div>
@@ -231,27 +249,28 @@ const EventInfo = ({
         </div>
       )}
 
+      {/* Bottoni */}
       <div className="action-buttons">
         {isOwner && (
           <>
             <button className="edit" onClick={handleEditEvent}>
-              Edit Event
+              Modifica
             </button>
             <button className="delete" onClick={() => handleDeleteEvent(null)}>
-              Delete Event
+              Elimina
             </button>
             {selectedEvent.rrule && (
               <button
                 className="delete-single"
                 onClick={() => handleDeleteEvent(selectedOccurrence)}
               >
-                Delete Single Instance
+                Elimina solo questa istanza
               </button>
             )}
           </>
         )}
         <button className="export" onClick={handleExportEvent}>
-          Export Event
+          Esporta evento
         </button>
 
         {selectedEvent.extendedProps.isPomodoro && (

@@ -6,7 +6,6 @@ export const createPomodoro = async (req, res) => {
   const { studyTime, breakTime, cycles, userID } = req.body;
   
   if (!studyTime || !breakTime || !cycles || !userID) {
-    console.log('here 3');
     return res.status(400).json({ message: "Tutti i campi sono obbligatori." });
   }
 

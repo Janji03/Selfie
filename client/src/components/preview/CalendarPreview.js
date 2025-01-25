@@ -104,6 +104,7 @@ const CalendarPreview = () => {
         dateClick={goToCalendar}
         height="auto"
         now={time}
+        nowIndicator={true}
         dayMaxEventRows={1}
       />
 

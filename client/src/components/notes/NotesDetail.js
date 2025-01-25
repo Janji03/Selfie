@@ -58,8 +58,6 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       accessList: visibility === "restricted" ? selectedUsers : [],
     };
 
-    console.log("Updated note: ", updatedNote); // Aggiungi questa linea per il debug
-
     updateNote(note._id, updatedNote)
       .then(() => {
         refreshNotes(); // Ricarica le note

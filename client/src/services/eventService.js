@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-// Ottieni tutti gli eventi associati all'utente loggato
+// Ottieni tutti gli eventi associati ad un utente
 export const getEvents = async (userID) => {
   try {
     const response = await axiosInstance.get(`events`, {
@@ -14,7 +14,7 @@ export const getEvents = async (userID) => {
   }
 };
 
-// Ottieni tutti gli eventi a cui l'utente loggato è stato invitato
+// Ottieni tutti gli eventi a cui l'utente è stato invitato
 export const getInvitedEvents = async (userID) => {
   try {
     const response = await axiosInstance.get(`events/invited`, {
@@ -41,7 +41,6 @@ export const getUnavailableEvents = async (userID) => {
     );
   }
 };
-
 
 // Ottieni un evento tramite il suo ID
 export const getEventById = async (id) => {
@@ -88,35 +87,49 @@ export const deleteEvent = async (id) => {
   } catch (error) {
     throw new Error(
       error.response?.data?.message ||
-        "Errore durante l'eliminazione dell'evento'"
+        "Errore durante l'eliminazione dell'evento"
     );
   }
 };
 
+// Gestisce la risposta all'invito di un evento di gruppo
 export const handleInvitationResponse = async (id, userID, responseType) => {
   try {
-    const response = await axiosInstance.put(`events/${id}/${responseType}`, {}, { params: { userID } });
+    const response = await axiosInstance.put(
+      `events/${id}/${responseType}`,
+      {},
+      { params: { userID } }
+    );
 
     if (response.status === 200) {
       return response.data;
-    } 
+    }
   } catch (error) {
-    console.error("Error: ", error);
+    throw new Error(
+      error.response?.data?.message ||
+        "Errore durante la gestione della risposta all'invito"
+    );
   }
 };
 
+// Gestisce la conversione di un evento in formato iCalendar
 export const sendEventAsICalendar = async (id, email, event) => {
   try {
-    const response = await axiosInstance.post(`events/${id}/ics`, { event, email });
+    const response = await axiosInstance.post(`events/${id}/ics`, {
+      event,
+      email,
+    });
     return response.data;
   } catch (error) {
-    console.error("Error: ", error);
+    throw new Error(
+      error.response?.data?.message ||
+        "Errore durante l'invio dell'evento in formato iCalendar"
+    );
   }
-}
+};
 
-//aggiorna cicli completati
+// Aggiorna i cicli completati di un evento pomodoro
 export const updateCompletedCycles = async (id, completedCycles) => {
-
   try {
     const response = await axiosInstance.put(`events/${id}/completed-cycles`, {
       completedCycles,
@@ -129,4 +142,3 @@ export const updateCompletedCycles = async (id, completedCycles) => {
     );
   }
 };
-

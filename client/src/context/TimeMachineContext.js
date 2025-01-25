@@ -6,6 +6,7 @@ export const TimeMachineProvider = ({ children }) => {
   const [time, setTime] = useState(new Date());
   const [isTimeMachineActive, setIsTimeMachineActive] = useState(false);
 
+  // Incrementa il tempo ogni secondo
   useEffect(() => {
     const timer = setInterval(() => {
       setTime((prevTime) => new Date(prevTime.getTime() + 1000));

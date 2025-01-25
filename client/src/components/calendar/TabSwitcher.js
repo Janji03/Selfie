@@ -14,7 +14,7 @@ const TabSwitcher = ({
         className={currentFormTab === "event" ? "active" : ""}
         onClick={() => setCurrentFormTab("event")}
       >
-        Event
+        Evento
       </button>
       <button
         disabled={disableTaskTab}

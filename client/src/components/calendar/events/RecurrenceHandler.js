@@ -2,6 +2,7 @@ import { DateTime } from "luxon";
 import { RRule, rrulestr } from "rrule";
 
 const RecurrenceHandler = () => {
+  // Funzione per creare la stringa RRule
   const handleRecurrence = (recurrence, startDateTime) => {
     if (!recurrence) return null;
 
@@ -33,32 +34,32 @@ const RecurrenceHandler = () => {
       weekend: "SA,SU",
     };
 
-    // Start recurrence
+    // Inizio
     const startDateStr = DateTime.fromISO(startDateTime, { zone: "utc" });
     const rruleStart = startDateStr.toFormat("yyyyMMdd'T'HHmmss'Z'");
     let rruleString = `DTSTART:${rruleStart}\n`;
 
-    // Default recurrences
+    // Ricorrenze standard
     if (type !== "CUSTOM") {
       rruleString += `RRULE:FREQ=${type};INTERVAL=${interval}`;
     } else {
-      // Custom recurrences
+      // Ricorrenze custom
       rruleString += `RRULE:FREQ=${frequency};INTERVAL=${interval}`;
 
-      // Custom weekly recurrences
+      // Settimanali
       if (frequency === "WEEKLY") {
         rruleString += `;BYDAY=${daysOfWeek
           .map((day) => day.slice(0, 2).toUpperCase())
           .join(",")}`;
       }
 
-      // Custom monthly recurrences
+      // Mensili
       if (frequency === "MONTHLY") {
         if (monthlyType === "daysOfMonth") {
           rruleString += `;BYMONTHDAY=${monthDays.join(",")}`;
         }
       }
-      // Custom yearly recurrences
+      // Annuali
       if (frequency === "YEARLY") {
         rruleString += `;BYMONTH=${yearMonths.join(",")}`;
       }
@@ -78,7 +79,7 @@ const RecurrenceHandler = () => {
       }
     }
 
-    // End recurrence
+    // Fine
     if (endCondition === "onDate" && endDate) {
       const untilDate = DateTime.fromISO(endDate, { zone: "utc" });
       const untilStr = untilDate.toFormat("yyyyMMdd'T'HHmmss'Z'");
@@ -90,6 +91,7 @@ const RecurrenceHandler = () => {
     return rruleString;
   };
 
+  // Funzione per calcolare la durata di un evento
   const calculateDuration = (allDay, startDateTime, endDateTime) => {
     const start = new Date(startDateTime);
     const end = new Date(endDateTime);
@@ -111,6 +113,7 @@ const RecurrenceHandler = () => {
     return `${formattedHours}:${formattedMinutes}`;
   };
 
+  // Funzione per riempire il recurrence form in base alla stringa RRule
   const parseRRule = (rruleString, custom, startDateTime) => {
     const rruleLine = rruleString
       .split("\n")
@@ -262,86 +265,83 @@ const RecurrenceHandler = () => {
     return baseDate.toISOString().split("T")[0];
   };
 
+  // Funzione per mostrare la rrule in formato human readable
   const getRecurrenceSummary = (rruleString) => {
     try {
       const rule = rrulestr(rruleString);
       const options = rule.origOptions;
       let summary = "";
-
+  
       const fullDayNames = {
-        MO: "Monday",
-        TU: "Tuesday",
-        WE: "Wednesday",
-        TH: "Thursday",
-        FR: "Friday",
-        SA: "Saturday",
-        SU: "Sunday",
+        MO: "lunedì",
+        TU: "martedì",
+        WE: "mercoledì",
+        TH: "giovedì",
+        FR: "venerdì",
+        SA: "sabato",
+        SU: "domenica",
       };
-
+  
       const fullMonthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        "gennaio",
+        "febbraio",
+        "marzo",
+        "aprile",
+        "maggio",
+        "giugno",
+        "luglio",
+        "agosto",
+        "settembre",
+        "ottobre",
+        "novembre",
+        "dicembre",
       ];
-
+  
       if (options.interval && options.interval > 1) {
         switch (options.freq) {
           case RRule.DAILY:
-            summary += `Every ${options.interval} days`;
+            summary += `Ogni ${options.interval} giorni`;
             break;
           case RRule.WEEKLY:
-            summary += `Every ${options.interval} weeks`;
+            summary += `Ogni ${options.interval} settimane`;
             break;
           case RRule.MONTHLY:
-            summary += `Every ${options.interval} months`;
+            summary += `Ogni ${options.interval} mesi`;
             break;
           case RRule.YEARLY:
-            summary += `Every ${options.interval} years`;
+            summary += `Ogni ${options.interval} anni`;
             break;
-          default:
-            summary += `Custom`;
         }
       } else {
         switch (options.freq) {
           case RRule.DAILY:
-            summary += `Daily`;
+            summary += `Ogni giorno`;
             break;
           case RRule.WEEKLY:
-            summary += `Weekly`;
+            summary += `Ogni settimana`;
             break;
           case RRule.MONTHLY:
-            summary += `Monthly`;
+            summary += `Ogni mese`;
             break;
           case RRule.YEARLY:
-            summary += `Yearly`;
+            summary += `Ogni anno`;
             break;
-          default:
-            summary += `Custom`;
         }
       }
-
+  
       if (options.byweekday) {
-        const weekdayOrder = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
+        const weekdayOrder = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
         const ordinals = [
-          "first",
-          "second",
-          "third",
-          "fourth",
-          "fifth",
-          "last",
+          "primo",
+          "secondo",
+          "terzo",
+          "quarto",
+          "quinto",
+          "ultimo",
         ];
-
+  
         let ordinal;
-
+  
         const days = options.byweekday
           .sort(
             (a, b) =>
@@ -350,9 +350,12 @@ const RecurrenceHandler = () => {
           .map((day) => {
             const dayName = fullDayNames[day.toString().slice(-2)];
             ordinal = day.n ? ordinals[day.n > 0 ? day.n - 1 : 5] : "";
-            return ordinal ? `the ${ordinal} ${dayName}` : dayName;
+            if (dayName === "domenica") {
+              ordinal = "prima";
+            }
+            return ordinal ? `${ordinal} ${dayName}` : dayName;
           });
-
+  
         const isWeekdayPattern =
           days.length === 5 &&
           ["MO", "TU", "WE", "TH", "FR"].every((d) =>
@@ -363,43 +366,43 @@ const RecurrenceHandler = () => {
           ["SA", "SU"].every((d) =>
             days.some((day) => day.includes(fullDayNames[d]))
           );
-
+  
         if (isWeekdayPattern) {
-          summary += ` on the ${ordinal} weekday`;
+          summary += ` nei giorni lavorativi`;
         } else if (isWeekendPattern) {
-          summary += ` on the ${ordinal} weekend`;
+          summary += ` il weekend`;
         } else {
-          summary += ` on ${days.join(", ")}`;
+          summary += ` - ${days.join(", ")}`;
         }
       }
-
+  
       if (options.bymonthday) {
         const monthDays = Array.isArray(options.bymonthday)
           ? options.bymonthday
           : [options.bymonthday];
-        summary += ` on day ${monthDays.join(", ")}`;
+        summary += ` il ${monthDays.join(", ")}`;
       }
-
+  
       if (options.freq === RRule.YEARLY && options.bymonth) {
         const months = options.bymonth
           .map((month) => fullMonthNames[month - 1])
           .join(", ");
-        summary += ` in ${months}`;
+        summary += ` nei mesi di ${months}`;
       }
-
+  
       if (options.until) {
         const endDate = DateTime.fromJSDate(options.until).toLocaleString(
           DateTime.DATE_FULL
         );
-        summary += ` - repeat until ${endDate}`;
+        summary += ` - ripeti fino al ${endDate}`;
       } else if (options.count) {
-        summary += ` - repeat ${options.count} times`;
+        summary += ` - ripeti ${options.count} volte`;
       }
-
-      return summary || "Custom recurrence";
+  
+      return summary || "Ricorrenza personalizzata";
     } catch (error) {
-      console.error("Invalid RRULE string", error);
-      return "Custom recurrence";
+      console.error("Stringa RRule non valida", error);
+      return "Ricorrenza personalizzata";
     }
   };
 

@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 const DateUtilities = ({ calendarTimeZone }) => {
+
   const decrementOneDay = (date) => {
     const updatedDate = new Date(date);
     updatedDate.setDate(updatedDate.getDate() - 1);
@@ -26,29 +27,25 @@ const DateUtilities = ({ calendarTimeZone }) => {
     return date.toISOString();
   };
 
+  // Funzione per convertire data e ora di un evento al fuso orario del calendario
   const convertEventTimes = (event) => {
-    const { start, end, rrule } = event;
+    const { start, end, rrule, allDay } = event;
   
     const convertedStart = DateTime.fromISO(start, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
     const convertedEnd = DateTime.fromISO(end, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
-  
-    let convertedRRule = rrule;
-    if (rrule) {
-      const rruleStartMatch = rrule.match(/DTSTART:(\d{8}T\d{6}Z)/);
-      if (rruleStartMatch) {
-        const updatedRRuleStart = DateTime
-          .fromISO(convertedStart) 
-          .toUTC()                                 
-          .toFormat("yyyyMMdd'T'HHmmss'Z'");       
-        
-        convertedRRule = rrule.replace(
-          /DTSTART:\d{8}T\d{6}Z/,
-          `DTSTART:${updatedRRuleStart}`
-        );
 
-      }
-    }
+    if (allDay) {
   
+      return {
+        ...event,
+        start: convertedStart,
+        end: convertedEnd,
+        rrule, 
+      };
+    }
+
+    let convertedRRule = rrule;
+
     return {
       ...event,
       start: convertedStart,

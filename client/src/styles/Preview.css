@@ -613,16 +613,21 @@
 }
 
 
-.fc-daygrid-more-link,
-.fc-daygrid-event {
+.fc-daygrid-event,
+.fc-daygrid-day-events,
+.fc-daygrid-event-harness {
+  width: 100%;
+}
+
+.fc-daygrid-more-link {
   height: 1.5rem;
+  max-width: 100%;
 }
 
 .fc-daygrid-day-frame {
   height: 1.9rem;
   display: flex;
   flex-direction: row;
-  overflow: hidden !important;
 }
 
 

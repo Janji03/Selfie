@@ -70,14 +70,11 @@ export const getEventById = async (req, res) => {
 export const createNewEvent = async (req, res) => {
   const { eventData, userID } = req.body;
 
-  console.log('eventData', eventData);
   try {
     const newEvent = new Event({
       ...eventData,
       userID,
     });
-
-    console.log('new event', newEvent);
 
     const savedEvent = await newEvent.save();
 

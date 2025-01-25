@@ -33,8 +33,6 @@ const UserForm = ({ formData, setFormData }) => {
   const handleAddUser = async (user) => {
     try {
       const unavailableEvents = await getUnavailableEvents(user._id);
-
-      console.log(unavailableEvents);
   
       const isUnavailable = unavailableEvents.some((unavailableEvent) => {
         let eventStart, eventEnd;
@@ -55,17 +53,12 @@ const UserForm = ({ formData, setFormData }) => {
   
           try {
             const rruleInstance = RRule.fromString(rruleString);
-
-            console.log(eventStart);
-            console.log(eventEnd);
             
             const occurrences = rruleInstance.between(
               eventStart,
               eventEnd,
               true 
             );
-
-            console.log(occurrences);
             
             return occurrences.some((occurrenceStart) => {
               const occurrenceEnd = new Date(
@@ -80,7 +73,7 @@ const UserForm = ({ formData, setFormData }) => {
               );
             });
           } catch (error) {
-            console.error("Error parsing rrule string:", error);
+            console.error("Errore durante il parsing di rrule:", error);
             return false; 
           }
         } else {
@@ -96,14 +89,14 @@ const UserForm = ({ formData, setFormData }) => {
       });
   
       if (isUnavailable) {
-        setError(`${user.name} is unavailable for this event.`);
+        setError(`${user.name} non è disponibile in questo intervallo di tempo.`);
         return;
       }
   
       if (
         formData.invitedUsers.some((invitedUser) => invitedUser.userID === user._id)
       ) {
-        setError("User already added.");
+        setError("Hai già aggiunto questo utente.");
       } else {
         setFormData((prevFormData) => ({
           ...prevFormData,
@@ -117,8 +110,7 @@ const UserForm = ({ formData, setFormData }) => {
         setSuggestions([]);
       }
     } catch (error) {
-      console.error("Error checking user availability:", error);
-      setError("Unable to verify user availability. Please try again.");
+      setError("Errore durante il controllo della disponibilità. Per favore riprovare in seguito.");
     }
   };
 
@@ -142,7 +134,7 @@ const UserForm = ({ formData, setFormData }) => {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Type name or email"
+        placeholder="Inserisci nome o email"
         className="form-input"
       />
       {error && <span className="error-message">{error}</span>}
@@ -173,7 +165,7 @@ const UserForm = ({ formData, setFormData }) => {
               className="form-button remove-user"
               onClick={() => handleRemoveUser(user._id)}
             >
-              Remove
+              Rimuovi
             </button>
           </div>
         ))}

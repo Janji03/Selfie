@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 
-// Manually defined time zones ordered by geographical regions
 const timeZones = [
   // Default
-  { label: "Local Time Zone", value: Intl.DateTimeFormat().resolvedOptions().timeZone},
+  { label: "Locale", value: Intl.DateTimeFormat().resolvedOptions().timeZone},
 
   { label: "Hawaii (UTC-10:00)", value: "Pacific/Honolulu" },
   { label: "Alaska (UTC-09:00)", value: "America/Anchorage" },
