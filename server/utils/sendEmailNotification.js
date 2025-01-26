@@ -9,6 +9,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Funzione per inviare una email
 const sendEmailNotification = async (to, subject, message) => {
   try {
     await transporter.sendMail({
@@ -26,7 +27,7 @@ const sendEmailNotification = async (to, subject, message) => {
     });
 
   } catch (err) {
-    console.error(`Error sending email to ${to}:`, err);
+    console.error(`Errore durante l'invio della mail a ${to}:`, err);
   }
 };
 

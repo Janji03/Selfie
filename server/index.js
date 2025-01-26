@@ -32,6 +32,7 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/time-machine", timeMachineRoutes);
 
 
+// Funzione per far partire l'agenda
 const startAgenda = async () => {
   try {
     await agenda.start();
@@ -42,6 +43,7 @@ const startAgenda = async () => {
   }
 };
 
+// Connetto il database e avvio l'agenda
 connectDB().then(() => {
   startAgenda().then(() => {
     const PORT = config.port;

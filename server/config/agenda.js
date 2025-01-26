@@ -8,19 +8,22 @@ import defineInviteNotificationJob from "../jobs/inviteNotificationJob.js"
 
 dotenv.config();
 
-// Agenda Configuration
+// Configuro l'agenda
 const agenda = new Agenda({
   db: { address: config.dbURI, collection: 'jobs' }, 
   processEvery: '1 minute', 
   useUnifiedTopology: true,
 });
 
+
+// Definisco i job dell'agenda
 defineNotificationJob(agenda);
 defineTaskNotificationJob(agenda);
 defineOverdueTaskJob(agenda);
 defineInviteNotificationJob(agenda);
 
-// Graceful Shutdown
+
+// Funzione per gestire lo spegnimento dell'agenda
 const gracefulShutdown = async () => {
   try {    
     await agenda.stop();

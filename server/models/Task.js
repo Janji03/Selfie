@@ -53,7 +53,6 @@ const ExtendedPropsSchema = new Schema(
   { _id: false }
 );
 
-// Define the Task Schema
 const taskSchema = new Schema(
   {
     id: {

@@ -6,6 +6,7 @@ const addThirtyMinutes = (dateTimeStr) => {
   return date.toISOString();
 };
 
+// Definisco il job per controllare le task in ritardo
 export default (agenda) => {
   agenda.define("check-overdue-tasks", async () => {
     try {
@@ -15,6 +16,7 @@ export default (agenda) => {
       const nowTime = now.toISOString().split("T")[1].slice(0, 5);
       const nowDateTime = `${nowDate}T${nowTime}:00Z`; 
 
+      // Estraggo tutte le task in ritardo
       const tasks = await Task.find({
         "extendedProps.status": "pending",
         "extendedProps.deadline": { $lt: now },
@@ -24,7 +26,7 @@ export default (agenda) => {
         return;
       }
 
-
+      // Aggiorno il campo start, end e isOverdue
       for (const task of tasks) {
         const current = task.allDay ? nowDate : nowDateTime;
         const currentEnd = task.allDay ? nowDate : `${addThirtyMinutes(nowDateTime)}`;
