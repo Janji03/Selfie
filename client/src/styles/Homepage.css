@@ -237,6 +237,11 @@ html {
   cursor: pointer;
 }
 
+.home-preview .calendar-preview {
+  height: 75%;
+  width: 90%;
+}
+
 .home-preview .bi-x-lg:hover {
   color: #8085a4;
 }
@@ -252,17 +257,24 @@ html {
   right: 20px;
   width: 50px;
   height: 50px;
-  background-color: #284bff;
+  background-color: var(--button-primary-bg);
   border-radius: 50%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--box-shadow);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 100;
 }
+.time-machine-button:hover {
+  background-color: var(--button-primary-hover-bg);
+}
+
+.time-machine-button:active {
+  background-color: var(--button-primary-active-bg);
+}
 
 .time-machine-button i{
-color: #fff;
+color: var(--color-white);
 font-size: 22px;
 cursor: pointer;
 }
@@ -355,22 +367,6 @@ color: rgb(114, 114, 114);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @media (min-width: 580px) and (max-width: 1000px) {
 
   .homepage-header h1 {
@@ -449,13 +445,6 @@ color: rgb(114, 114, 114);
   }
     
 }
-
-
-
-
-
-
-
 
 
 
@@ -558,7 +547,7 @@ color: rgb(114, 114, 114);
     position: relative;
   }
 
-  .preview-box .calendar-preview{
+  .preview-box {
     height: 50vh;
   }
 }

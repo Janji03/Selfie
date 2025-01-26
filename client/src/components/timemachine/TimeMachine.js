@@ -3,14 +3,15 @@ import { useTimeMachine } from "../../context/TimeMachineContext";
 import "../../styles/TimeMachine.css";
 import { updateTimeMachine, resetTimeMachine } from "../../services/timeMachineService";
 
-const formatDateTime = (date) => {
-  return new Intl.DateTimeFormat("en-GB", {
+const formatDateTime = (isoString) => {
+  return new Intl.DateTimeFormat("it-IT", {
     dateStyle: "full",
     timeStyle: "medium",
-  }).format(date);
+  }).format(new Date(isoString));
 };
 
-const formatDateTimeForInput = (date) => {
+const formatDateTimeForInput = (isoString) => {
+  const date = new Date(isoString);
   const pad = (num) => String(num).padStart(2, "0");
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1);
@@ -48,7 +49,6 @@ const TimeMachine = () => {
   const handleInputChange = (event) => {
     const value = event.target.value;
     const date = new Date(value);
-
     if (!isNaN(date.getTime())) {
       setInputTime(value);
     } else {
@@ -57,7 +57,7 @@ const TimeMachine = () => {
   };
 
   const handleUpdateTime = () => {
-    const newTime = new Date(inputTime);
+    const newTime = new Date(inputTime).toISOString();
     setTime(newTime);
     update(userID, newTime);
     if (isTimeMachineActive) {
@@ -71,7 +71,7 @@ const TimeMachine = () => {
   };
 
   const resetToLocalTime = () => {
-    const localTime = new Date();
+    const localTime = new Date().toISOString();
     setTime(localTime);
     reset(userID);
     setIsTimeMachineActive(false);
@@ -84,17 +84,12 @@ const TimeMachine = () => {
     <div className="time-machine">
       <p className="current-time">{formatDateTime(time)}</p>
       <div className="time-machine-controls">
-          <input
-          type="datetime-local"
-          onChange={handleInputChange}
-          value={inputTime}
-        />
+        <input type="datetime-local" onChange={handleInputChange} value={inputTime} />
         {isInputDifferent && (
-          <button onClick={handleUpdateTime} className="update-button">Aggiorna</button>
+          <button onClick={handleUpdateTime} className="primary">Applica</button>
         )}
-        <button onClick={resetToLocalTime} className="reset-button">Resetta</button>
+        <button onClick={resetToLocalTime} className="danger">Resetta</button>
       </div>
-      
       {isTimeMachineActive ? (
         <h3>
           Time machine <span className="tm-active">attivata</span>

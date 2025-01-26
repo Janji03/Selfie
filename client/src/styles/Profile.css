@@ -57,9 +57,10 @@
 .profile-actions {
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
   margin-top: 15px;
+  gap: 20px;
 }
 
 .button {
@@ -73,20 +74,6 @@
   text-transform: uppercase;
 }
 
-.edit-button {
-  background: #001789;
-  color: white;
-}
-
-.delete-button {
-  background: #96221e;
-  color: white;
-}
-
-.logout-button {
-  background: #001789;
-  color: white;
-}
 
 .error-message {
   color: #d9534f;
@@ -161,7 +148,7 @@
   }
 
   .profile-actions {
-    justify-content: space-between;
+    /* justify-content: space-between; */
     gap: 20px;
   }
 
@@ -224,24 +211,6 @@
   text-transform: uppercase;
   transition: background 0.3s ease, transform 0.3s ease;
   margin-right: 5px;
-}
-
-.edit-profile-form button[type="submit"] {
-  background: #001789;
-  color: white;
-}
-
-.edit-profile-form button[type="submit"]:hover {
-  background: #284bff;
-}
-
-.edit-profile-form button[type="button"] {
-  background: #96221e;
-  color: white;
-}
-
-.edit-profile-form button[type="button"]:hover {
-  background: #c12e29;
 }
 
 /* Media Query: Tablet (schermi medi) */

@@ -132,7 +132,7 @@ export const deleteTask = async (req, res) => {
   }
 };
 
-
+// Accetto l'invito ad una task
 export const acceptTaskInvitation = async (req, res) => {
 
   const { userID } = req.query;
@@ -140,60 +140,62 @@ export const acceptTaskInvitation = async (req, res) => {
 
   try {
     const task = await Task.findOne({ id });
-    if (!task) return res.status(404).send('Task not found');
+    if (!task) return res.status(404).send('Task non trovata');
 
     const invitee = task.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     if (invitee.status !== 'pending') {
-      return res.status(403).send('You cannot modify your response.');
+      return res.status(403).send('Non puoi modificare la risposta.');
     }
 
     invitee.status = 'accepted';
     await task.save();
 
-    res.send(`You have successfully accepted the invitation for ${task.title}`);
+    res.send(`Hai accettato l'invito per ${task.title}`);
   } catch (error) {
-    res.status(500).send('Error accepting invitation');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }
 
+// Rifiuto l'invito ad una task
 export const rejectTaskInvitation = async (req, res) => {
   const { userID } = req.query;
   const { id } = req.params;
 
   try {
     const task = await Task.findOne({ id });
-    if (!task) return res.status(404).send('Task not found');
+    if (!task) return res.status(404).send('Task non trovata');
 
     const invitee = task.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     invitee.status = 'rejected';
     await task.save();
 
-    res.send(`You have successfully rejected the invitation for ${task.title}`);
+    res.send(`Hai rifiutato l'invito per ${task.title}`);
   } catch (error) {
-    res.status(500).send('Error rejecting invitation');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }
 
+// Positicipo la risposta dell'invito ad una task
 export const resendTaskInvitation = async (req, res) => {
   const { userID } = req.query;
   const { id } = req.params;
 
   try {
     const task = await Task.findOne({ id });
-    if (!task) return res.status(404).send('Task not found');
+    if (!task) return res.status(404).send('Task non trovata');
 
     const invitee = task.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     invitee.status = 'pending';
     await task.save();
@@ -207,8 +209,8 @@ export const resendTaskInvitation = async (req, res) => {
       type: "task"
     });
 
-    res.send(`Reminder has been sent for the task: ${task.title}`);
+    res.send(`L'invito per ${task.title} verrà inviato nuovamente tra 30 minuti.`);
   } catch (error) {
-    res.status(500).send('Error resending reminder');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }

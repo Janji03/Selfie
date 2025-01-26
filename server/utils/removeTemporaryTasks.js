@@ -1,5 +1,6 @@
 import Task from "../models/Task.js";
 
+// Funzione per rimuovere le task temporanee generate dalla time machine
 const removeTemporaryTasks = async (userID) => {
   try {
     await Task.deleteMany({
@@ -7,9 +8,9 @@ const removeTemporaryTasks = async (userID) => {
       userID: userID,
     });
     
-    console.log("Temporary tasks cleared");
+    console.log("Task temporanei rimosse");
   } catch (error) {
-    console.log("Failed to clear temporary tasks: ", error);
+    console.log("Errore durante la rimozione delle task temporanee: ", error);
   }
 };
 

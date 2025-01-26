@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-// Creazione del modello utente
 const userSchema = new mongoose.Schema(
   {
     name: {

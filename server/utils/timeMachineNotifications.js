@@ -5,13 +5,14 @@ import { generateEventEmail, generateTaskEmail } from "./generateEmail.js";
 import sendEmailNotification from "../utils/sendEmailNotification.js";
 
 const urgencyIntervals = [
-  0, // Level 0
-  7 * 24 * 60 * 60 * 1000, // Level 1 (+ 1 week)
-  10 * 24 * 60 * 60 * 1000, // Level 2 (+ 3 days)
-  11 * 24 * 60 * 60 * 1000, // Level 3 (+ 1 day)
-  11.5 * 24 * 60 * 60 * 1000, // Level 4 (+ 12 hours)
+  0,                              // Livello 0
+  7 * 24 * 60 * 60 * 1000,        // Livello 1 (+ 1 settimana)
+  10 * 24 * 60 * 60 * 1000,       // Livello 2 (+ 3 giorni)
+  11 * 24 * 60 * 60 * 1000,       // Livello 3 (+ 1 giorno)
+  11.5 * 24 * 60 * 60 * 1000,     // Livello 4 (+ 12 ore)
 ];
 
+// Funzione 
 const triggerTimeMachineNotifications = async (userID, timeMachine) => {
   try {
     if (!userID || !timeMachine) {
@@ -32,6 +33,7 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
     const endOfDay = new Date(timeMachineValue);
     endOfDay.setHours(23, 59, 59, 999);
 
+    // Estraggo gli eventi di cui mandare le notifiche
     const events = await Event.find({
       userID: userID,
       start: {
@@ -40,6 +42,7 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
       },
     });
 
+    // Estraggo le attività di cui mandare le notifiche
     const tasks = await Task.find({
       userID: userID,
       start: {
@@ -75,11 +78,11 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
           try {
             await sendEmailNotification(
               user.email,
-              `Reminder: ${event.title}`,
+              `REMINDER: ${event.title}`,
               emailMessage
             );
           } catch (error) {
-            console.error(`Failed to send email notification:`, error);
+            console.error(`Errore durante l'invio dell'email:`, error);
           }
 
           if (allDayEvent) {
@@ -107,15 +110,15 @@ const triggerTimeMachineNotifications = async (userID, timeMachine) => {
       try {
         await sendEmailNotification(
           user.email,
-          `Overdue Task: ${task.title}`,
+          `TASK IN RITARDO: ${task.title}`,
           emailMessage
         );
       } catch (error) {
-        console.error(`Failed to send email notification:`, error);
+        console.error(`Errore durante l'invio dell'email:`, error);
       }
     }
   } catch (err) {
-    console.error("Error scheduling time machine notifications:", err);
+    console.error("Errore durante lo schedule di notifiche:", err);
   }
 };
 

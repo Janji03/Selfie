@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 
+// Scheduler per inviare le notifiche all'utente quando un evento viene creato o modificato
 const scheduleEventNotifications = async (agenda, userID, event) => {
   try {
 
@@ -21,6 +22,7 @@ const scheduleEventNotifications = async (agenda, userID, event) => {
         eventStartTime.getTime() - notification.timeBefore * 60 * 1000
       );
 
+      // Schedulo la notifica in base al valore indicato
       if (!notification.isSent) {
         await agenda.schedule(notificationTime, "event-notification", {
           event,
@@ -30,7 +32,7 @@ const scheduleEventNotifications = async (agenda, userID, event) => {
       }
     }
   } catch (err) {
-    console.error("Error scheduling event notifications:", err);
+    console.error("Errore durante lo schedule dell'event notification job:", err);
   }
 };
 

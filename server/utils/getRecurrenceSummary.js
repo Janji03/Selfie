@@ -9,69 +9,72 @@ const getRecurrenceSummary = (rruleString) => {
     let summary = "";
 
     const fullDayNames = {
-      MO: "Monday",
-      TU: "Tuesday",
-      WE: "Wednesday",
-      TH: "Thursday",
-      FR: "Friday",
-      SA: "Saturday",
-      SU: "Sunday",
+      MO: "lunedì",
+      TU: "martedì",
+      WE: "mercoledì",
+      TH: "giovedì",
+      FR: "venerdì",
+      SA: "sabato",
+      SU: "domenica",
     };
 
     const fullMonthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
+      "gennaio",
+      "febbraio",
+      "marzo",
+      "aprile",
+      "maggio",
+      "giugno",
+      "luglio",
+      "agosto",
+      "settembre",
+      "ottobre",
+      "novembre",
+      "dicembre",
     ];
 
     if (options.interval && options.interval > 1) {
       switch (options.freq) {
         case RRule.DAILY:
-          summary += `Every ${options.interval} days`;
+          summary += `Ogni ${options.interval} giorni`;
           break;
         case RRule.WEEKLY:
-          summary += `Every ${options.interval} weeks`;
+          summary += `Ogni ${options.interval} settimane`;
           break;
         case RRule.MONTHLY:
-          summary += `Every ${options.interval} months`;
+          summary += `Ogni ${options.interval} mesi`;
           break;
         case RRule.YEARLY:
-          summary += `Every ${options.interval} years`;
+          summary += `Ogni ${options.interval} anni`;
           break;
-        default:
-          summary += `Custom`;
       }
     } else {
       switch (options.freq) {
         case RRule.DAILY:
-          summary += `Daily`;
+          summary += `Ogni giorno`;
           break;
         case RRule.WEEKLY:
-          summary += `Weekly`;
+          summary += `Ogni settimana`;
           break;
         case RRule.MONTHLY:
-          summary += `Monthly`;
+          summary += `Ogni mese`;
           break;
         case RRule.YEARLY:
-          summary += `Yearly`;
+          summary += `Ogni anno`;
           break;
-        default:
-          summary += `Custom`;
       }
     }
 
     if (options.byweekday) {
-      const weekdayOrder = ["MO", "TU", "WE", "TH", "FR", "SA", "SU"];
-      const ordinals = ["first", "second", "third", "fourth", "fifth", "last"];
+      const weekdayOrder = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+      const ordinals = [
+        "primo",
+        "secondo",
+        "terzo",
+        "quarto",
+        "quinto",
+        "ultimo",
+      ];
 
       let ordinal;
 
@@ -83,7 +86,10 @@ const getRecurrenceSummary = (rruleString) => {
         .map((day) => {
           const dayName = fullDayNames[day.toString().slice(-2)];
           ordinal = day.n ? ordinals[day.n > 0 ? day.n - 1 : 5] : "";
-          return ordinal ? `the ${ordinal} ${dayName}` : dayName;
+          if (dayName === "domenica") {
+            ordinal = "prima";
+          }
+          return ordinal ? `${ordinal} ${dayName}` : dayName;
         });
 
       const isWeekdayPattern =
@@ -98,11 +104,11 @@ const getRecurrenceSummary = (rruleString) => {
         );
 
       if (isWeekdayPattern) {
-        summary += ` on the ${ordinal} weekday`;
+        summary += ` nei giorni lavorativi`;
       } else if (isWeekendPattern) {
-        summary += ` on the ${ordinal} weekend`;
+        summary += ` il weekend`;
       } else {
-        summary += ` on ${days.join(", ")}`;
+        summary += ` - ${days.join(", ")}`;
       }
     }
 
@@ -110,29 +116,29 @@ const getRecurrenceSummary = (rruleString) => {
       const monthDays = Array.isArray(options.bymonthday)
         ? options.bymonthday
         : [options.bymonthday];
-      summary += ` on day ${monthDays.join(", ")}`;
+      summary += ` il ${monthDays.join(", ")}`;
     }
 
     if (options.freq === RRule.YEARLY && options.bymonth) {
       const months = options.bymonth
         .map((month) => fullMonthNames[month - 1])
         .join(", ");
-      summary += ` in ${months}`;
+      summary += ` nei mesi di ${months}`;
     }
 
     if (options.until) {
       const endDate = DateTime.fromJSDate(options.until).toLocaleString(
         DateTime.DATE_FULL
       );
-      summary += ` - repeat until ${endDate}`;
+      summary += ` - ripeti fino al ${endDate}`;
     } else if (options.count) {
-      summary += ` - repeat ${options.count} times`;
+      summary += ` - ripeti ${options.count} volte`;
     }
 
-    return summary || "Custom recurrence";
+    return summary || "Ricorrenza personalizzata";
   } catch (error) {
-    console.error("Invalid RRULE string", error);
-    return "Custom recurrence";
+    console.error("Stringa RRule non valida", error);
+    return "Ricorrenza personalizzata";
   }
 };
 

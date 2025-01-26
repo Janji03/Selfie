@@ -4,13 +4,13 @@ import {
   updateUser,
   updateUserProfilePicture,
   deleteUser,
-  getAllUsersBasicInfo, // Import della funzione aggiornata
+  getAllUsersBasicInfo, 
 } from "../controllers/userController.js";
 import upload from "../utils/uploadUtils.js";
 
 const router = express.Router();
 
-router.get("/", getAllUsersBasicInfo); // Aggiornato il nome della funzione
+router.get("/", getAllUsersBasicInfo); 
 router.get("/:id", getUser);
 router.put("/:id", updateUser);
 router.put(

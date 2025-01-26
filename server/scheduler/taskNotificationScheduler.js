@@ -1,13 +1,14 @@
 import User from "../models/User.js";
 
 const urgencyIntervals = [
-  0,                              // Level 0
-  7 * 24 * 60 * 60 * 1000,        // Level 1 (+ 1 week)
-  10 * 24 * 60 * 60 * 1000,       // Level 2 (+ 3 days)
-  11 * 24 * 60 * 60 * 1000,       // Level 3 (+ 1 day)
-  11.5 * 24 * 60 * 60 * 1000,     // Level 4 (+ 12 hours)
+  0,                              // Livello 0
+  7 * 24 * 60 * 60 * 1000,        // Livello 1 (+ 1 settimana)
+  10 * 24 * 60 * 60 * 1000,       // Livello 2 (+ 3 giorni)
+  11 * 24 * 60 * 60 * 1000,       // Livello 3 (+ 1 giorno)
+  11.5 * 24 * 60 * 60 * 1000,     // Livello 4 (+ 12 ore)
 ];
 
+// Scheduler per inviare le notifiche all'utente quando una task è in ritardo
 const scheduleTaskNotifications = async (agenda, userID, task) => {
   try {
 
@@ -23,6 +24,7 @@ const scheduleTaskNotifications = async (agenda, userID, task) => {
 
     const taskDeadline = new Date(task.extendedProps.deadline);
     
+    // In base a quanto la task è in ritardo, viene assegnato un livello di urgenza
     for (let level = 0; level <= 4; level++) {
       if (level !== 4) {
         const nextNotificationTime = new Date(taskDeadline.getTime() + urgencyIntervals[level]);
@@ -32,6 +34,7 @@ const scheduleTaskNotifications = async (agenda, userID, task) => {
           userEmail: user.email,
         });
       
+      // Quando la task arriva a livello 4, viene eseguito il job per inviare una notifica periodica ogni 12 ore
       } else {
         const recurringNotificationJob = agenda.create("task-notification", {
           task,
@@ -46,7 +49,7 @@ const scheduleTaskNotifications = async (agenda, userID, task) => {
     }
     
   } catch (err) {
-    console.error("Error scheduling task notification:", err);
+    console.error("Errore durante lo schedule del task notification job:", err);
   }
 };
 

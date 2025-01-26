@@ -5,7 +5,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
-import luxonPlugin from "@fullcalendar/luxon";
+import itLocale from "@fullcalendar/core/locales/it";
 
 import { DateTime } from "luxon";
 
@@ -37,6 +37,7 @@ import { getTasks, getInvitedTasks } from "../../services/taskService";
 import DateUtilities from "./DateUtilities";
 
 import "../../styles/Calendar.css";
+import "../../styles/Global.css"
 
 const Calendar = () => {
   const calendarRef = useRef(null);
@@ -48,6 +49,8 @@ const Calendar = () => {
   const [calendarRenderKey, setCalendarRenderKey] = useState(0);
 
   const { time, isTimeMachineActive } = useTimeMachine();
+
+  const [convertedNow, setConvertedNow] = useState(time);
 
   const [calendarTimeZone, setCalendarTimeZone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -73,11 +76,21 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities();
+
+  // Converto il valore della time machine al fuso orario del
+  useEffect(() => {
+    setConvertedNow(DateTime.fromISO(time, { zone: "UTC" }).setZone(calendarTimeZone).toISO());
+  }, [time, calendarTimeZone]);
+
+  // Quando viene modificato il fuso orario del calendario, forza il re-render del calendario per aggiornare il now indicator
+  useEffect(() => {
+    handleTriggerReRender();
+  }, [calendarTimeZone]);
 
   useEffect(() => {
     const fetchAndSetData = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && !isTimeMachineActive) {
         try {
           await redistributePomodoroTime(userID, time);
   
@@ -88,23 +101,22 @@ const Calendar = () => {
           const invitedTasks = await getInvitedTasks(userID);
   
           const convertedEvents = fetchedEvents.map((event) => ({
-            ...convertEventTimes(event),
-            classNames: ["event"],
-            display: event.extendedProps?.markAsUnavailable
-              ? "background"
-              : "auto",
+            ...convertEventTimes(event, calendarTimeZone),
+            classNames: event.extendedProps?.markAsUnavailable ? ["background-event"] : ["standard-event"],
+            display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
+
           }));
           const convertedInvitedEvents = invitedEvents.map((event) => ({
-            ...convertEventTimes(event),
+            ...convertEventTimes(event, calendarTimeZone),
             classNames: ["invited-event"],
           }));
   
           const convertedTasks = fetchedTasks.map((task) => ({
-            ...convertEventTimes(task),
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
           const convertedInvitedTasks = invitedTasks.map((task) => ({
-            ...convertEventTimes(task),
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
   
@@ -140,7 +152,7 @@ const Calendar = () => {
     const interval = setInterval(fetchAndSetData, 10000);
   
     return () => clearInterval(interval);
-  }, [isAuthenticated, userID]);
+  }, [isAuthenticated, userID, isTimeMachineActive]);
 
   // Funzione per attribuire le classi CSS alle task in base a scadenza/completamento
   const getClassNamesForTask = (task) => {
@@ -236,14 +248,21 @@ const Calendar = () => {
   // Quando vengono modificati gli state di eventi o task oppure quando viene cambiata la view del calendario, aggiorno lo state eventi di fullCalendar
   useEffect(() => {
 
-    const processedEvents = events.map((event) => ({
-      ...event,
-      display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
-      classNames: event.userID === userID ? ["event"] : ["invited-event"],
-    }));
+    const processedEvents = events.map((event) => {
+      const isUnavailable = event.extendedProps?.markAsUnavailable;
+      const isUserEvent = event.userID === userID;
+      return {
+        ...convertEventTimes(event, calendarTimeZone),
+        display: isUnavailable ? "background" : "auto",
+        classNames: [
+          isUnavailable ? "background-event" : "standard-event",
+          isUserEvent ? "" : "invited-event",
+        ],
+      };
+    });
 
     const processedTasks = tasks.map((task) => ({
-      ...task,
+      ...convertEventTimes(task, calendarTimeZone),
       classNames: getClassNamesForTask(task),
     }));
 
@@ -258,7 +277,7 @@ const Calendar = () => {
     // Aggiorna gli eventi di fullCalendar
     const calendarApi = calendarRef.current.getApi();
     calendarApi.refetchEvents();
-  }, [events, tasks, currentView]);
+  }, [events, tasks, currentView, calendarTimeZone]);
 
   // Funzione per gestire il click su una cella del calendario
   const handleDateClick = (info) => {
@@ -350,7 +369,7 @@ const Calendar = () => {
       view.type === "timeGridWeek" 
       ? new Date(view.currentStart)
       : new Date(time);
-    
+
     let startDateTime;
 
     // Se ho selezionato un range, utilizzo la data e tempo del range
@@ -379,12 +398,24 @@ const Calendar = () => {
       }
 
     } else {
+
       // Arrotondo le ore e i minuti
       baseDate.setHours(new Date(time).getHours());
       startDateTime = roundTime(baseDate).toISOString();
 
       initializeEventForm(startDateTime);
       initializeTaskForm(startDateTime);
+
+      if (view.type === "dayGridMonth" || view.type === "taskList") {
+        setEventFormInitialData((prevData) => ({
+          ...prevData,
+          allDay: true,
+        }));
+        setTaskFormInitialData((prevData) => ({
+          ...prevData,
+          allDay: true,
+        }));
+      }
     }
 
     setIsEditMode(false);
@@ -425,10 +456,6 @@ const Calendar = () => {
   const handleTZFormSubmit = (newTimeZone) => {
     setCalendarTimeZone(newTimeZone);
     setIsTZFormOpen(false);
-
-    // Converto data e ora di eventi e task nel nuovo fuso orario 
-    const convertedCombined = combinedItems.map((item) => convertEventTimes(item));
-    setCombinedItems(convertedCombined);
   };
 
   // Aggiungo delle classi CSS per rendere la toolbar responsive
@@ -440,84 +467,80 @@ const Calendar = () => {
   }
 
   return (
-    <div>
+    <>
       <div className="time-machine-button">
         <TimeMachinePreview />
       </div>
-      <button
-        onClick={() => setIsTZFormOpen(true)}
-        className="timezone-button"
-      ></button>
+      <div className="calendar-container">
 
-      <Modal
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          if (isTaskEditing) setCurrentFormTab("task");
-          else if (isEventEditing) setCurrentFormTab("event");
-        }}
-        title={currentFormTab === "event" ? "Evento" : "Task"}
-        zIndex={1100}
-      >
-        <TabSwitcher
-          currentFormTab={currentFormTab}
-          setCurrentFormTab={setCurrentFormTab}
-          disableEventTab={isTaskEditing}
-          disableTaskTab={isEventEditing}
-        />
-        {renderForm()}
-      </Modal>
-
-      <Modal
-        isOpen={!!selectedEvent}
-        onClose={() => {setSelectedEvent(null); setSelectedOccurrence(null)}}
-        title={"Evento"}
-        zIndex={1000}
-      >
-        {selectedEvent && (
-          <EventInfo
-            selectedEvent={selectedEvent}
-            setSelectedEvent={setSelectedEvent}
-            setEvents={setEvents}
-            selectedOccurrence={selectedOccurrence}
-            handleEditEvent={handleEditEvent}
-            handleDeleteEvent={handleDeleteEvent}
-            handleExportEvent={handleExportEvent}
+        <Modal
+          isOpen={isFormOpen}
+          onClose={() => {
+            setIsFormOpen(false);
+            if (isTaskEditing) setCurrentFormTab("task");
+            else if (isEventEditing) setCurrentFormTab("event");
+          }}
+          title={currentFormTab === "event" ? "Evento" : "Task"}
+          zIndex={1100}
+        >
+          <TabSwitcher
+            currentFormTab={currentFormTab}
+            setCurrentFormTab={setCurrentFormTab}
+            disableEventTab={isTaskEditing}
+            disableTaskTab={isEventEditing}
           />
-        )}
-      </Modal>
+          {renderForm()}
+        </Modal>
 
-      <Modal
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-        title={"Task"}
-        zIndex={1000}
-      >
-        {selectedTask && (
-          <TaskInfo
-            selectedTask={selectedTask}
-            setSelectedTask={setSelectedTask}
-            setTasks={setTasks}
-            handleEditTask={handleEditTask}
-            handleDeleteTask={handleDeleteTask}
-            markTaskAsCompleted={() => markTaskAsCompleted(selectedTask.id)}
+        <Modal
+          isOpen={!!selectedEvent}
+          onClose={() => {setSelectedEvent(null); setSelectedOccurrence(null)}}
+          title={"Evento"}
+          zIndex={1000}
+        >
+          {selectedEvent && (
+            <EventInfo
+              selectedEvent={selectedEvent}
+              setSelectedEvent={setSelectedEvent}
+              setEvents={setEvents}
+              selectedOccurrence={selectedOccurrence}
+              handleEditEvent={handleEditEvent}
+              handleDeleteEvent={handleDeleteEvent}
+              handleExportEvent={handleExportEvent}
+            />
+          )}
+        </Modal>
+
+        <Modal
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          title={"Task"}
+          zIndex={1000}
+        >
+          {selectedTask && (
+            <TaskInfo
+              selectedTask={selectedTask}
+              setSelectedTask={setSelectedTask}
+              setTasks={setTasks}
+              handleEditTask={handleEditTask}
+              handleDeleteTask={handleDeleteTask}
+              markTaskAsCompleted={() => markTaskAsCompleted(selectedTask.id)}
+            />
+          )}
+        </Modal>
+
+        <Modal
+          isOpen={isTZFormOpen}
+          onClose={() => setIsTZFormOpen(false)}
+          title={"Fuso Orario"}
+          zIndex={1000}
+        >
+          <TimeZoneForm
+            initialTimeZone={calendarTimeZone}
+            onSubmit={handleTZFormSubmit}
           />
-        )}
-      </Modal>
+        </Modal>
 
-      <Modal
-        isOpen={isTZFormOpen}
-        onClose={() => setIsTZFormOpen(false)}
-        title={"Fuso Orario"}
-        zIndex={1000}
-      >
-        <TimeZoneForm
-          initialTimeZone={calendarTimeZone}
-          onSubmit={handleTZFormSubmit}
-        />
-      </Modal>
-
-      <div className="calendar">
         <FullCalendar
           ref={calendarRef}
           key={calendarRenderKey}
@@ -527,13 +550,12 @@ const Calendar = () => {
             listPlugin,
             interactionPlugin,
             rrulePlugin,
-            luxonPlugin,
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "title addEvent,prev,today,next",
+            left: "title",
             center: "dayGridMonth,timeGridWeek,timeGridDay,taskList",
-            right: "addEvent prev,today,next",
+            right: "timezone addEvent prev,today,next",
           }}
           buttonText={{
             today: "Oggi",
@@ -547,6 +569,10 @@ const Calendar = () => {
               text: "",
               click: handleAddItem,
             },
+            timezone: {
+              text: "",
+              click: () => setIsTZFormOpen(true)
+            }
           }}
           views={{
             taskList: {
@@ -562,7 +588,7 @@ const Calendar = () => {
           }}
           events={combinedItems}
           timeZone={calendarTimeZone}
-          now={time}
+          now={convertedNow}
           nowIndicator={true}
           datesSet={({ view }) => setCurrentView(view.type)}
           dateClick={handleDateClick}
@@ -575,11 +601,19 @@ const Calendar = () => {
           scrollTimeReset={false}
           dayMaxEventRows={4}
           eventMaxStack={3}
-          height="auto"
+          height="90%"
           selectMinDistance={1}
+          locale={itLocale}
+          allDayText="Giorno intero"
+          dayHeaderContent={(args) => args.text.charAt(0).toUpperCase() + args.text.slice(1)}
+          slotLabelFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false, 
+          }}
         />
       </div>
-    </div>
+    </>
   );
 };
 

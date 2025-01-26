@@ -182,6 +182,7 @@ export const updateCompletedCycles = async (req, res) => {
   }
 };
 
+// Accetto l'invito ad un evento
 export const acceptEventInvitation = async (req, res) => {
 
   const { userID } = req.query;
@@ -189,60 +190,62 @@ export const acceptEventInvitation = async (req, res) => {
 
   try {
     const event = await Event.findOne({ id });
-    if (!event) return res.status(404).send('Event not found');
+    if (!event) return res.status(404).send('Evento non trovato');
 
     const invitee = event.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     if (invitee.status !== 'pending') {
-      return res.status(403).send('You cannot modify your response.');
+      return res.status(403).send('Non puoi modificare la risposta.');
     }
 
     invitee.status = 'accepted';
     await event.save();
 
-    res.send(`You have successfully accepted the invitation for ${event.title}`);
+    res.send(`Hai accettato l'invito per ${event.title}`);
   } catch (error) {
-    res.status(500).send('Error accepting invitation');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }
 
+// Rifiuto l'invito ad un evento
 export const rejectEventInvitation = async (req, res) => {
   const { userID } = req.query;
   const { id } = req.params;
 
   try {
     const event = await Event.findOne({ id });
-    if (!event) return res.status(404).send('Event not found');
+    if (!event) return res.status(404).send('Evento non trovato');
 
     const invitee = event.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     invitee.status = 'rejected';
     await event.save();
 
-    res.send(`You have successfully rejected the invitation for ${event.title}`);
+    res.send(`Hai rifiutato l'invito per ${event.title}`);
   } catch (error) {
-    res.status(500).send('Error rejecting invitation');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }
 
+// Positicipo la risposta dell'invito ad un evento
 export const resendEventInvitation = async (req, res) => {
   const { userID } = req.query;
   const { id } = req.params;
 
   try {
     const event = await Event.findOne({ id });
-    if (!event) return res.status(404).send('Event not found');
+    if (!event) return res.status(404).send('Evento non trovato');
 
     const invitee = event.extendedProps.invitedUsers.find(
       (invitee) => invitee.userID === userID
     );
-    if (!invitee) return res.status(404).send('Invitee not found');
+    if (!invitee) return res.status(404).send('Invitato non trovato');
 
     invitee.status = 'pending';
     await event.save();
@@ -256,13 +259,13 @@ export const resendEventInvitation = async (req, res) => {
       type: "event"
     });
 
-    res.send(`Reminder has been sent for the event: ${event.title}`);
+    res.send(`L'invito per ${event.title} verrà inviato nuovamente tra 30 minuti.`);
   } catch (error) {
-    res.status(500).send('Error resending reminder');
+    res.status(500).send(`Errore durante la gestione dell'invito`);
   }
 }
 
-
+// Invio l'evento per email come file ics
 export const sendEventAsICalendar = async (req, res) => {
   try {
     const { event, email } = req.body;

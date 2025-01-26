@@ -1,20 +1,23 @@
 import sendEmailNotification from "../utils/sendEmailNotification.js";
 import { DateTime } from "luxon";
 
+// Definisco il job per mandare inviti ad eventi/task
 export default (agenda) => {
   agenda.define("send-invite-email", async (job) => {
     const { user, item, invitee, type } = job.attrs.data; 
-    const emailSubject = `You are invited to a ${type}: ${item.title}`;
+    const emailSubject = `Sei stato invitato a: ${item.title}`;
     const baseUrl = "http://localhost:3000";
 
+    // Rotte per accettare, rifiutare o reinviare l'invito
     const acceptUrl = `${baseUrl}/${type}s/${item.id}/accept?userID=${invitee.userID}`;
     const rejectUrl = `${baseUrl}/${type}s/${item.id}/reject?userID=${invitee.userID}`;
     const resendUrl = `${baseUrl}/${type}s/${item.id}/resend?userID=${invitee.userID}`;
 
     let emailBody = `
-      <p>Hello <strong>${user.name}</strong>,</p>
-      <p>You have been invited to the ${type}: <strong>${item.title}</strong>.</p>`;
+      <p>Ciao <strong>${user.name}</strong>,</p>
+      <p>Sei stato invitato a: <strong>${item.title}</strong>.</p>`;
 
+    // Genero il corpo della email in base evento o task
     try {
       if (type === "event") {
         const startISO = new Date(item.start).toISOString();
@@ -24,10 +27,10 @@ export default (agenda) => {
         const timeZone = item.extendedProps.timeZone;
 
         emailBody += `
-          <p><strong>Event Start:</strong>: ${item.allDay
+          <p><strong>Inizio Evento:</strong>: ${item.allDay
             ? startDate.setZone(timeZone).toLocaleString(DateTime.DATE_SHORT)
             : startDate.setZone(timeZone).toLocaleString(DateTime.DATETIME_FULL)}</p>
-          <p><strong>Event End:</strong>: ${item.allDay
+          <p><strong>Fine Evento:</strong>: ${item.allDay
             ? endDate.setZone(timeZone).toLocaleString(DateTime.DATE_SHORT)
             : endDate.setZone(timeZone).toLocaleString(DateTime.DATETIME_FULL)}</p>`;
       } else if (type === "task") {
@@ -36,29 +39,31 @@ export default (agenda) => {
         const timeZone = item.extendedProps.timeZone;
 
         emailBody += `
-          <p><strong>Task Deadline:</strong> ${item.allDay
+          <p><strong>Scadenza Task:</strong> ${item.allDay
             ? deadline.setZone(timeZone).toLocaleString(DateTime.DATE_SHORT)
             : deadline.setZone(timeZone).toLocaleString(DateTime.DATETIME_FULL)}</p>`;
       }
 
       emailBody += `
-        <p>Please respond to this invitation:</p>
+        <p>Per favore, rispondi a questo invito:</p>
         <ul>
-          <li><a href="${acceptUrl}">Accept</a></li>
-          <li><a href="${rejectUrl}">Reject</a></li>
-          <li><a href="${resendUrl}">Resend Reminder Later</a></li>
+          <li><a href="${acceptUrl}">Accetta</a></li>
+          <li><a href="${rejectUrl}">Rifiuta</a></li>
+          <li><a href="${resendUrl}">Reinvia promemoria più tardi</a></li>
         </ul>
       `;
 
+      // Invio la notifica 
       await sendEmailNotification(user.email, emailSubject, emailBody);
     } catch (error) {
-      console.error(`Failed to send email notification:`, error);
+      console.error(`Errore durante l'invio della notifica:`, error);
     }
 
+    // Rimuovo il job
     try {
       await job.remove();
     } catch (err) {
-      console.error("Error removing job:", err);
+      console.error("Errore durante la rimozione del job:", err);
     }
   });
 };
