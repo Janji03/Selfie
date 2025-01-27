@@ -5,7 +5,6 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
-import luxonPlugin from "@fullcalendar/luxon";
 import itLocale from "@fullcalendar/core/locales/it";
 
 import { DateTime } from "luxon";
@@ -525,7 +524,6 @@ const Calendar = () => {
             listPlugin,
             interactionPlugin,
             rrulePlugin,
-            luxonPlugin,
           ]}
           initialView={currentView}
           headerToolbar={{

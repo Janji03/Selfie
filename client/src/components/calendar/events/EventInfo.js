@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { DateTime } from "luxon";
-import { RRule, rrulestr } from "rrule";
 import { Link } from "react-router-dom";
 
 import "../../../styles/EventInfo.css";
