@@ -6,6 +6,7 @@ import listPlugin from "@fullcalendar/list";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import luxonPlugin from "@fullcalendar/luxon";
+import itLocale from "@fullcalendar/core/locales/it";
 
 import { DateTime } from "luxon";
 
@@ -37,6 +38,7 @@ import { getTasks, getInvitedTasks } from "../../services/taskService";
 import DateUtilities from "./DateUtilities";
 
 import "../../styles/Calendar.css";
+import "../../styles/Global.css"
 
 const Calendar = () => {
   const calendarRef = useRef(null);
@@ -440,84 +442,80 @@ const Calendar = () => {
   }
 
   return (
-    <div>
+    <>
       <div className="time-machine-button">
         <TimeMachinePreview />
       </div>
-      <button
-        onClick={() => setIsTZFormOpen(true)}
-        className="timezone-button"
-      ></button>
+      <div className="calendar-container">
 
-      <Modal
-        isOpen={isFormOpen}
-        onClose={() => {
-          setIsFormOpen(false);
-          if (isTaskEditing) setCurrentFormTab("task");
-          else if (isEventEditing) setCurrentFormTab("event");
-        }}
-        title={currentFormTab === "event" ? "Evento" : "Task"}
-        zIndex={1100}
-      >
-        <TabSwitcher
-          currentFormTab={currentFormTab}
-          setCurrentFormTab={setCurrentFormTab}
-          disableEventTab={isTaskEditing}
-          disableTaskTab={isEventEditing}
-        />
-        {renderForm()}
-      </Modal>
-
-      <Modal
-        isOpen={!!selectedEvent}
-        onClose={() => {setSelectedEvent(null); setSelectedOccurrence(null)}}
-        title={"Evento"}
-        zIndex={1000}
-      >
-        {selectedEvent && (
-          <EventInfo
-            selectedEvent={selectedEvent}
-            setSelectedEvent={setSelectedEvent}
-            setEvents={setEvents}
-            selectedOccurrence={selectedOccurrence}
-            handleEditEvent={handleEditEvent}
-            handleDeleteEvent={handleDeleteEvent}
-            handleExportEvent={handleExportEvent}
+        <Modal
+          isOpen={isFormOpen}
+          onClose={() => {
+            setIsFormOpen(false);
+            if (isTaskEditing) setCurrentFormTab("task");
+            else if (isEventEditing) setCurrentFormTab("event");
+          }}
+          title={currentFormTab === "event" ? "Evento" : "Task"}
+          zIndex={1100}
+        >
+          <TabSwitcher
+            currentFormTab={currentFormTab}
+            setCurrentFormTab={setCurrentFormTab}
+            disableEventTab={isTaskEditing}
+            disableTaskTab={isEventEditing}
           />
-        )}
-      </Modal>
+          {renderForm()}
+        </Modal>
 
-      <Modal
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
-        title={"Task"}
-        zIndex={1000}
-      >
-        {selectedTask && (
-          <TaskInfo
-            selectedTask={selectedTask}
-            setSelectedTask={setSelectedTask}
-            setTasks={setTasks}
-            handleEditTask={handleEditTask}
-            handleDeleteTask={handleDeleteTask}
-            markTaskAsCompleted={() => markTaskAsCompleted(selectedTask.id)}
+        <Modal
+          isOpen={!!selectedEvent}
+          onClose={() => {setSelectedEvent(null); setSelectedOccurrence(null)}}
+          title={"Evento"}
+          zIndex={1000}
+        >
+          {selectedEvent && (
+            <EventInfo
+              selectedEvent={selectedEvent}
+              setSelectedEvent={setSelectedEvent}
+              setEvents={setEvents}
+              selectedOccurrence={selectedOccurrence}
+              handleEditEvent={handleEditEvent}
+              handleDeleteEvent={handleDeleteEvent}
+              handleExportEvent={handleExportEvent}
+            />
+          )}
+        </Modal>
+
+        <Modal
+          isOpen={!!selectedTask}
+          onClose={() => setSelectedTask(null)}
+          title={"Task"}
+          zIndex={1000}
+        >
+          {selectedTask && (
+            <TaskInfo
+              selectedTask={selectedTask}
+              setSelectedTask={setSelectedTask}
+              setTasks={setTasks}
+              handleEditTask={handleEditTask}
+              handleDeleteTask={handleDeleteTask}
+              markTaskAsCompleted={() => markTaskAsCompleted(selectedTask.id)}
+            />
+          )}
+        </Modal>
+
+        <Modal
+          isOpen={isTZFormOpen}
+          onClose={() => setIsTZFormOpen(false)}
+          title={"Fuso Orario"}
+          zIndex={1000}
+        >
+          <TimeZoneForm
+            initialTimeZone={calendarTimeZone}
+            onSubmit={handleTZFormSubmit}
           />
-        )}
-      </Modal>
+        </Modal>
 
-      <Modal
-        isOpen={isTZFormOpen}
-        onClose={() => setIsTZFormOpen(false)}
-        title={"Fuso Orario"}
-        zIndex={1000}
-      >
-        <TimeZoneForm
-          initialTimeZone={calendarTimeZone}
-          onSubmit={handleTZFormSubmit}
-        />
-      </Modal>
-
-      <div className="calendar">
         <FullCalendar
           ref={calendarRef}
           key={calendarRenderKey}
@@ -531,9 +529,9 @@ const Calendar = () => {
           ]}
           initialView={currentView}
           headerToolbar={{
-            left: "title addEvent,prev,today,next",
+            left: "title",
             center: "dayGridMonth,timeGridWeek,timeGridDay,taskList",
-            right: "addEvent prev,today,next",
+            right: "timezone addEvent prev,today,next",
           }}
           buttonText={{
             today: "Oggi",
@@ -547,6 +545,10 @@ const Calendar = () => {
               text: "",
               click: handleAddItem,
             },
+            timezone: {
+              text: "",
+              click: () => setIsTZFormOpen(true)
+            }
           }}
           views={{
             taskList: {
@@ -575,11 +577,19 @@ const Calendar = () => {
           scrollTimeReset={false}
           dayMaxEventRows={4}
           eventMaxStack={3}
-          height="auto"
+          height="90%"
           selectMinDistance={1}
+          locale={itLocale}
+          allDayText="Giorno intero"
+          dayHeaderContent={(args) => args.text.charAt(0).toUpperCase() + args.text.slice(1)}
+          slotLabelFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false, 
+          }}
         />
       </div>
-    </div>
+    </>
   );
 };
 

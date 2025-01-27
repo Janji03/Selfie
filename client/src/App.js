@@ -4,7 +4,6 @@ import { AuthProvider } from "./context/AuthContext";
 import { TimeMachineProvider } from "./context/TimeMachineContext";
 import Login from "./components/loginsignup/Login";
 import Signup from "./components/loginsignup/Signup";
-import HomePage from "./components/homepage/Homepage";
 import Profile from "./components/profile/Profile";
 import Calendar from "./components/calendar/Calendar";
 import Pomodoro from "./components/pomodoro/Pomodoro";
@@ -15,6 +14,7 @@ import ForgotPassword from "./components/loginsignup/ForgotPassword";
 import ResetPassword from "./components/loginsignup/ResetPassword";
 import Inbox from "./components/profile/Inbox";
 import InvitationHandler from "./components/calendar/InvitationHandler";
+import HomePage from "./components/homepage/Homepage";
 
 const App = () => {
   return (

@@ -558,7 +558,7 @@ color: rgb(114, 114, 114);
     position: relative;
   }
 
-  .preview-box .calendar-preview{
+  .preview-box {
     height: 50vh;
   }
 }

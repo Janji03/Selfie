@@ -1,0 +1,53 @@
+:root {
+    /* Primary Colors */
+    --color-primary: #001789; 
+    --color-secondary: #ffffff; 
+    --color-tertiary: #e63946; 
+    
+    /* Neutral Colors */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-light: #f1f3f5; 
+    --color-gray-dark: #6c757d; 
+    --color-gray-disabled: #d6d6d6;
+    --color-text-disabled: #9a9a9a;
+
+    /* Background Colors */
+    --background-light: #f8f9fa; 
+    --background-dark: #001233; 
+
+    /* Text Colors */
+    --text-primary: #001789; 
+    --text-secondary: #6c757d; 
+    --text-inverted: #ffffff; 
+    --text-disabled: var(--color-text-disabled);
+
+    /* Button Colors */
+    --button-primary-bg: var(--color-primary);
+    --button-primary-hover-bg: #002d9c; 
+    --button-primary-active-bg: #000f6b; 
+    --button-primary-disabled-bg: var(--color-gray-disabled);
+    --button-primary-text: var(--color-white);
+    --button-primary-disabled-text: var(--text-disabled);
+
+    --button-secondary-bg: var(--color-secondary);
+    --button-secondary-hover-bg: var(--button-primary-hover-bg); 
+    --button-secondary-active-bg: #003370; 
+    --button-secondary-disabled-bg: var(--color-gray-disabled);
+    --button-secondary-text: var(--color-primary);
+    --button-secondary-disabled-text: var(--text-disabled);
+
+    /* Borders and Shadows */
+    --border-radius: 8px; 
+    --border-width: 2px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    /* Typography */
+    --font-family-sans: 'Poppins', sans-serif;
+    --line-height-base: 1.6;
+    --font-weight-light: 200;
+    --font-weight-normal: 400;
+    --font-weight-slight-bold: 500;
+    --font-weight-bold: 600;
+    --font-weight-real-bold: 800;
+}

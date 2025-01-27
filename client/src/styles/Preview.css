@@ -97,11 +97,123 @@
   font-weight: bold;
 }
 
+.calendar-preview {
+  height: 100%;
+  width: 100%;
 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2%;
+}
+.calendar-preview .select-container {
+  height: 5%;
+  width: 100%;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.calendar-preview .view-select{
+  height: 100%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+
+.calendar-preview .fc.fc-media-screen.fc-direction-ltr.fc-theme-standard {
+  height: 80%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+.calendar-preview .fc .fc-toolbar.fc-header-toolbar.fc-toolbar-ltr.fc-toolbar {
+  height: 15%;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 1.2rem;
+}
+.calendar-preview .fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 0;
+}
+
+
+.calendar-preview .fc-view-harness.fc-view-harness-passive {
+  display: flex;
+  height: 80%;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.calendar-preview .fc-dayGridMonth-view.fc-view.fc-daygrid {
+  height: 100%;
+}
+.calendar-preview .fc-scrollgrid {
+  height: 100%;
+}
+
+.calendar-preview .fc table {
+  font-size: 1rem;
+}
+
+.calendar-preview .fc-timegrid-slot-label-cushion {
+  font-size: 1rem;
+}
+
+.calendar-preview .fc-col-header-cell-cushion {
+  font-size: 0.8rem !important;
+}
+
+.calendar-preview .link-container {
+  height: 10%;
+  width: 30%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.calendar-preview .calendar-link {
+  height: 100%;
+  display: flex;
+  padding: 5%;
+  font-family: "Poppins";
+  font-size: 1rem;
+  font-weight: 700;
+  background-color: #fff;
+  border: solid 1px #002aff !important;
+  color: #002aff !important;
+  text-decoration: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.calendar-preview .calendar-link:hover {
+  background-color: #001789;
+  color: white !important;
+}
 
 .pomo-link,
 .note-link,
-.calendar-link,
 .btn-email-sender {
   margin-top: 20px;
   padding: 2%;
@@ -119,7 +231,6 @@
 
 .pomo-link:hover,
 .note-link:hover,
-.calendar-link:hover,
 .btn-email-sender:hover {
   background-color: #001789;
   color: white !important;
@@ -230,10 +341,6 @@
   font-family: 'Poppins';
 }
 
-
-
-
-
 @media (max-width:1000px) and (min-width:765px){
   .pomodoro-elements{
     font-size: 1rem;
@@ -256,6 +363,17 @@
   .pomo-link{
     width: auto;
     margin-top: 5px;
+  }
+
+  .calendar-preview .view-select{ 
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .calendar-preview .fc .fc-toolbar.fc-header-toolbar.fc-toolbar-ltr.fc-toolbar {  
+    height: 10%;
+    font-size: 0.9rem !important;
+    
   }
 }
 
@@ -298,6 +416,21 @@
     position: absolute;
     bottom: 15%;
     right: 10%;
+  }
+
+  .calendar-preview .view-select{ 
+    font-size: 0.7rem;
+    text-align: center;
+  }
+
+  .calendar-preview .fc .fc-toolbar.fc-header-toolbar.fc-toolbar-ltr.fc-toolbar {  
+    height: 10%;
+    font-size: 0.7rem !important;
+    
+  }
+
+  .calendar-preview .fc-col-header-cell-cushion {
+    font-size: 0.5rem !important;
   }
 }
 
@@ -367,59 +500,7 @@
     width: 40%;
     font-family: 'Poppins';
   }
-
-  .calendar-link{
-    margin-bottom: 5%;
-  }
-
-  .calendar-preview-tablet{
-    text-align: center;
-  }
-
-  .view-select{
-    margin: 5px 0;
-    font-size: 12px;
-    text-wrap: nowrap;
-  }
-
-  .view-select label{
-    color: #002aff !important;
-  }
-
-  .view-select select{
-    color: #000;
-    width: 60% !important;
-  }
-
-  .fc .fc-toolbar.fc-header-toolbar{
-    margin-bottom: 5px;
-    font-size: 15px;
-    text-wrap: nowrap;
-  }
-
-  .fc-col-header-cell-cushion{
-    font-size: 10px !important;
-  }
-
-  .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion{
-    font-size: 13px !important;
-  }
-
-  .elem-grid.full-width{
-    padding: 0 10px;
-  }
-
-  .fc-event{
-    font-size: 12px !important;
-  }
-
 }
-
-
-
-
-
-
 
 @media (max-width:579px){
   .pomo-link, .note-link{
@@ -514,170 +595,4 @@
     justify-content: end;
   }
 
-  .calendar-link{
-    margin-bottom: 5%;
-  }
-
-  .calendar-preview-mobile .title{
-    margin-bottom: 0;
-  }
-
-  .calendar-preview-mobile .subtitle{
-    margin-top: 0;
-    color: #001789;
-    padding:0 10px;
-  }
-
-  .view-select{
-    margin: 5px 0;
-  }
-
-  .view-select label{
-    color: #002aff !important;
-  }
-
-  .view-select select{
-    color: #000
-  }
-
-  .fc .fc-toolbar.fc-header-toolbar{
-    margin-bottom: 5px
-  }
-
-  .fc-col-header-cell-cushion{
-    font-size: 10px !important;
-  }
-
-  .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion{
-    font-size: 10px !important;
-  }
-
-  .calendar-preview{
-    width: 90% !important;
-  }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.calendar-preview {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-}
-
-.fc {
-  height: 100%;
-  overflow-y: hidden;
-}
-
-.fc-view {
-  height: 80%;
-  cursor: pointer;
-}
-
-.fc-timeGridWeek-view,
-.fc-timeGridDay-view {
-  overflow-y: scroll !important; 
-}
-
-.fc-dayGridMonth-view .fc-view-harness,
-.fc-listDay-view .fc-view-harness {
-  overflow-y: hidden; 
-}
-
-.fc-view-harness {
-  height: 100%; 
-}
-
-
-.fc-daygrid-event,
-.fc-daygrid-day-events,
-.fc-daygrid-event-harness {
-  width: 100%;
-}
-
-.fc-daygrid-more-link {
-  height: 1.5rem;
-  max-width: 100%;
-}
-
-.fc-daygrid-day-frame {
-  height: 1.9rem;
-  display: flex;
-  flex-direction: row;
-}
-
-
-.fc-month-view .fc-event {
-  display: none;
-}
-
-
-.calendar-preview * {
-  color: #001789;
-}
-
-.calendar-preview-mobile {
-  width: 90%;
-  color: #002aff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  margin-top: 5%;
-}
-
-.view-select label{
-  color: #002aff !important;
-}
-
-.view-select{
-  text-wrap: nowrap;
-  margin-bottom: 5px;
-}
-
-.fc-col-header-cell-cushion{
-  color: #002aff !important;
-}
-
-.fc-daygrid-day-number{
-  color: #002aff !important;
-}
-
- .view-select select{
-  font-family: 'Poppins';
-  width: 60%;
-  color: #000
-}
-
-.fc .fc-toolbar.fc-header-toolbar{
-  margin-bottom: 5px
-}
-
-.fc-timegrid-axis-cushion{
-  font-size: 8px;
 }
