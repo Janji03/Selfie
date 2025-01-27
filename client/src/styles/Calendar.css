@@ -26,7 +26,6 @@
 
 .calendar-container .fc .fc-button-primary {
   background-color: var(--button-primary-bg);
-  border: var(--border-width) solid var(--button-primary-bg);
   color: var(--button-primary-text);
 }
 
@@ -44,6 +43,7 @@
   cursor: not-allowed;
   box-shadow: none; 
   opacity: 0.9;
+  border: var(--border-width) solid var(--button-primary-bg);
 }
 
 
@@ -81,19 +81,16 @@
 }
 
 .calendar-container .fc-toolbar-left {
-  /* width: 20%; */
   display: flex;
   justify-content: start;
   align-items: center;
 }
 .calendar-container .fc-toolbar-center {
-  /* width: 40%; */
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .calendar-container .fc-toolbar-right {
-  /* width: 40%; */
   display: flex;
   justify-content: end;
   align-items: center;
@@ -113,14 +110,6 @@
   text-transform: capitalize;
 }
 
-.calendar-container .fc-button-group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* Bottoni Views */
-
 
 .calendar-container .fc-button.fc-timezone-button::before {
   content: '\1F310'; 
@@ -135,6 +124,9 @@
   background-color: var(--button-secondary-bg);
   border: var(--border-width) solid var(--button-primary-bg);
   color: var(--button-secondary-text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .calendar-container .fc-button.fc-timezone-button:hover,
@@ -174,6 +166,17 @@
 }
 
 
+.calendar-container .fc-toolbar-left {
+  width: 25%;
+}
+.calendar-container .fc-toolbar-center {
+  width: 40%;
+}
+.calendar-container .fc-toolbar-center .fc-button-group {
+  width: 90%;
+}
+
+
 /* Body */
 .calendar-container .fc-view-harness {
   height: 90%;
@@ -190,14 +193,27 @@
   width: 100%;
 }
 
+/* Day Header */
+.calendar-container .fc-col-header-cell-cushion {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: 1.1rem;
+}
+
+/* Cells Number */
+.calendar-container .fc-daygrid-day-number {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-normal);
+}
 
 /* Time cells */
 .calendar-container .fc-timegrid-slot-label-frame,
 .calendar-container .fc-timegrid-axis-cushion {
   text-align: center;
+  color: var(--text-primary);
 }
 
-@media (max-width: 1100px) {  
+@media (max-width: 1150px) {  
   .calendar-container .fc-header-toolbar {
     height: 15%;
   }
@@ -214,7 +230,7 @@
   .calendar-container .fc-toolbar-right {
     width: 20%;
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
@@ -223,7 +239,7 @@
   .calendar-container .fc-toolbar-center .fc-button-group {
     width: 100%;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
@@ -240,10 +256,7 @@
   .calendar-container .fc-toolbar-right .fc-button-group {
     margin: 0;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0.5%;
+    margin-top: 1.5%;
   }
 
   .calendar-container .fc-toolbar-right .fc-button-group .fc-button {
@@ -256,7 +269,7 @@
 
   .calendar-container .fc-toolbar-right .fc-button {
     margin: 0;
-    width: 50%;
+    width: 48%;
   }
 
   .calendar-container .fc-toolbar-title {
@@ -267,7 +280,6 @@
 @media (max-width:1100px) and (min-width:766px) {
   .calendar-container .fc-toolbar-left .fc-button-group {
     width: 50%;
-
   }
 
   .calendar-container .fc-toolbar-left .fc-button-group .fc-button {
@@ -275,10 +287,61 @@
   }
 }
 
-@media (max-width:765px) and (min-width:480px) {
-  .calendar-container .fc-toolbar-title { 
-    font-size: 1.2rem;
+@media (max-width:765px) {
+  .calendar-container .fc-header-toolbar {
+    position: relative;
+    padding-bottom: 2%;
   }
+  
+  .calendar-container .fc-toolbar-center {
+    position: absolute;
+    width: 100%;
+    bottom: 2%;
+  }
+
+  .calendar-container .fc-toolbar-right {
+    justify-content: space-between;
+  }
+
+  .calendar-container .fc-toolbar-center .fc-button-group {
+    width: 100%;
+    flex-wrap: nowrap;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .calendar-container .fc-toolbar-left,
+  .calendar-container .fc-toolbar-right {
+    width: 40%;
+    padding-bottom: 5%;
+  }
+  .calendar-container .fc-toolbar-title {
+    width: 100%;
+  }
+
+  .calendar-container .fc-toolbar-center .fc-button-group .fc-button {
+    font-size: 0.9rem;
+  }
+  .calendar-container .fc-toolbar-right .fc-button {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width:765px) and (min-width:600px) {
+  .calendar-container .fc-timegrid-slot-label-frame,
+  .calendar-container .fc-timegrid-axis-cushion {
+    font-size: 1rem;
+  }
+  .calendar-container .fc-col-header-cell-cushion {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width:599px) and (min-width:480px) {
+  .calendar-container .fc-toolbar-title { 
+    font-size: 1.7rem;
+  } 
   .calendar-container .fc-timegrid-slot-label-frame,
   .calendar-container .fc-timegrid-axis-cushion {
     font-size: 1rem;
@@ -286,18 +349,59 @@
   .calendar-container .fc-col-header-cell-cushion {
     font-size: 0.9rem;
   }
+  .calendar-container .fc-toolbar-center .fc-button-group .fc-button {
+    font-size: 0.8rem;
+  }
+  .calendar-container .fc-toolbar-right .fc-button {
+    font-size: 0.7rem;
+  }
 }
 
 
-@media (max-width:479px){
+@media (max-width:479px) and (min-width:360px){
   .calendar-container .fc-toolbar-title { 
-    font-size: 0.9rem;
-  }
+    font-size: 1.5rem;
+  } 
   .calendar-container .fc-timegrid-slot-label-frame,
   .calendar-container .fc-timegrid-axis-cushion {
     font-size: 0.8rem;
   }
   .calendar-container .fc-col-header-cell-cushion {
     font-size: 0.7rem;
+  }
+  .calendar-container .fc-toolbar-center .fc-button-group .fc-button {
+    font-size: 0.7rem;
+  }
+  .calendar-container .fc-toolbar-right .fc-button {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width:359px) {
+  .calendar-container .fc-toolbar-left,
+  .calendar-container .fc-toolbar-right {
+    padding-bottom: 0;
+  }
+  .calendar-container .fc-toolbar-right {
+    width: 30%;
+  }
+  .calendar-container .fc-toolbar-right {
+    width: 50%;
+  }
+  .calendar-container .fc-toolbar-title { 
+    font-size: 1.3rem;
+  } 
+  .calendar-container .fc-timegrid-slot-label-frame,
+  .calendar-container .fc-timegrid-axis-cushion {
+    font-size: 0.6rem;
+  }
+  .calendar-container .fc-col-header-cell-cushion {
+    font-size: 0.5rem;
+  }
+  .calendar-container .fc-toolbar-center .fc-button-group .fc-button {
+    font-size: 0.6rem;
+  }
+  .calendar-container .fc-toolbar-right .fc-button {
+    font-size: 0.5rem;
   }
 }
