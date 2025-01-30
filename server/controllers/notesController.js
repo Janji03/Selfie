@@ -43,7 +43,7 @@ export const createNote = async (req, res) => {
       const recipients = await User.find({ _id: { $in: accessList } }, 'email');
       const emails = recipients.map(user => user.email);
       const subject = `Nuova nota condivisa con te`;
-      const message = `L'utente ${userName} ti ha condiviso una nuova nota.  <a href="http://localhost:3001/notes"> Clicca per vederla </a>`;
+      const message = `L'utente ${userName} ti ha condiviso una nuova nota.  <a href="https://site232447.tw.cs.unibo.it/notes"> Clicca per vederla </a>`;
 
       for (const email of emails) {
         await sendEmailNotification(email, subject, message);
@@ -111,7 +111,7 @@ export const updateNote = async (req, res) => {
       const recipients = await User.find({ _id: { $in: accessList } }, 'email');
       const emails = recipients.map(user => user.email);
       const subject = `Nota aggiornata condivisa con te`;
-      const message = `L'utente ${userName} ha aggiornato una nota e l'ha condivisa con te. <a href="http://localhost:3001/notes">Accedi per vederla</a>`;
+      const message = `L'utente ${userName} ha aggiornato una nota e l'ha condivisa con te. <a href="https://site232447.tw.cs.unibo.it/notes">Accedi per vederla</a>`;
 
       for (const email of emails) {
         await sendEmailNotification(email, subject, message);

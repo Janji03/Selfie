@@ -34,7 +34,7 @@ export const sendMessage = async (req, res) => {
 
     // Invia l'email di notifica
     const subject = `Nuovo messaggio da ${sender.name}`;
-    const message = `Hai ricevuto un nuovo messaggio. <a href="http://localhost:3001/inbox">Leggilo qui</a>`;
+    const message = `Hai ricevuto un nuovo messaggio. <a href="https://site232447.tw.cs.unibo.it/inbox">Leggilo qui</a>`;
     await sendEmailNotification(recipient.email, subject, message);
 
     res.status(201).json({ message: 'Message sent and email notification delivered.', newMessage });

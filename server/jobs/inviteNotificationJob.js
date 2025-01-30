@@ -6,7 +6,7 @@ export default (agenda) => {
   agenda.define("send-invite-email", async (job) => {
     const { user, item, invitee, type } = job.attrs.data; 
     const emailSubject = `Sei stato invitato a: ${item.title}`;
-    const baseUrl = "http://localhost:3000";
+    const baseUrl = "https://site232447.tw.cs.unibo.it";
 
     // Rotte per accettare, rifiutare o reinviare l'invito
     const acceptUrl = `${baseUrl}/${type}s/${item.id}/accept?userID=${invitee.userID}`;

@@ -1,17 +1,20 @@
 import express from "express";
 import cors from "cors";
-import connectDB from "./config/db.js";
+import path from "path";
+import { fileURLToPath } from "url";
+import config from "./config/config.js";
+
+import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import notesRoutes from "./routes/notesRoutes.js";
 import pomodoroRoutes from "./routes/pomodoroRoutes.js";
-import messageRoutes from './routes/messageRoutes.js';
+import messageRoutes from "./routes/messageRoutes.js";
 import timeMachineRoutes from "./routes/timeMachineRoutes.js";
-import config from "./config/config.js";
-import agenda from "./config/agenda.js"; 
-import scheduleOverdueTasks  from './scheduler/overdueTaskScheduler.js';
+import agenda from "./config/agenda.js";
+import scheduleOverdueTasks from "./scheduler/overdueTaskScheduler.js";
 
 const app = express();
 
@@ -19,7 +22,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/uploads", express.static("./uploads"));
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+app.use(express.static(path.join(__dirname, "client")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Registrazione delle rotte
 app.use("/api/auth", authRoutes);
@@ -31,8 +37,21 @@ app.use("/api/pomodoro", pomodoroRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/time-machine", timeMachineRoutes);
 
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
+});
 
-// Funzione per far partire l'agenda
+
+const connectDB = async () => {
+  try {
+    await mongoose.connect(config.dbURI);
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err);
+    process.exit(1);
+  }
+};
+
 const startAgenda = async () => {
   try {
     await agenda.start();
@@ -43,14 +62,20 @@ const startAgenda = async () => {
   }
 };
 
-// Connetto il database e avvio l'agenda
-connectDB().then(() => {
-  startAgenda().then(() => {
-    const PORT = config.port;
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    await startAgenda();
+
+    const PORT = 8000;
     app.listen(PORT, () => {
-      console.log(`Server is running on http://localhost:${PORT}`);
+      console.log(`Server is running at https://site232447.tw.cs.unibo.it/`);
     });
-  }).catch(err => {
-    console.error("Error starting agenda:", err);
-  });
-});
+  } catch (err) {
+    console.error('Error during server startup:', err);
+    process.exit(1);
+  }
+};
+
+startServer();

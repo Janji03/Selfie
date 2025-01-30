@@ -106,7 +106,7 @@ export const forgotPassword = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
     await user.save();
 
-    const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+    const resetURL = `https://site232447.tw.cs.unibo.it/reset-password/${resetToken}`;
     
     const body = `
         <p>Hai richiesto di resettare la tua password.</p>

@@ -9,7 +9,7 @@ const ProfilePreview = () => {
 
   const userID = localStorage.getItem("userID");
 
-  const baseURL = "http://localhost:5000/";
+  const baseURL = "https://site232447.tw.cs.unibo.it/";
 
   useEffect(() => {
     const fetchUserProfilePicture = async () => {

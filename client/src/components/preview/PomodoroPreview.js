@@ -59,11 +59,11 @@ const PomodoroPreview = () => {
     let dynamicLink = '';
 
     if(windowPreview === "last" && lastPomodoro){
-      dynamicLink = `http://localhost:3000/pomodoro?studyTime=${lastPomodoro.studyTime}&breakTime=${lastPomodoro.breakTime}&cycles=${lastPomodoro.cycles}`;
+      dynamicLink = `https://site232447.tw.cs.unibo.it/pomodoro?studyTime=${lastPomodoro.studyTime}&breakTime=${lastPomodoro.breakTime}&cycles=${lastPomodoro.cycles}`;
     } else if(windowPreview === "next" && nextPomodoro){
-      dynamicLink = `http://localhost:3000/calendar`;
+      dynamicLink = `https://site232447.tw.cs.unibo.it/calendar`;
     } else {
-      dynamicLink = `http://localhost:3000/pomodoro?studyTime=${newStudyTime}&breakTime=${newBreakTime}&cycles=${newCycles}`;
+      dynamicLink = `https://site232447.tw.cs.unibo.it/pomodoro?studyTime=${newStudyTime}&breakTime=${newBreakTime}&cycles=${newCycles}`;
     }
     return dynamicLink;
   }

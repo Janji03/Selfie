@@ -1,7 +1,7 @@
 import getRecurrenceSummary from "./getRecurrenceSummary.js";
 import { DateTime } from "luxon";
 
-const loginURL = `http://localhost:3000/calendar/`;
+const loginURL = `https://site232447.tw.cs.unibo.it/calendar/`;
 
 export const generateEventEmail = (event, timeBefore) => {
 

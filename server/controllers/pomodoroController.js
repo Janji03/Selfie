@@ -1,5 +1,5 @@
 import Pomodoro from "../models/Pomodoro.js";
-import sendEmailNotification from "../../server/utils/sendEmailNotification.js"
+import sendEmailNotification from "../server/utils/sendEmailNotification.js"
 
 // Funzione per creare un nuovo Pomodoro
 export const createPomodoro = async (req, res) => {
@@ -52,7 +52,7 @@ export const sendPomodoroEmail = async (req, res) => {
 
   try {
     const { studyTime, breakTime, cycles } = settings;
-    const dynamicLink = `http://localhost:3000/pomodoro?studyTime=${studyTime}&breakTime=${breakTime}&cycles=${cycles}`;
+    const dynamicLink = `https://site232447.tw.cs.unibo.it/pomodoro?studyTime=${studyTime}&breakTime=${breakTime}&cycles=${cycles}`;
 
     const subject = "Ti hanno condiviso delle impostazioni Pomodoro";
     const message = `

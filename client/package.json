@@ -1,5 +1,5 @@
 {
-  "proxy": "http://localhost:5000",
+  "proxy": "https://site232447.tw.cs.unibo.it",
   "name": "client",
   "version": "0.1.0",
   "private": true,
