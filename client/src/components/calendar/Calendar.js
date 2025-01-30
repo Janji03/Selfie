@@ -46,6 +46,8 @@ const Calendar = () => {
   const userID = localStorage.getItem("userID");
 
   const isInitialMount = useRef(true);
+  const isPomodoroRedistributed = useRef(false);
+  
   const [calendarRenderKey, setCalendarRenderKey] = useState(0);
 
   const { time, isTimeMachineActive } = useTimeMachine();
@@ -80,7 +82,11 @@ const Calendar = () => {
     const fetchAndSetData = async () => {
       if (isAuthenticated) {
         try {
-          await redistributePomodoroTime(userID, time);
+
+          if (!isPomodoroRedistributed.current) {
+            await redistributePomodoroTime(userID, time);
+            isPomodoroRedistributed.current = true;
+          }
   
           const fetchedEvents = await getEvents(userID);
           const invitedEvents = await getInvitedEvents(userID);

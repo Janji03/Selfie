@@ -72,6 +72,14 @@ const EventHandler = ({
         };
       });
 
+      // Estrai le impostazioni del Pomodoro
+      const pomodoroSettings = selectedEvent.extendedProps.pomodoroSettings || {
+        studyTime: null,
+        breakTime: null,
+        cycles: null,
+        completedCycles: null,
+    };
+
       setEventFormInitialData({
         title: selectedEvent.title,
         startDate: DateTime.fromISO(selectedEvent.start, { zone: "UTC" })
@@ -100,6 +108,13 @@ const EventHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedEvent.allDay,
+        isPomodoro: selectedEvent.extendedProps.isPomodoro,
+        pomodoroSettings: {
+          studyTime: pomodoroSettings.studyTime,
+          breakTime: pomodoroSettings.breakTime,
+          cycles: pomodoroSettings.cycles,
+          completedCycles: pomodoroSettings.completedCycles,
+        },
         isRecurring: rruleParsed ? true : false,
         location: selectedEvent.extendedProps.location,
         description: selectedEvent.extendedProps.description,
@@ -269,12 +284,14 @@ const EventHandler = ({
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
         isPomodoro: data.isPomodoro,
+        ...(data.isPomodoro && {
         pomodoroSettings: {
           studyTime: data.pomodoroSettings.studyTime,
           breakTime: data.pomodoroSettings.breakTime,
           cycles: data.pomodoroSettings.cycles,
           completedCycles: data.pomodoroSettings.completedCycles,
         },
+      }),
         invitedUsers: data.invitedUsers,
         markAsUnavailable: data.markAsUnavailable
       },
