@@ -96,8 +96,8 @@ const TaskInfo = ({
       <p>
         <strong>Deadline:</strong>{" "}
         {isAllDay
-          ? deadline.toLocaleString(DateTime.DATE_SHORT)
-          : deadline.toLocaleString(DateTime.DATETIME_FULL)}
+          ? deadline.setLocale("it").toLocaleString(DateTime.DATE_SHORT)
+          : deadline.setLocale("it").toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
       {/* All Day */}

@@ -8,7 +8,7 @@
   flex-grow: 1;
 }
 
-.tab-container button:disabled {
+.tab-container button.not-active:disabled {
   cursor: not-allowed;
   background-color: #e0e0e0;
   color: #999;

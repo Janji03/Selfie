@@ -110,9 +110,11 @@ const EventInfo = ({
             {allDay
               ? DateTime.fromISO(start, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATE_SHORT)
               : DateTime.fromISO(start, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATETIME_FULL)}
           </p>
 
@@ -122,9 +124,11 @@ const EventInfo = ({
             {allDay
               ? DateTime.fromISO(end, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATE_SHORT)
               : DateTime.fromISO(end, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATETIME_FULL)}
           </p>
         </>
@@ -263,7 +267,7 @@ const EventInfo = ({
                 className="danger"
                 onClick={() => handleDeleteEvent(selectedOccurrence)}
               >
-                Elimina solo questa istanza
+                Elimina istanza
               </button>
             )}
           </>

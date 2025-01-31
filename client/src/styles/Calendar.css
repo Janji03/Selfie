@@ -72,6 +72,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  
   --fc-today-bg-color: var(--background-light-blue) !important;
   --fc-bg-event-color: var(--color-unavailable-event) !important;
   --fc-bg-event-opacity: 0.2 !important;
@@ -240,11 +241,16 @@
   cursor: pointer;
 }
 
-.calendar-container .fc-daygrid-day {
+.calendar-container .fc-daygrid-event-dot {
+  display: none;
 }
 
-.calendar-container .fc-daygrid-day-events {
-  /* height: 50%; */
+.calendar-container .fc-event-title {
+  color: var(--color-white);
+}
+
+.calendar-container .fc-daygrid-event .fc-event-time {
+  display: none;
 }
 
 @media (max-width: 1150px) {  
@@ -447,10 +453,6 @@
 
 }
 
-
-.calendar-container .fc-daygrid-event {
-
-}
 
 /* Eventi */
 .calendar-container .fc-event.standard-event {
