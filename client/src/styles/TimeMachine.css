@@ -37,44 +37,6 @@ input[type="datetime-local"]:focus {
     border: 1px solid #526eff;
 }
 
-.time-machine button {
-    font-family: 'Poppins';
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-
-.update-button {
-    background-color: #284bff;
-    color: white;
-    border: none;
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 10px 20px; 
-    border-radius: 0 8px 8px 0;
-    margin-left: -8px;
-    border: 1px solid #284bff;
-    height: 100%; 
-}
-
-.update-button:hover {
-    background-color: #001789;
-}
-
-  
-  .reset-button {
-    background-color: #f2f5ff;
-    color: #284bff;
-    border: 2px solid #284bff;
-    padding: 1%;
-    border-radius: 8px;
-    margin-left: 8px;
-  }
-  
-  .reset-button:hover {
-    background-color: #ffffff;
-    transform: scale(0.98);
-  }
-
   .time-machine h3{
     font-weight: 300;
     margin-top: 30px;
@@ -84,13 +46,13 @@ input[type="datetime-local"]:focus {
   }
 
   .tm-active{
-    color: #284bff;
-    font-weight: 700;
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
   }
 
   .tm-not-active{
-    color: red;
-    font-weight: 700;
+    color: var(--color-danger);
+    font-weight: var(--font-weight-bold);
   }
 
   .modal-content{
@@ -102,12 +64,6 @@ input[type="datetime-local"]:focus {
         margin-top: 5px;
         margin-left: 0;
         background-color: #ffffff;
-    }
-
-    .reset-button:hover{
-        border-color: #001789;
-        color: #001789;
-        transform: none;
     }
 
     .time-machine-controls{

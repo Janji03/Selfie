@@ -90,9 +90,9 @@ const TimeMachine = () => {
           value={inputTime}
         />
         {isInputDifferent && (
-          <button onClick={handleUpdateTime} className="update-button">Aggiorna</button>
+          <button onClick={handleUpdateTime} className="primary">Aggiorna</button>
         )}
-        <button onClick={resetToLocalTime} className="reset-button">Resetta</button>
+        <button onClick={resetToLocalTime} className="danger">Resetta</button>
       </div>
       
       {isTimeMachineActive ? (

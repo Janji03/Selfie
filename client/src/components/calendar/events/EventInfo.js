@@ -21,7 +21,7 @@ const EventInfo = ({
 
   const { id, userID, title, start, end, allDay, rrule, extendedProps } =
     selectedEvent;
-  const { location, description, timeZone, notifications, invitedUsers } =
+  const { location, description, timeZone, notifications, invitedUsers, markAsUnavailable } =
     extendedProps;
 
   const currentUserID = localStorage.getItem("userID");
@@ -100,7 +100,7 @@ const EventInfo = ({
   return (
     <div className="event-info">
       {/* Titolo */}
-      <h2 className={`${isOwner ? "" : "invited"}`}>{title}</h2>
+      <h2 className={`${markAsUnavailable ? "unavailable" : isOwner ? "" : "invited"}`}>{title}</h2>
       
       {!rrule && (
         <>
@@ -110,9 +110,11 @@ const EventInfo = ({
             {allDay
               ? DateTime.fromISO(start, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATE_SHORT)
               : DateTime.fromISO(start, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATETIME_FULL)}
           </p>
 
@@ -122,9 +124,11 @@ const EventInfo = ({
             {allDay
               ? DateTime.fromISO(end, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATE_SHORT)
               : DateTime.fromISO(end, { zone: "UTC" })
                   .setZone(timeZone)
+                  .setLocale("it")
                   .toLocaleString(DateTime.DATETIME_FULL)}
           </p>
         </>
@@ -252,23 +256,23 @@ const EventInfo = ({
       <div className="action-buttons">
         {isOwner && (
           <>
-            <button className="edit" onClick={handleEditEvent}>
+            <button className="primary" onClick={handleEditEvent}>
               Modifica
             </button>
-            <button className="delete" onClick={() => handleDeleteEvent(null)}>
+            <button className="danger" onClick={() => handleDeleteEvent(null)}>
               Elimina
             </button>
             {selectedEvent.rrule && (
               <button
-                className="delete-single"
+                className="danger"
                 onClick={() => handleDeleteEvent(selectedOccurrence)}
               >
-                Elimina solo questa istanza
+                Elimina istanza
               </button>
             )}
           </>
         )}
-        <button className="export" onClick={handleExportEvent}>
+        <button className="tertiary" onClick={handleExportEvent}>
           Esporta evento
         </button>
 

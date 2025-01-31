@@ -24,7 +24,7 @@ const TaskHandler = ({
   isTimeMachineActive,
   calendarTimeZone,
 }) => {
-  const { addThirtyMinutes, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { addThirtyMinutes, convertEventTimes } = DateUtilities();
 
   // Funzione per gestire il click su una task
   const handleTaskClick = async (clickedItemId) => {
@@ -140,7 +140,7 @@ const TaskHandler = ({
         const updatedTask = await updateTask(selectedTask.id, newTask);
 
         // Converto la task da UTC al fuso orario del calendario
-        const convertedTask = convertEventTimes(updatedTask);
+        const convertedTask = convertEventTimes(updatedTask, calendarTimeZone);
 
         const updatedTasks = tasks.map((task) =>
           task.id === selectedTask.id ? { ...task, ...convertedTask } : task
@@ -153,7 +153,7 @@ const TaskHandler = ({
         const createdTask = await createTask(newTask, userID);
         
         // Converto la task da UTC al fuso orario del calendario
-        const convertedTask = convertEventTimes(createdTask);
+        const convertedTask = convertEventTimes(createdTask, calendarTimeZone);
 
         setTasks([...tasks, convertedTask]);
       }
@@ -218,13 +218,15 @@ const TaskHandler = ({
       };
       try {
         const newTask = await updateTask(selectedTask.id, updatedTask);
+        const convertedTask = convertEventTimes(newTask, calendarTimeZone);
+
         const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...newTask } : task
+          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
         );
 
         setTasks(updatedTasks);
 
-        setSelectedTask(updatedTask);
+        setSelectedTask(convertedTask);
       } catch (error) {
         console.error("Errore durante la modifica dello stato della task:", error);
       }

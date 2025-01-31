@@ -15,7 +15,7 @@ import ResetPassword from "./components/loginsignup/ResetPassword";
 import Inbox from "./components/profile/Inbox";
 import InvitationHandler from "./components/calendar/InvitationHandler";
 import HomePage from "./components/homepage/Homepage";
-
+import "../src/styles/Global.css";
 const App = () => {
   return (
     <AuthProvider>

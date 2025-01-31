@@ -74,7 +74,7 @@ const Calendar = () => {
   const [selectedOccurrence, setSelectedOccurrence] = useState(null);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities();
 
   useEffect(() => {
     const fetchAndSetData = async () => {
@@ -89,23 +89,22 @@ const Calendar = () => {
           const invitedTasks = await getInvitedTasks(userID);
   
           const convertedEvents = fetchedEvents.map((event) => ({
-            ...convertEventTimes(event),
-            classNames: ["event"],
-            display: event.extendedProps?.markAsUnavailable
-              ? "background"
-              : "auto",
+            ...convertEventTimes(event, calendarTimeZone),
+            classNames: event.extendedProps?.markAsUnavailable ? ["background-event"] : ["standard-event"],
+            display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
+
           }));
           const convertedInvitedEvents = invitedEvents.map((event) => ({
-            ...convertEventTimes(event),
+            ...convertEventTimes(event, calendarTimeZone),
             classNames: ["invited-event"],
           }));
   
           const convertedTasks = fetchedTasks.map((task) => ({
-            ...convertEventTimes(task),
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
           const convertedInvitedTasks = invitedTasks.map((task) => ({
-            ...convertEventTimes(task),
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
   
@@ -237,14 +236,21 @@ const Calendar = () => {
   // Quando vengono modificati gli state di eventi o task oppure quando viene cambiata la view del calendario, aggiorno lo state eventi di fullCalendar
   useEffect(() => {
 
-    const processedEvents = events.map((event) => ({
-      ...event,
-      display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
-      classNames: event.userID === userID ? ["event"] : ["invited-event"],
-    }));
+    const processedEvents = events.map((event) => {
+      const isUnavailable = event.extendedProps?.markAsUnavailable;
+      const isUserEvent = event.userID === userID;
+      return {
+        ...convertEventTimes(event, calendarTimeZone),
+        display: isUnavailable ? "background" : "auto",
+        classNames: [
+          isUnavailable ? "background-event" : "standard-event",
+          isUserEvent ? "" : "invited-event",
+        ],
+      };
+    });
 
     const processedTasks = tasks.map((task) => ({
-      ...task,
+      ...convertEventTimes(task, calendarTimeZone),
       classNames: getClassNamesForTask(task),
     }));
 
@@ -259,7 +265,7 @@ const Calendar = () => {
     // Aggiorna gli eventi di fullCalendar
     const calendarApi = calendarRef.current.getApi();
     calendarApi.refetchEvents();
-  }, [events, tasks, currentView]);
+  }, [events, tasks, currentView, calendarTimeZone]);
 
   // Funzione per gestire il click su una cella del calendario
   const handleDateClick = (info) => {
@@ -426,10 +432,7 @@ const Calendar = () => {
   const handleTZFormSubmit = (newTimeZone) => {
     setCalendarTimeZone(newTimeZone);
     setIsTZFormOpen(false);
-
-    // Converto data e ora di eventi e task nel nuovo fuso orario 
-    const convertedCombined = combinedItems.map((item) => convertEventTimes(item));
-    setCombinedItems(convertedCombined);
+    handleTriggerReRender();
   };
 
   // Aggiungo delle classi CSS per rendere la toolbar responsive
