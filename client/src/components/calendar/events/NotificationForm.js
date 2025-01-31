@@ -73,7 +73,7 @@ const NotificationForm = ({ formData, setFormData }) => {
     <div>
       <button
         type="button"
-        className="form-button add-notification"
+        className="secondary small add-notification"
         onClick={addNotification}
       >
         Aggiungi
@@ -105,7 +105,7 @@ const NotificationForm = ({ formData, setFormData }) => {
           {/* Bottone rimuovi */}
           <button
             type="button"
-            className="form-button remove-notification"
+            className="danger small remove-notification"
             onClick={() => removeNotification(index)}
           >
             Rimuovi

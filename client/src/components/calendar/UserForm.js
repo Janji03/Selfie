@@ -162,7 +162,7 @@ const UserForm = ({ formData, setFormData }) => {
           </div>
             <button
               type="button"
-              className="form-button remove-user"
+              className="danger small"
               onClick={() => handleRemoveUser(user._id)}
             >
               Rimuovi

@@ -90,10 +90,9 @@ const Calendar = () => {
   
           const convertedEvents = fetchedEvents.map((event) => ({
             ...convertEventTimes(event),
-            classNames: ["event"],
-            display: event.extendedProps?.markAsUnavailable
-              ? "background"
-              : "auto",
+            classNames: event.extendedProps?.markAsUnavailable ? ["background-event"] : ["standard-event"],
+            display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
+
           }));
           const convertedInvitedEvents = invitedEvents.map((event) => ({
             ...convertEventTimes(event),
@@ -237,11 +236,18 @@ const Calendar = () => {
   // Quando vengono modificati gli state di eventi o task oppure quando viene cambiata la view del calendario, aggiorno lo state eventi di fullCalendar
   useEffect(() => {
 
-    const processedEvents = events.map((event) => ({
-      ...event,
-      display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
-      classNames: event.userID === userID ? ["event"] : ["invited-event"],
-    }));
+    const processedEvents = events.map((event) => {
+      const isUnavailable = event.extendedProps?.markAsUnavailable;
+      const isUserEvent = event.userID === userID;
+      return {
+        ...event,
+        display: isUnavailable ? "background" : "auto",
+        classNames: [
+          isUnavailable ? "background-event" : "standard-event",
+          isUserEvent ? "" : "invited-event",
+        ],
+      };
+    });
 
     const processedTasks = tasks.map((task) => ({
       ...task,

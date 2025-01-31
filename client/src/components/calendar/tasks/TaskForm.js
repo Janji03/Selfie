@@ -163,13 +163,13 @@ const TaskForm = ({ initialData, onSubmit, isEditMode }) => {
         </div>
 
         {/* Bottone submit */}
-        <button type="submit" className="form-button form-submit">
+        <button type="submit" className="primary">
           {isEditMode ? "Salva" : "Aggiungi"}
         </button>
 
         {/* Bottone reset (solo edit mode) */}
         {isEditMode && (
-          <button type="button" onClick={handleResetChanges} className="form-button form-reset">
+          <button type="button" onClick={handleResetChanges} className="danger">
             Cancella
           </button>
         )}

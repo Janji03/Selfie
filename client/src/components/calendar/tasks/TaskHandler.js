@@ -218,13 +218,15 @@ const TaskHandler = ({
       };
       try {
         const newTask = await updateTask(selectedTask.id, updatedTask);
+        const convertedTask = convertEventTimes(newTask);
+
         const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...newTask } : task
+          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
         );
 
         setTasks(updatedTasks);
 
-        setSelectedTask(updatedTask);
+        setSelectedTask(convertedTask);
       } catch (error) {
         console.error("Errore durante la modifica dello stato della task:", error);
       }

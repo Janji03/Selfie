@@ -530,14 +530,14 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
                 </>
               )}
             </div>
-            <button type="submit" className="form-button form-submit">
+            <button type="submit" className="primary form-submit">
               {isEditMode ? "Salva" : "Aggiungi"}
             </button>
             {isEditMode && (
               <button
                 type="button"
                 onClick={handleResetChanges}
-                className="form-button form-reset"
+                className="danger"
               >
                 Cancella
               </button>
@@ -695,7 +695,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
             </div>
             {/* Bottone submit */}
 
-            <button type="submit" className="form-button form-submit">
+            <button type="submit" className="primary">
               {isEditMode ? "Salva" : "Aggiungi"}
             </button>
 
@@ -704,7 +704,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               <button
                 type="button"
                 onClick={handleResetChanges}
-                className="form-button form-reset"
+                className="danger"
               >
                 Cancella
               </button>
