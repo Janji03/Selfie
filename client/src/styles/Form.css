@@ -6,6 +6,7 @@
 .tab-container button {
   font-weight: var(--font-weight-bold);
   flex-grow: 1;
+  border-radius: var(--border-radius-big) var(--border-radius-big) 0px 0px; 
 }
 
 .tab-container button.not-active:disabled {
@@ -20,18 +21,18 @@
 }
 
 .tab-container button.not-active {
-  background-color: var(--color-white);
-  border: 1px solid var(--button-primary-bg);
+  background-color: var(--background-light);
+  border: 1px solid var(--color-primary);
   color: var(--color-primary);
 }
 
 .form-container {
   padding: 25px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 0px 0px var(--border-radius) var(--border-radius);
   max-width: 600px;
   margin: auto;
-  background-color: #f9f9f9;
+  background-color: var(--background-light);
   font-family: "Poppins", sans-serif;
 }
 
@@ -70,14 +71,14 @@
 }
 
 .error-message {
-  color: red;
+  color: var(--color-danger);
   font-size: 12px;
   margin-top: 5px;
 }
 
 
 .form-input:invalid {
-  border-color: red;
+  border-color: var(--color-danger);
 }
 
 .recurrence-container {

@@ -228,7 +228,7 @@ const CalendarPreview = () => {
         eventClick={goToCalendar}
         dateClick={goToCalendar}
         height="auto"
-        now={time}
+        now={() => DateTime.fromISO(time, { zone: "UTC" }).setZone(calendarTimeZone).toISO()}
         nowIndicator={true}
         dayMaxEventRows={2}
         eventMaxStack={3}

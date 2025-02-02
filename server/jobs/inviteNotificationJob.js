@@ -2,6 +2,7 @@ import sendEmailNotification from "../utils/sendEmailNotification.js";
 import { DateTime } from "luxon";
 
 // Definisco il job per mandare inviti ad eventi/task
+// Definisco il job per mandare inviti ad eventi/task
 export default (agenda) => {
   agenda.define("send-invite-email", async (job) => {
     const { user, item, invitee, type } = job.attrs.data; 

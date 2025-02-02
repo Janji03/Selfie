@@ -1,5 +1,5 @@
 import Pomodoro from "../models/Pomodoro.js";
-import sendEmailNotification from "../server/utils/sendEmailNotification.js"
+import sendEmailNotification from "../utils/sendEmailNotification.js"
 
 // Funzione per creare un nuovo Pomodoro
 export const createPomodoro = async (req, res) => {

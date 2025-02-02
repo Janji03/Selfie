@@ -50,6 +50,8 @@ const Calendar = () => {
 
   const { time, isTimeMachineActive } = useTimeMachine();
 
+  const [convertedNow, setConvertedNow] = useState(time);
+
   const [calendarTimeZone, setCalendarTimeZone] = useState(
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
@@ -76,9 +78,19 @@ const Calendar = () => {
 
   const { decrementOneDay, roundTime, convertEventTimes } = DateUtilities();
 
+  // Converto il valore della time machine al fuso orario del
+  useEffect(() => {
+    setConvertedNow(DateTime.fromISO(time, { zone: "UTC" }).setZone(calendarTimeZone).toISO());
+  }, [time, calendarTimeZone]);
+
+  // Quando viene modificato il fuso orario del calendario, forza il re-render del calendario per aggiornare il now indicator
+  useEffect(() => {
+    handleTriggerReRender();
+  }, [calendarTimeZone]);
+
   useEffect(() => {
     const fetchAndSetData = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && !isTimeMachineActive) {
         try {
           await redistributePomodoroTime(userID, time);
   
@@ -140,7 +152,7 @@ const Calendar = () => {
     const interval = setInterval(fetchAndSetData, 10000);
   
     return () => clearInterval(interval);
-  }, [isAuthenticated, userID]);
+  }, [isAuthenticated, userID, isTimeMachineActive]);
 
   // Funzione per attribuire le classi CSS alle task in base a scadenza/completamento
   const getClassNamesForTask = (task) => {
@@ -357,7 +369,7 @@ const Calendar = () => {
       view.type === "timeGridWeek" 
       ? new Date(view.currentStart)
       : new Date(time);
-    
+
     let startDateTime;
 
     // Se ho selezionato un range, utilizzo la data e tempo del range
@@ -386,12 +398,24 @@ const Calendar = () => {
       }
 
     } else {
+
       // Arrotondo le ore e i minuti
       baseDate.setHours(new Date(time).getHours());
       startDateTime = roundTime(baseDate).toISOString();
 
       initializeEventForm(startDateTime);
       initializeTaskForm(startDateTime);
+
+      if (view.type === "dayGridMonth" || view.type === "taskList") {
+        setEventFormInitialData((prevData) => ({
+          ...prevData,
+          allDay: true,
+        }));
+        setTaskFormInitialData((prevData) => ({
+          ...prevData,
+          allDay: true,
+        }));
+      }
     }
 
     setIsEditMode(false);
@@ -432,7 +456,6 @@ const Calendar = () => {
   const handleTZFormSubmit = (newTimeZone) => {
     setCalendarTimeZone(newTimeZone);
     setIsTZFormOpen(false);
-    handleTriggerReRender();
   };
 
   // Aggiungo delle classi CSS per rendere la toolbar responsive
@@ -565,7 +588,7 @@ const Calendar = () => {
           }}
           events={combinedItems}
           timeZone={calendarTimeZone}
-          now={time}
+          now={convertedNow}
           nowIndicator={true}
           datesSet={({ view }) => setCurrentView(view.type)}
           dateClick={handleDateClick}

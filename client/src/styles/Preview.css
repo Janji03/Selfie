@@ -134,7 +134,7 @@
 }
 
 .calendar-preview .fc {
-  height: 80%;
+  height: 75%;
   width: 100%;
 
   display: flex;
@@ -145,6 +145,10 @@
   --fc-today-bg-color: var(--background-light-blue) !important;
   --fc-bg-event-color: var(--color-unavailable-event) !important;
   --fc-bg-event-opacity: 0.2 !important;
+  --fc-now-indicator-color: var(--color-primary) !important;
+
+  padding-bottom: 1rem;
+  padding-top: 0.5rem;
 }
 
 .calendar-preview .fc .fc-toolbar.fc-header-toolbar {
@@ -157,6 +161,7 @@
 
   font-size: 1.2rem;
   margin-bottom: 0;
+  padding-bottom: 0.3rem;
 }
 
 .calendar-preview .fc-toolbar-title {
@@ -328,7 +333,6 @@
 
 
 /* Calendar Link */
-
 .calendar-preview .link-container {
   height: 10%;
   width: 30%;

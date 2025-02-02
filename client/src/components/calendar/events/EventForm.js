@@ -358,7 +358,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
               onChange={handleChange}
               className="checkbox-input"
             />
-            <span className="checkbox-label">
+            <span className="checkbox-label-small">
               Segna non disponibile per eventi di gruppo
             </span>
           </label>

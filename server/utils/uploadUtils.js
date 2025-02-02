@@ -4,14 +4,6 @@ import fs from "fs";
 
 // Controllo se la directory in cui salvare le foto esiste, in caso negativo la creo
 const uploadDirectory = "uploads/profilePictures";
-try {
-  if (!fs.existsSync(uploadDirectory)) {
-    fs.mkdirSync(uploadDirectory, { recursive: true });
-  }
-} catch (error) {
-  console.error("Failed to create upload directory:", error);
-  throw new Error("Could not initialize file upload directory.");
-}
 
 // Definisco la directory in cui salvare le immagini e il nome da attribuirgli
 const storage = multer.diskStorage({
