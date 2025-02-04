@@ -4,41 +4,35 @@
 }
 
 .tab-container button {
-  font-family: "Poppins", sans-serif;
-  padding: 5px;
-  font-size: 1rem;
-  font-weight: bold;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  font-weight: var(--font-weight-bold);
   flex-grow: 1;
+  border-radius: var(--border-radius-big) var(--border-radius-big) 0px 0px; 
 }
 
-.tab-container button:disabled {
+.tab-container button.not-active:disabled {
   cursor: not-allowed;
   background-color: #e0e0e0;
   color: #999;
 }
 
 .tab-container button.active {
-  background-color: #001789;
+  background-color: var(--button-primary-bg);
   color: #fff;
 }
 
-.tab-container button:hover:not(:disabled) {
-  background-color: #0066cc;
-  color: #fff;
+.tab-container button.not-active {
+  background-color: var(--background-light);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
 }
 
 .form-container {
   padding: 25px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 0px 0px var(--border-radius) var(--border-radius);
   max-width: 600px;
   margin: auto;
-  background-color: #f9f9f9;
+  background-color: var(--background-light);
   font-family: "Poppins", sans-serif;
 }
 
@@ -77,39 +71,14 @@
 }
 
 .error-message {
-  color: red;
+  color: var(--color-danger);
   font-size: 12px;
   margin-top: 5px;
 }
 
-.form-button {
-  background-color: #001789;
-  color: #fff;
-  border-radius: 6px;
-  border: none;
-  padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s;
-  margin-top: 20px;
-}
-
-.form-submit:hover {
-  background-color: #0056b3;
-}
-
-.form-reset {
-  background-color: #dc3545;
-  margin-left: 10px;
-}
-
-.form-reset:hover {
-  background-color: #990615;
-}
 
 .form-input:invalid {
-  border-color: red;
+  border-color: var(--color-danger);
 }
 
 .recurrence-container {
@@ -168,22 +137,22 @@
 }
 
 .add-notification {
-  background-color: #007bff;
+  background-color: var(--button-secondary-bg);
   margin-top: 0px;
   margin-bottom: 15px;
 }
 
 .add-notification:hover {
-  background-color: #0056b3;
+  background-color: var(--button-secondary-hover-bg);
 }
 
 .remove-notification {
-  background-color: #dc3545;
+  background-color: var(--button-danger-bg);
   margin-top: 0px;
 }
 
 .remove-notification:hover {
-  background-color: #990615;
+  background-color: var(--button-danger-hover-bg);
 }
 
 .notification-container {
@@ -201,12 +170,12 @@
 }
 
 .remove-user {
-  background-color: #dc3545;
+  background-color: var(--button-danger-bg);
   margin-top: 0px;
 }
 
 .remove-user:hover {
-  background-color: #990615;
+  background-color: var(--button-danger-hover-bg);
 }
 
 .invited-users-container ul {
@@ -251,15 +220,15 @@
 }
 
 .status.accepted {
-  color: #149108;
+  color: var(--color-accept);
 }
 
 .status.rejected {
-  color: red;
+  color: var(--color-danger);
 }
 
 .status.pending {
-  color: #007bff;
+  color: var(--color-secondary);
 }
 
 ::placeholder {

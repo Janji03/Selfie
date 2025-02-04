@@ -237,6 +237,11 @@ html {
   cursor: pointer;
 }
 
+.home-preview .calendar-preview {
+  height: 75%;
+  width: 90%;
+}
+
 .home-preview .bi-x-lg:hover {
   color: #8085a4;
 }
@@ -362,22 +367,6 @@ color: rgb(114, 114, 114);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @media (min-width: 580px) and (max-width: 1000px) {
 
   .homepage-header h1 {
@@ -456,13 +445,6 @@ color: rgb(114, 114, 114);
   }
     
 }
-
-
-
-
-
-
-
 
 
 

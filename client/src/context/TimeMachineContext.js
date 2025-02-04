@@ -1,15 +1,18 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
-const TimeMachineContext = createContext();
+export const TimeMachineContext = createContext();
 
 export const TimeMachineProvider = ({ children }) => {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(new Date().toISOString());
   const [isTimeMachineActive, setIsTimeMachineActive] = useState(false);
 
   // Incrementa il tempo ogni secondo
   useEffect(() => {
     const timer = setInterval(() => {
-      setTime((prevTime) => new Date(prevTime.getTime() + 1000));
+      setTime((prevTime) => {
+        const newTime = new Date(new Date(prevTime).getTime() + 1000);
+        return newTime.toISOString();
+      });
     }, 1000);
 
     return () => clearInterval(timer);

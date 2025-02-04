@@ -19,19 +19,19 @@
 }
 
 .task-info h2.overdue {
-  background-color: #dc3545;
+  background-color: var(--color-task-overdue);
 }
 
 .task-info h2.completed {
-  background-color: #28a745;
+  background-color: var(--color-task-completed);
 }
 
 .task-info h2.late {
-  background-color: #ff9800;
+  background-color: var(--color-task-late);
 }
 
 .task-info h2.pending {
-  background-color: #007bff;
+  background-color: var(--color-task-pending);
 }
 
 .task-info p {
@@ -65,52 +65,25 @@
   justify-content: center;
 }
 
-.task-info button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+.task-info button.pending {
+  background-color: var(--color-task-pending);
+}
+.task-info button.pending:hover {
+  background-color: var(--color-task-pending-hover);
 }
 
-.task-info button.delete {
-  background-color: #dc3545;
-  color: white;
+.task-info button.completed {
+  background-color: var(--color-task-completed);
 }
-
-.task-info button.delete:hover {
-  background-color: #990615;
-}
-
-.task-info button.edit {
-  background-color: #0056b3;
-  color: white;
-}
-
-.task-info button.edit:hover {
-  background-color: #007bff;
-}
-
-.task-info button.completed,
-.task-info button.pending,
-.task-info button.mark-status {
-  background-color: #66bb6a;
-  color: white;
-}
-
-.task-info button.completed:hover,
-.task-info button.pending:hover,
-.task-info button.mark-status:hover {
-  background-color: #43a047;
+.task-info button.completed:hover {
+  background-color: var(--color-task-completed-hover);
 }
 
 
-.task-info button.leave {
-  background-color: #dc3545;
-  color: white;
+.event-info button.leave {
+  background-color: var(--color-danger);
 }
 
-.task-info button.leave:hover {
-  background-color: #990615;
+.event-info button.leave:hover {
+  background-color: var(--color-danger-hover);
 }

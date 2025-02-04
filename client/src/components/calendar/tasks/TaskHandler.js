@@ -24,7 +24,7 @@ const TaskHandler = ({
   isTimeMachineActive,
   calendarTimeZone,
 }) => {
-  const { addThirtyMinutes, convertEventTimes } = DateUtilities({ calendarTimeZone });
+  const { addThirtyMinutes } = DateUtilities();
 
   // Funzione per gestire il click su una task
   const handleTaskClick = async (clickedItemId) => {
@@ -102,9 +102,11 @@ const TaskHandler = ({
     const deadlineDate = data.deadlineDate;
     const deadlineTime = data.deadlineTime;
     const deadlineDateTime = `${deadlineDate}T${deadlineTime}:00`;
+    const isoDeadlineDateTime = DateTime.fromISO(deadlineDateTime, { zone: taskTimeZone }).toISO();
+    const utcDeadlineDateTime = DateTime.fromISO(isoDeadlineDateTime, { zone: "UTC" }).toISO();
     const deadlineEndDateTime = `${addThirtyMinutes(deadlineDateTime)}`;
 
-    const deadline = isAllDay ? deadlineDate : deadlineDateTime;
+    const deadline = isAllDay ? deadlineDate : utcDeadlineDateTime;
     const endDeadline = isAllDay ? deadlineDate : deadlineEndDateTime;
 
     const current = isAllDay ? nowDate : nowDateTime;
@@ -138,24 +140,12 @@ const TaskHandler = ({
       // Se stavo modificando una task, chiamo l'API update task
       if (isEditMode) {
         const updatedTask = await updateTask(selectedTask.id, newTask);
-
-        // Converto la task da UTC al fuso orario del calendario
-        const convertedTask = convertEventTimes(updatedTask);
-
-        const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
-        );
-
-        setTasks(updatedTasks);
+        setTasks([...tasks, updatedTask]);
         setSelectedTask(updatedTask);
       } else {
         // Se stavo creando una task, chiamo l'API create task
         const createdTask = await createTask(newTask, userID);
-        
-        // Converto la task da UTC al fuso orario del calendario
-        const convertedTask = convertEventTimes(createdTask);
-
-        setTasks([...tasks, convertedTask]);
+        setTasks([...tasks, createdTask]);
       }
       setIsFormOpen(false);
     } catch (error) {
@@ -191,7 +181,7 @@ const TaskHandler = ({
       const now = new Date(time);
       const nowDate = now.toISOString().split("T")[0];
       const nowTime = now.toISOString().split("T")[1].slice(0, 5);
-      const nowDateTime = `${nowDate}T${nowTime}`;
+      const nowDateTime = `${nowDate}T${nowTime}Z`;
       const current = selectedTask.isAllDay ? nowDate : nowDateTime;
 
       // Controllo se la task è in ritardo
@@ -218,13 +208,8 @@ const TaskHandler = ({
       };
       try {
         const newTask = await updateTask(selectedTask.id, updatedTask);
-        const updatedTasks = tasks.map((task) =>
-          task.id === selectedTask.id ? { ...task, ...newTask } : task
-        );
-
-        setTasks(updatedTasks);
-
-        setSelectedTask(updatedTask);
+        setTasks([...tasks, newTask]);
+        setSelectedTask(newTask);
       } catch (error) {
         console.error("Errore durante la modifica dello stato della task:", error);
       }
@@ -248,6 +233,9 @@ const TaskHandler = ({
 
       const isOverdue = taskDeadline <= current;
 
+      const isoCurrent = DateTime.fromISO(current, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
+      const isoCurrentEnd = DateTime.fromISO(currentEnd, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
+
       // Controllo se una task è da segnare come in ritardo (andiamo avanti con il tempo)
       if (isOverdue && task.extendedProps.status !== "completed") {
         return {
@@ -256,16 +244,16 @@ const TaskHandler = ({
             ...task.extendedProps,
             isOverdue: true,
           },
-          start: current,
-          end: currentEnd,
+          start: isoCurrent,
+          end: isoCurrentEnd,
         };
       // Controllo se una task è da segnare come pending (andiamo indietro con il tempo)
       } else if (!isOverdue && task.extendedProps.isOverdue) {
         const startDeadline = new Date(taskDeadline);
         const endDeadline = new Date(startDeadline.getTime() + 30 * 60 * 1000);
 
-        const taskStartDeadline = startDeadline.toISOString().slice(0, 16);
-        const taskEndDeadline = endDeadline.toISOString().slice(0, 16);
+        const taskStartDeadline = DateTime.fromISO(startDeadline, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
+        const taskEndDeadline = DateTime.fromISO(endDeadline, { zone: "UTC" }).setZone(calendarTimeZone).toISO();
 
         return {
           ...task,

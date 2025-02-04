@@ -6,6 +6,7 @@ import listPlugin from "@fullcalendar/list";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import itLocale from "@fullcalendar/core/locales/it";
 
 import { DateTime } from "luxon";
 
@@ -16,6 +17,8 @@ import { getEvents, getInvitedEvents } from "../../services/eventService";
 import { getTasks, getInvitedTasks } from "../../services/taskService";
 
 import TaskHandler from "../calendar/tasks/TaskHandler";
+
+import DateUtilities from "../calendar/DateUtilities";
 
 import "../../styles/Preview.css";
 
@@ -37,6 +40,11 @@ const CalendarPreview = () => {
   const [events, setEvents] = useState([]);
   const [combinedItems, setCombinedItems] = useState([]);
 
+  const [calendarTimeZone, setCalendarTimeZone] = useState(
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+  const { convertEventTimes } = DateUtilities();
+
   const { checkForOverdueTasks } = TaskHandler({
     userID,
     tasks,
@@ -51,40 +59,36 @@ const CalendarPreview = () => {
         try {
           const fetchedEvents = await getEvents(userID);
           const invitedEvents = await getInvitedEvents(userID);
-
+  
           const fetchedTasks = await getTasks(userID);
           const invitedTasks = await getInvitedTasks(userID);
-
+  
           const convertedEvents = fetchedEvents.map((event) => ({
-            ...event,
-            classNames: ["event"],
-            display: event.extendedProps?.markAsUnavailable
-              ? "background"
-              : "auto",
+            ...convertEventTimes(event, calendarTimeZone),
+            classNames: event.extendedProps?.markAsUnavailable ? ["background-event"] : ["standard-event"],
+            display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
+
           }));
           const convertedInvitedEvents = invitedEvents.map((event) => ({
-            ...event,
+            ...convertEventTimes(event, calendarTimeZone),
             classNames: ["invited-event"],
           }));
-
+  
           const convertedTasks = fetchedTasks.map((task) => ({
-            ...task,
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
           const convertedInvitedTasks = invitedTasks.map((task) => ({
-            ...task,
+            ...convertEventTimes(task, calendarTimeZone),
             classNames: getClassNamesForTask(task),
           }));
-
-          const combinedEvents = [
-            ...convertedEvents,
-            ...convertedInvitedEvents,
-          ];
+  
+          const combinedEvents = [...convertedEvents, ...convertedInvitedEvents];
           const combinedTasks = [...convertedTasks, ...convertedInvitedTasks];
-
-          setEvents(events);
+  
+          setEvents(combinedEvents);
           setTasks(combinedTasks);
-
+  
           const combined = [...combinedEvents, ...combinedTasks];
           setCombinedItems(combined);
 
@@ -110,11 +114,18 @@ const CalendarPreview = () => {
   }, [isTimeMachineActive]);
 
   useEffect(() => {
-    const processedEvents = events.map((event) => ({
-      ...event,
-      display: event.extendedProps?.markAsUnavailable ? "background" : "auto",
-      classNames: event.userID === userID ? ["event"] : ["invited-event"],
-    }));
+    const processedEvents = events.map((event) => {
+      const isUnavailable = event.extendedProps?.markAsUnavailable;
+      const isUserEvent = event.userID === userID;
+      return {
+        ...convertEventTimes(event, calendarTimeZone),
+        display: isUnavailable ? "background" : "auto",
+        classNames: [
+          isUnavailable ? "background-event" : "standard-event",
+          isUserEvent ? "" : "invited-event",
+        ],
+      };
+    });
 
     const processedTasks = tasks.map((task) => ({
       ...task,
@@ -217,12 +228,21 @@ const CalendarPreview = () => {
         eventClick={goToCalendar}
         dateClick={goToCalendar}
         height="auto"
-        now={time}
+        now={() => DateTime.fromISO(time, { zone: "UTC" }).setZone(calendarTimeZone).toISO()}
         nowIndicator={true}
         dayMaxEventRows={2}
+        eventMaxStack={3}
+        locale={itLocale}
+        allDayText="Giorno intero"
+        dayHeaderContent={(args) => args.text.charAt(0).toUpperCase() + args.text.slice(1)}
+        slotLabelFormat={{
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false, 
+        }}
       />
       <div className="link-container">
-        <Link to="/calendar" className="calendar-link">
+        <Link to="/calendar" className="link">
           Vai al Calendario
         </Link>
       </div>

@@ -33,15 +33,12 @@ const EventHandler = ({
     calculateEndDateRecurrence,
   } = RecurrenceHandler();
 
-  const { decrementOneDay, addOneHour, convertEventTimes } = DateUtilities({
-    calendarTimeZone,
-  });
+  const { decrementOneDay, addOneHour } = DateUtilities();
 
   // Funzione per gestire il click su un evento
   const handleEventClick = async (info, clickedItemId) => {
     try {
       const clickedEvent = await getEventById(clickedItemId);
-      console.log("Clicked event:", clickedEvent);
       // Se clicco su un evento ricorrente, prendo l'istanza
       if (clickedEvent && clickedEvent.rrule) {
         setSelectedOccurrence(info.event.start);
@@ -306,26 +303,12 @@ const EventHandler = ({
       // Se stavo modificando un evento, chiamo l'API update event
       if (isEditMode) {
         const updatedEvent = await updateEvent(selectedEvent.id, newEvent);
-
-        // Converto l'evento da UTC al fuso orario del calendario
-        const convertedEvent = convertEventTimes(updatedEvent);
-
-        const updatedEvents = events.map((event) =>
-          event.id === selectedEvent.id
-            ? { ...event, ...convertedEvent }
-            : event
-        );
-
-        setEvents(updatedEvents);
-        setSelectedEvent(convertedEvent);
+        setEvents([...events, updatedEvent]);
+        setSelectedEvent(updatedEvent);
       } else {
         // Se stavo creando un evento, chiamo l'API create new event
         const createdEvent = await createNewEvent(newEvent, userID);
-
-        // Converto l'evento da UTC al fuso orario del calendario
-        const convertedEvent = convertEventTimes(createdEvent);
-
-        setEvents([...events, convertedEvent]);
+        setEvents([...events, createdEvent]);
       }
       setSelectedRange(null);
       setIsFormOpen(false);

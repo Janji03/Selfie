@@ -63,8 +63,8 @@ const EditProfileForm = ({ formData, handleInputChange, handleFileChange, handle
           <option value="prefer not to say">Preferisco non specificare</option>
         </select>
       </div>
-      <button type="submit" className="form-button form-submit">Salva</button>
-      <button type="button" className="form-button form-reset" onClick={onCancel}>
+      <button type="submit" className="primary">Salva</button>
+      <button type="button" className="danger" onClick={onCancel}>
         Cancella
       </button>
     </form>

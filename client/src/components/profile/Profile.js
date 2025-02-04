@@ -114,17 +114,17 @@ const Profile = () => {
           <p className="profile-info"><strong>Email:</strong> {user?.email}</p>
           <p className="profile-info"><strong>Bio:</strong> {user?.bio}</p>
           <p className="profile-info"><strong>Compleanno:</strong> {user?.birthday}</p>
-          <p className="profile-info"><strong>Sesso:</strong> {user?.sex}</p>
+          <p className="profile-info"><strong>Sesso:</strong> {user?.sex === "prefer not to say" ? "Non specificato" : user?.sex}</p>
         </div>
 
         <div className="profile-actions">
-          <button className="button edit-button" onClick={toggleEditModal}>Modifica</button>
+          <button className="primary" onClick={toggleEditModal}>Modifica</button>
           
-          <button className="button inbox-button" onClick={handleOpenInbox}>Apri Inbox</button>
+          <button className="tertiary" onClick={handleOpenInbox}>Apri Inbox</button>
           
-          <button className="button logout-button" onClick={handleLogout}>Logout</button>
+          <button className="secondary" onClick={handleLogout}>Logout</button>
 
-          <button className="button delete-button" onClick={handleDelete}>Elimina profilo</button>
+          <button className="danger" onClick={handleDelete}>Elimina profilo</button>
         </div>
 
         {error && <p className="error-message">{error}</p>}

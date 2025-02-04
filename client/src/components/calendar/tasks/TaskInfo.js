@@ -96,8 +96,8 @@ const TaskInfo = ({
       <p>
         <strong>Deadline:</strong>{" "}
         {isAllDay
-          ? deadline.toLocaleString(DateTime.DATE_SHORT)
-          : deadline.toLocaleString(DateTime.DATETIME_FULL)}
+          ? deadline.setLocale("it").toLocaleString(DateTime.DATE_SHORT)
+          : deadline.setLocale("it").toLocaleString(DateTime.DATETIME_FULL)}
       </p>
 
       {/* All Day */}
@@ -191,10 +191,10 @@ const TaskInfo = ({
       <div className="action-buttons">
         {isOwner && (
           <>
-            <button className="edit" onClick={handleEditTask}>
+            <button className="primary" onClick={handleEditTask}>
               Modifica
             </button>
-            <button className="delete" onClick={handleDeleteTask}>
+            <button className="danger" onClick={handleDeleteTask}>
               Elimina
             </button>
           </>
