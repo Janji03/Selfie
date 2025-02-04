@@ -98,7 +98,7 @@ const NotesPreview = () => {
                 <p>{note.content.slice(0, 30)}...</p>
                 
                 {/* Aggiungi la visibilità della nota */}
-                <p><strong>Visibilità:</strong> {note.visibility === "open" ? "Pubblica" : note.visibility === "restricted" ? "Ristretta" : "Privata"}</p>
+                <p className="note-visibility"><strong>Visibilità:</strong> {note.visibility === "open" ? "Pubblica" : note.visibility === "restricted" ? "Ristretta" : "Privata"}</p>
               </li>
             </div>
           ))}
@@ -107,7 +107,7 @@ const NotesPreview = () => {
         <p>Non ci sono note recenti.</p>
       )}
 
-      <Link to="/notes" className="note-link">
+      <Link to="/notes" className="link">
         Vai alle Note
       </Link>
     </div>

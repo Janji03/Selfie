@@ -46,6 +46,7 @@
   animation: timer-indicator-reverse calc(var(--timer-unit) * var(--pause-length)) linear;
 }
 
+
 @keyframes timer-indicator {
   0% {
     transform: translateY(0%);
@@ -63,3 +64,4 @@
     transform: translateY(0%);
   }
 }
+

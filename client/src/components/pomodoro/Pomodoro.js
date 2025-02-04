@@ -12,7 +12,6 @@ import { useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 
-//bugghetti: se hai voglia aggiungi profilo e selfie, personalizzabile, abbellire
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
@@ -340,11 +339,15 @@ const Pomodoro = () => {
 
               <div className="pomodoro-applyers">
                 <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
-              {isRunning ? (
-                <i className="bi bi-pause-circle-fill pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
-              ) : (
-                <i className="bi bi-play-circle-fill  pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
-              )}
+                <i
+                className={`bi ${isRunning ? 'bi-pause-circle-fill' : 'bi-play-circle-fill'} pause-start-button`}
+                onClick={() => {
+                  // Verifica se il timer è già terminato
+                  if (timeLeft > 0) {
+                    setIsRunning(!isRunning); // Cambia lo stato solo se il timer non è terminato
+                  }
+                }}
+              ></i>
               </div>
               
               
