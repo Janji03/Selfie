@@ -7,6 +7,7 @@ import NotesDetail from "./NotesDetail";
 import SortNotes from "./SortNotes";
 import MarkdownLegend from "./MarkdownLegend";
 import "../../styles/Notes.css";
+import "../../styles/Global.css";
 import { marked } from "marked";
 
 const Notes = () => {
@@ -26,9 +27,9 @@ const Notes = () => {
   });
 
   const [markdownPreview, setMarkdownPreview] = useState("");
-  const [visibility, setVisibility] = useState("open"); // Visibilità predefinita
-  const [userList, setUserList] = useState([]); // Lista degli utenti
-  const [selectedUsers, setSelectedUsers] = useState([]); // Utenti selezionati per la visibilità "restricted"
+  const [visibility, setVisibility] = useState("open"); 
+  const [userList, setUserList] = useState([]); 
+  const [selectedUsers, setSelectedUsers] = useState([]); 
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -45,7 +46,7 @@ const Notes = () => {
   useEffect(() => {
     if (visibility === "restricted") {
       getAllUsersBasicInfo()
-        .then(setUserList) // Salva la lista completa di utenti con id, name ed email
+        .then(setUserList) 
         .catch((err) => setError(err.message));
     }
   }, [visibility]);
@@ -92,12 +93,12 @@ const Notes = () => {
   return (
     <div className="notes-container">
       <div className="note-header">
-        <button className="new-note-button" onClick={() => setIsCreating(true)}>
+        <button className="primary" onClick={() => setIsCreating(true)}>
           Nuova Nota
         </button>
         <SortNotes notes={notes} setNotes={setNotes} />
         <button
-          className="new-note-button"
+          className="primary"
           onClick={() => setShowMarkdownLegend(true)}
         >
           Legenda Markdown
@@ -137,7 +138,7 @@ const Notes = () => {
                 }
                 required
               />
-
+  
               <div className="visibility-options">
                 <label>
                   <input
@@ -167,7 +168,7 @@ const Notes = () => {
                   Ristretta
                 </label>
               </div>
-
+  
               {visibility === "restricted" && (
                 <div className="user-selection">
                   <h3>Seleziona gli utenti:</h3>
@@ -180,34 +181,32 @@ const Notes = () => {
                             checked={selectedUsers.includes(user._id)}
                             onChange={() => handleUserSelection(user._id)}
                           />
-                          {`${user.name} (${user.email})`} {/* Mostra nome ed email */}
+                          {`${user.name} (${user.email})`} 
                         </label>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-
-
-              <button className="create-note-button" type="submit">
+  
+              <button className="primary" type="submit">
                 Crea Nota
               </button>
               <button
-                className="create-note-button"
+                className="secondary"
                 onClick={() => setIsCreating(false)}
               >
                 Annulla
               </button>
             </form>
             <button
-              className="preview-button"
+              className="tertiary"
               onClick={() => setShowMarkdownPreview(!showMarkdownPreview)}
             >
               {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
             </button>
-
           </div>
-
+  
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -219,11 +218,11 @@ const Notes = () => {
           )}
         </div>
       )}
-
+  
       {showMarkdownLegend && (
         <MarkdownLegend onClose={() => setShowMarkdownLegend(false)} />
       )}
-
+  
       <NotesDetail
         note={selectedNote}
         onClose={() => setSelectedNote(null)}
@@ -237,6 +236,7 @@ const Notes = () => {
       {error && <p className="error-message">{error}</p>}
     </div>
   );
+  
 };
 
 export default Notes;

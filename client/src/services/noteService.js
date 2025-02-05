@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 
 const API_URL = "http://localhost:5000/api/notes";
 
-// Ottieni tutte le note associate all'utente loggato
+
 export const getNotes = async (userID) => {
   try {
     const response = await axiosInstance.get(`notes`, {
@@ -16,7 +16,7 @@ export const getNotes = async (userID) => {
   }
 };
 
-// Crea una nuova nota
+
 export const createNote = async (noteData) => {
   try {
     const response = await axiosInstance.post(`notes`, noteData);
@@ -28,7 +28,7 @@ export const createNote = async (noteData) => {
   }
 };
 
-// Aggiorna una nota esistente
+
 export const updateNote = async (id, noteData) => {
   try {
     const response = await axiosInstance.put(`notes/${id}`, noteData);
@@ -41,9 +41,9 @@ export const updateNote = async (id, noteData) => {
   }
 };
 
-// Cancella una nota
+
 export const deleteNote = async (id) => {
-  const userID = localStorage.getItem("userID"); // Ottieni l'ID dell'utente corrente
+  const userID = localStorage.getItem("userID"); 
   return axiosInstance.delete(`${API_URL}/${id}`, {
     params: { userID },
   });

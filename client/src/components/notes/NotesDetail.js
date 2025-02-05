@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { updateNote } from "../../services/noteService";
-import { getAllUsersBasicInfo } from "../../services/userService"; // Importato il nuovo servizio
+import { getAllUsersBasicInfo } from "../../services/userService"; 
 import { marked } from "marked";
 
 
@@ -13,14 +13,14 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     note?.categories.join(", ") || ""
   );
   const [visibility, setVisibility] = useState(note?.visibility || "open");
-  const [userList, setUserList] = useState([]); // Lista utenti con nome ed email
-  const [selectedUsers, setSelectedUsers] = useState(note?.accessList || []); // ID degli utenti selezionati
+  const [userList, setUserList] = useState([]); 
+  const [selectedUsers, setSelectedUsers] = useState(note?.accessList || []); 
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false);
   const [markdownPreview, setMarkdownPreview] = useState("");
 
   useEffect(() => {
     if (note) {
-      setEditMode(false); // Reset editMode when a new note is selected
+      setEditMode(false);
       setEditedTitle(note.title);
       setEditedContent(note.content);
       setEditedCategories(note.categories.join(", "));
@@ -38,10 +38,10 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
     }
   }, [editedContent, editMode]);
 
-  // Carica gli utenti solo se la visibilità è "restricted"
+
   useEffect(() => {
     if (visibility === "restricted") {
-      getAllUsersBasicInfo() // Carica la lista completa di utenti con nome e email
+      getAllUsersBasicInfo() 
         .then(setUserList)
         .catch(console.error);
     }
@@ -60,9 +60,9 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
 
     updateNote(note._id, updatedNote)
       .then(() => {
-        refreshNotes(); // Ricarica le note
-        setEditMode(false); // Disabilita la modalità di modifica
-        onClose(); // Chiudi il form di modifica
+        refreshNotes(); 
+        setEditMode(false); 
+        onClose(); 
       })
       .catch(console.error);
   };
@@ -107,8 +107,8 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
               placeholder="Modifica Categorie (separate da virgola)"
               required
             />
-
-            {note.userID === userID && (  // Solo il proprietario può vedere le opzioni di visibilità
+  
+            {note.userID === userID && (  
               <div className="visibility-options">
                 <label>
                   <input
@@ -139,8 +139,8 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
                 </label>
               </div>
             )}
-
-            {visibility === "restricted" && note.userID === userID && (  // Mostra la lista degli utenti solo se la visibilità è "restricted"
+  
+            {visibility === "restricted" && note.userID === userID && (  
               <div className="user-selection">
                 <h3>Seleziona gli utenti:</h3>
                 <ul>
@@ -152,33 +152,33 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
                           checked={selectedUsers.includes(user._id)}
                           onChange={() => handleUserSelection(user._id)}
                         />
-                        {`${user.name} (${user.email})`} {/* Mostra nome ed email */}
+                        {`${user.name} (${user.email})`} 
                       </label>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-
+  
             <div className="note-actions">
-              <button className="save-note-button" onClick={handleSave}>
+              <button className="primary" onClick={handleSave}>
                 Salva e Chiudi
               </button>
               <button
-                className="note-button"
+                className="secondary"
                 onClick={() => setEditMode(false)}
               >
                 Annulla
               </button>
               <button
-                className="note-button"
+                className="tertiary"
                 onClick={toggleMarkdownPreview}
               >
                 {showMarkdownPreview ? "Nascondi Anteprima" : "Mostra Anteprima"}
               </button>
             </div>
           </div>
-
+  
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -202,17 +202,17 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
             </p>
             <div className="note-actions">
               <button
-                className="note-button"
+                className="primary"
                 onClick={() => setEditMode(true)}
               >
                 Modifica
               </button>
-              <button className="note-button" onClick={onClose}>
+              <button className="secondary" onClick={onClose}>
                 Chiudi
               </button>
             </div>
           </div>
-
+  
           {showMarkdownPreview && (
             <div className="markdown-preview">
               <h2>Anteprima Markdown</h2>
@@ -226,6 +226,7 @@ const NotesDetail = ({ note, onClose, refreshNotes }) => {
       )}
     </div>
   );
+  
 };
 
 export default NotesDetail;

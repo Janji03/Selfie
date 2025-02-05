@@ -1,4 +1,4 @@
-/* Stile specifico per Login e Signup */
+/* Stile Login e Signup */
 .auth-container {
   display: flex;
   flex-direction: column;
@@ -70,7 +70,7 @@
 
 .auth-btn button {
   background-color: #fff;
-  color: #001789;
+  color: #ffffff;
   border: 2px solid #001789;
   border-radius: 8px;
   padding: 10px 20px;
