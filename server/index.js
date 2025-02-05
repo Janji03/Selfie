@@ -37,10 +37,12 @@ app.use("/api/pomodoro", pomodoroRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/time-machine", timeMachineRoutes);
 
+
 app.get("*", (req, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'index.html'));
 });
 
+// Funzione per connettersi al database
 const connectDB = async () => {
   try {
     await mongoose.connect(config.dbURI);
@@ -51,6 +53,7 @@ const connectDB = async () => {
   }
 };
 
+// Funzione per far partire l'agenda
 const startAgenda = async () => {
   try {
     await agenda.start();
