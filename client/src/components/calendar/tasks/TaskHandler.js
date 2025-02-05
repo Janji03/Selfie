@@ -24,7 +24,7 @@ const TaskHandler = ({
   isTimeMachineActive,
   calendarTimeZone,
 }) => {
-  const { addThirtyMinutes } = DateUtilities();
+  const { addThirtyMinutes, convertEventTimes } = DateUtilities();
 
   // Funzione per gestire il click su una task
   const handleTaskClick = async (clickedItemId) => {
@@ -140,12 +140,22 @@ const TaskHandler = ({
       // Se stavo modificando una task, chiamo l'API update task
       if (isEditMode) {
         const updatedTask = await updateTask(selectedTask.id, newTask);
-        setTasks([...tasks, updatedTask]);
+
+        // Converto la task da UTC al fuso orario del calendario
+        const convertedTask = convertEventTimes(updatedTask, calendarTimeZone);
+        const updatedTasks = tasks.map((task) =>
+          task.id === selectedTask.id ? { ...task, ...convertedTask } : task
+        );
+
+        setTasks(updatedTasks);
         setSelectedTask(updatedTask);
       } else {
         // Se stavo creando una task, chiamo l'API create task
         const createdTask = await createTask(newTask, userID);
-        setTasks([...tasks, createdTask]);
+        // Converto la task da UTC al fuso orario del calendario
+        const convertedTask = convertEventTimes(createdTask, calendarTimeZone);
+
+        setTasks([...tasks, convertedTask]);
       }
       setIsFormOpen(false);
     } catch (error) {
