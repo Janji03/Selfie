@@ -182,15 +182,6 @@
     transform: scale(1.2);
   }
 
-
-
-  /* Bottone "Crea", "Annulla" e "Mostra Anteprima" */
-  .action-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-  }
-
   .create-note-button,
   .cancel-button,
   .preview-button {
