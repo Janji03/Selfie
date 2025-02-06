@@ -17,15 +17,15 @@
 /* Card della legenda */
 .markdown-legend-card {
   background: #ffffff;
-  border-radius: 10px;  /* Ridotto per allinearlo meglio con le altre card */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);  /* Ombra più leggera */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 20px;
   width: 90%;
   max-width: 500px;
   text-align: center;
   overflow-y: auto;
   max-height: 80%;
-  font-family: 'Figtree', sans-serif; /* Stesso font delle note */
+  font-family: 'Figtree', sans-serif;
 }
 
 /* Titolo della card */
@@ -33,7 +33,7 @@
   font-size: 1.5rem;
   color: #001789;
   margin-bottom: 20px;
-  font-family: 'Poppins', sans-serif; /* Poppins per il titolo, come nelle altre note */
+  font-family: 'Poppins', sans-serif;
 }
 
 /* Paragrafi nella card */
@@ -51,7 +51,7 @@
 
 .legend-section h3 {
   font-size: 1.2rem;
-  color: #0036d0;  /* Colore coerente con il resto del sito */
+  color: #0036d0;
   margin-bottom: 10px;
   text-align: left;
   font-family: 'Figtree', sans-serif;
@@ -78,7 +78,7 @@
 
 /* Pulsante di chiusura */
 .close-legend-button {
-  background: linear-gradient(135deg, #284bff, #001789);  /* Gradiente come nelle note */
+  background: linear-gradient(135deg, #284bff, #001789);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -90,7 +90,7 @@
 }
 
 .close-legend-button:hover {
-  background: #0036d0;  /* Colore hover coerente con le note */
+  background: #0036d0;
 }
 
 /* Icona Tux */
@@ -103,35 +103,34 @@
   top: 20px;
 }
 
-/* Media query per la versione mobile */
 @media (max-width: 768px) {
   .markdown-legend-card {
-    font-size: 0.9rem;  /* Riduce la dimensione del font per la versione mobile */
-    padding: 15px;  /* Riduce il padding per la versione mobile */
+    font-size: 0.9rem;
+    padding: 15px;
   }
 
   .markdown-legend-card h2 {
-    font-size: 1.2rem;  /* Riduce la dimensione del titolo */
+    font-size: 1.2rem;
   }
 
   .markdown-legend-card p {
-    font-size: 0.9rem;  /* Riduce la dimensione del testo nei paragrafi */
+    font-size: 0.9rem;
   }
 
   .legend-section h3 {
-    font-size: 1rem;  /* Riduce la dimensione del sottotitolo */
+    font-size: 1rem;
   }
 
   .legend-section li {
-    font-size: 0.9rem;  /* Riduce la dimensione dei testi nei listati */
+    font-size: 0.9rem;
   }
 
   .close-legend-button {
-    padding: 8px 16px;  /* Riduce la dimensione del pulsante */
-    font-size: 0.9rem;  /* Riduce la dimensione del testo nel pulsante */
+    padding: 8px 16px;
+    font-size: 0.9rem;
   }
 
   .tux-icon {
-    width: 40px;  /* Riduce la larghezza dell'icona */
+    width: 40px;
   }
 }

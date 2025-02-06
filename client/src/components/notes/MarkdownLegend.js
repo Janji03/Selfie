@@ -8,6 +8,7 @@ const MarkdownLegend = ({ onClose }) => {
       <div className="markdown-legend-card">
         <h2>Guida Markdown</h2>
         <p>Markdown è un linguaggio semplice per la formattazione del testo. Ecco come usarlo:</p>
+        
         <div className="legend-section">
           <h3>Stile del testo</h3>
           <ul>
@@ -25,6 +26,7 @@ const MarkdownLegend = ({ onClose }) => {
             </li>
           </ul>
         </div>
+  
         <div className="legend-section">
           <h3>Struttura</h3>
           <ul>
@@ -56,6 +58,7 @@ const MarkdownLegend = ({ onClose }) => {
             </li>
           </ul>
         </div>
+  
         <div className="legend-section">
           <h3>Link e immagini</h3>
           <ul>
@@ -67,6 +70,7 @@ const MarkdownLegend = ({ onClose }) => {
             </li>
           </ul>
         </div>
+  
         <div className="legend-section">
           <h3>Codice</h3>
           <ul>
@@ -80,7 +84,6 @@ const MarkdownLegend = ({ onClose }) => {
                   ```
                   <br />
                   console.log("Un pinguino cammina in un bar...");
-
                   <br />
                   ```
                 </code>
@@ -88,12 +91,14 @@ const MarkdownLegend = ({ onClose }) => {
             </li>
           </ul>
         </div>
-        <button className="close-legend-button" onClick={onClose}>
+  
+        <button className="primary" onClick={onClose}>
           Chiudi
         </button>
       </div>
     </div>
   );
+  
 };
 
 export default MarkdownLegend;

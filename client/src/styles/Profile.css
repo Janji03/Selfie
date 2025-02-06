@@ -1,7 +1,6 @@
-/* Mobile-First (default) */
 .profile-container {
-  width: 100%; /* Occupa tutta la larghezza dello schermo */
-  max-width: 90%; /* Margini laterali su dispositivi piccoli */
+  width: 100%;
+  max-width: 90%;
   margin: 20px auto;
   padding: 15px;
   background: #f9f9f9;
@@ -14,7 +13,7 @@
 
 .profile-header {
   text-align: center;
-  font-size: 1.8rem; /* Testo ridotto per schermi piccoli */
+  font-size: 1.8rem;
   color: #001789;
   margin-bottom: 15px;
   font-weight: 700;
@@ -90,7 +89,7 @@
   font-weight: 600;
 }
 
-/* Media Query: Tablet (schermi medi) */
+
 @media (min-width: 600px) {
   .profile-container {
     max-width: 85%;
@@ -122,7 +121,7 @@
   }
 }
 
-/* Media Query: Desktop (schermi larghi) */
+
 @media (min-width: 1024px) {
   .profile-container {
     max-width: 800px;
@@ -158,30 +157,29 @@
 }
 
 
-/* edit form */ 
+/* edit form */
 
 
-/* Stile mobile-first (default per schermi piccoli) */
 .edit-profile-form {
-  width: 100%; /* Occupa tutta la larghezza dello schermo */
-  max-width: 90%; /* Leggero margine dai bordi */
-  margin: 10px auto; /* Centrare su dispositivi mobili */
-  padding: 15px; /* Spaziatura interna più compatta */
+  width: 100%;
+  max-width: 90%;
+  margin: 10px auto;
+  padding: 15px;
   background: #f9f9f9;
-  border-radius: 10px; /* Raggio leggermente ridotto */
+  border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   font-family: "Poppins", sans-serif;
-  overflow: hidden; /* Evita le barre di scorrimento */
+  overflow: hidden;
   box-sizing: border-box;
 }
 
 .edit-profile-form div {
-  margin-bottom: 10px; /* Minore distanza tra i campi */
+  margin-bottom: 10px;
 }
 
 .edit-profile-form label {
   display: block;
-  font-size: 0.9rem; /* Testo più piccolo per schermi piccoli */
+  font-size: 0.9rem;
   color: #333;
   font-weight: 600;
   margin-bottom: 5px;
@@ -191,8 +189,8 @@
 .edit-profile-form input[type="date"],
 .edit-profile-form input[type="file"],
 .edit-profile-form select {
-  width: calc(100% - 20px); /* Leggermente ridotto per evitare sovrapposizioni */
-  padding: 8px 10px; /* Compatto */
+  width: calc(100% - 20px);
+  padding: 8px 10px;
   font-size: 0.9rem;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -216,48 +214,48 @@
 /* Media Query: Tablet (schermi medi) */
 @media (min-width: 600px) {
   .edit-profile-form {
-      max-width: 75%; /* Larghezza maggiore per schermi medi */
-      padding: 20px;
+    max-width: 75%;
+    padding: 20px;
   }
 
   .edit-profile-form input[type="text"],
   .edit-profile-form input[type="date"],
   .edit-profile-form input[type="file"],
   .edit-profile-form select {
-      font-size: 1rem; /* Testo più grande */
-      width: calc(100% - 24px); /* Ridotto per migliore allineamento */
+    font-size: 1rem;
+    width: calc(100% - 24px);
   }
 
   .edit-profile-form label {
-      font-size: 1rem; /* Testo leggibile su schermi medi */
+    font-size: 1rem;
   }
 
   .edit-profile-form button {
-      font-size: 1rem;
+    font-size: 1rem;
   }
 }
 
-/* Media Query: Desktop (schermi larghi) */
+
 @media (min-width: 1024px) {
   .edit-profile-form {
-      max-width: 500px; /* Card più stretta e centrata */
-      padding: 25px; /* Spaziatura più ampia */
+    max-width: 500px;
+    padding: 25px;
   }
 
   .edit-profile-form label {
-      font-size: 1rem;
+    font-size: 1rem;
   }
 
   .edit-profile-form input[type="text"],
   .edit-profile-form input[type="date"],
   .edit-profile-form input[type="file"],
   .edit-profile-form select {
-      font-size: 1rem;
-      width: calc(100% - 24px);
+    font-size: 1rem;
+    width: calc(100% - 24px);
   }
 
   .edit-profile-form button {
-      font-size: 1rem;
-      padding: 10px 20px; /* Pulsanti più spaziosi */
+    font-size: 1rem;
+    padding: 10px 20px;
   }
 }

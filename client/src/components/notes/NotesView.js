@@ -3,15 +3,15 @@ import { deleteNote, duplicateNote } from "../../services/noteService";
 import markdownIcon from "../../assets/markdownIcon.png";
 import padlockIcon from "../../assets/padlockIcon.png";
 import searchIcon from "../../assets/searchIcon.png";
-import filterIcon from "../../assets/filterIcon.png"; // Icona del filtro
+import filterIcon from "../../assets/filterIcon.png";
 import VisibilityFilter from "./NotesFilter";
 
 const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
   const userID = localStorage.getItem("userID");
   const [visibilityFilter, setVisibilityFilter] = useState("all");
-  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false); // Stato per il menu
-  const [isSearchingCategory, setIsSearchingCategory] = useState(false); // Stato per l'input di ricerca
-  const [searchCategory, setSearchCategory] = useState(""); // Stato per la categoria cercata
+  const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+  const [isSearchingCategory, setIsSearchingCategory] = useState(false);
+  const [searchCategory, setSearchCategory] = useState("");
 
   const handleDelete = (noteID) => {
     deleteNote(noteID)
@@ -49,7 +49,6 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
 
   return (
     <div className="notes-container">
-      {/* Header con il titolo centrato e le icone */}
       <div className="notes-header">
         <h1 className="notes-title">Lista Note</h1>
         <div className="icons-container">
@@ -83,7 +82,7 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
         </div>
       </div>
 
-      {/* Menu di filtro che appare sotto l'intestazione */}
+
       {isFilterMenuOpen && (
         <div className="filter-menu">
           <VisibilityFilter
@@ -93,7 +92,7 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
         </div>
       )}
 
-      {/* Lista di note */}
+
       <div className="notes-list">
         {notes
           .filter(filterNotesByVisibility)
@@ -122,20 +121,20 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
               <p>Visibilità: {note.visibility}</p>
               <div className="note-actions">
                 <button
-                  className="note-button"
+                  className="primary"
                   onClick={() => setSelectedNote(note)}
                 >
                   Apri
                 </button>
                 <button
-                  className="note-button"
+                  className="secondary"
                   onClick={() => handleDuplicate(note._id)}
                 >
                   Duplica
                 </button>
                 {note.userID === userID && (
                   <button
-                    className="note-button"
+                    className="danger"
                     onClick={() => handleDelete(note._id)}
                   >
                     Elimina
@@ -147,6 +146,7 @@ const NotesView = ({ notes, setSelectedNote, refreshNotes }) => {
       </div>
     </div>
   );
+
 };
 
 export default NotesView;

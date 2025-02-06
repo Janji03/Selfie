@@ -89,7 +89,7 @@ export const getAllUserIdsAndNames = async (req, res) => {
   try {
     const users = await User.find({}, { _id: 1, name: 1 });
 
-    console.log("Utenti trovati:", users);  // Log degli utenti trovati
+    console.log("Utenti trovati:", users);  
 
     if (users.length === 0) {
       return res.status(404).json({ message: "Nessun utente trovato" });
@@ -97,7 +97,7 @@ export const getAllUserIdsAndNames = async (req, res) => {
 
     res.status(200).json(users);
   } catch (error) {
-    console.error("Errore nel recupero degli utenti:", error.message);  // Log dell'errore
+    console.error("Errore nel recupero degli utenti:", error.message);  
     res.status(500).json({ message: "Errore nel recupero degli utenti", error: error.message });
   }
 };

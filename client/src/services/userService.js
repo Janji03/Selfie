@@ -60,7 +60,7 @@ export const deleteUser = async (id) => {
 export const getAllUsersBasicInfo = async () => {
   try {
     const response = await axiosInstance.get("users/");
-    return response.data; // Restituisce l'elenco di utenti con id, name e email
+    return response.data; 
   } catch (error) {
     throw new Error(
       error.response?.data?.message ||

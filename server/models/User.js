@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Pre-save hook per criptare la password prima di salvarla nel database
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
   const salt = await bcrypt.genSalt(10);
@@ -48,7 +48,7 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-// Metodo per confrontare la password durante il login
+
 userSchema.methods.matchPassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
