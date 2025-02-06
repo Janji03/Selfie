@@ -161,14 +161,16 @@ const PomodoroPreview = () => {
         )}
       </>
       ))}
+      <div className="link-container">
+        <Link to={generatelink()} className="link">
+          {windowPreview === "add" ? (<>Crea Pomodoro</>) 
+          : (windowPreview === "next" ? (<>Programma Pomodoro</>) 
+            : (<>Ripeti Pomodoro</>))
+          }
 
-      <Link to={generatelink()} className="link">
-        {windowPreview === "add" ? (<>Crea Pomodoro</>) 
-        : (windowPreview === "next" ? (<>Programma Pomodoro</>) 
-          : (<>Ripeti Pomodoro</>))
-        }
+        </Link>
 
-      </Link>
+      </div>
     </div>
   );
 };

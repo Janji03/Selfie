@@ -159,8 +159,6 @@ button.danger:active {
 /* Link Preview */
 
 .link {
-    height: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;

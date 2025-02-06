@@ -17,7 +17,7 @@ const Profile = () => {
   const [error, setError] = useState('');
   const token = localStorage.getItem('token');
   const userID = localStorage.getItem('userID');
-  const baseURL = "https://site232447.tw.cs.unibo.it  /";
+  const baseURL = "https://site232447.tw.cs.unibo.it/";
 
   useEffect(() => {
     const fetchUserData = async () => {

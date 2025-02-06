@@ -11,11 +11,14 @@
   margin-top: 10px
 }
 
-
 .pomodoro-elements {
   display: flex;
   width: 100%;
   justify-content: space-evenly;
+  /* font-size: 3.4vw; */
+}
+
+.pomodoro-preview-mobile .pomodoro-elements{
   font-size: 3.4vw;
 }
 
@@ -401,7 +404,6 @@
   padding: 0;
   height: auto;
   width: 100%;
-  margin-top: 20px;
   flex-wrap: wrap;
 }
 
@@ -775,7 +777,7 @@
     margin: 0;
   }
 
-  .notes-preview-mobile, .calendar-preview-mobile{
+  .notes-preview-mobile, .calendar-preview-mobile, .pomodoro-preview-mobile {
     height: auto;
     margin-top: 5%;
     padding: 5% 0;
@@ -831,4 +833,32 @@
   }
 
   /* Calendar preview */
+  .calendar-preview .view-select{ 
+    font-size: 0.6rem;
+    text-align: center;
+  }
+
+  .calendar-preview .fc .fc-toolbar.fc-header-toolbar {  
+    height: 10%;
+    font-size: 0.6rem;
+  }
+
+
+  .calendar-preview .fc-timegrid-axis-cushion,
+  .calendar-preview .fc-timegrid-slot-label-cushion {
+    font-size: 0.4rem;
+  }
+  .calendar-preview .fc-col-header-cell-cushion {
+    font-size: 0.4rem;
+  }
+  .calendar-preview .fc-timeGridWeek-view .fc-col-header-cell-cushion {
+    font-size: 0.2rem;
+  }
+  .calendar-preview .fc-daygrid-day-number {
+    font-size: 0.5rem;
+  }
+
+  .calendar-preview .fc-toolbar-title {
+    font-size: 1rem;
+  }
 }

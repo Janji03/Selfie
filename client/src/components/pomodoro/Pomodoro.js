@@ -180,7 +180,7 @@ const Pomodoro = () => {
           <div className="left-pomodoro">
             <img src={pomodoroIcon}></img>
             <h1>Pomodoro Technique</h1>
-            <form className="study-form" onSubmit={handleSubmit}>
+            <form className="study-form" onSubmit={handleSubmit} id="pomodoro-form">
               <div className="pomo-info-form">
                 <label htmlFor="total-time" className="long-label">Tempo complessivo:</label>
                 <label htmlFor="total-time" className="short-label">Quanto tempo vuoi studiare? (min)</label>
@@ -369,7 +369,8 @@ const Pomodoro = () => {
 
         <button
                   className="but-start vertical-layout primary"
-                  onClick={handleSubmit}
+                  type="submit"
+                  form="pomodoro-form"
                 >
                   Inizia Sessione
                 </button>
