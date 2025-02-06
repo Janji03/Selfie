@@ -6,8 +6,13 @@ const PomodoroEmailSender = ({ studyTime, breakTime, cycles }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [email, setEmail] = useState("");
 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
+  
   const handleSendEmail = async () => {
-    if (!email) {
+    if (!email || !validateEmail(email)) {
       alert("Inserisci un'email valida.");
       return;
     }

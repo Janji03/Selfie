@@ -289,7 +289,7 @@ const Pomodoro = () => {
           <div className="right-pomodoro">
           
             {pomodoroSettings && (
-              <h2 className="pomodoro-logo">{title}</h2>
+              <h2 className="pomodoro-calendar-title">{title}</h2>
             )}
 
 
