@@ -33,7 +33,7 @@ const EventHandler = ({
     calculateEndDateRecurrence,
   } = RecurrenceHandler();
 
-  const { decrementOneDay, addOneHour } = DateUtilities();
+  const { decrementOneDay, addOneHour, convertEventTimes } = DateUtilities();
 
   // Funzione per gestire il click su un evento
   const handleEventClick = async (info, clickedItemId) => {
@@ -69,6 +69,14 @@ const EventHandler = ({
         };
       });
 
+      // Estrai le impostazioni del Pomodoro
+      const pomodoroSettings = selectedEvent.extendedProps.pomodoroSettings || {
+        studyTime: null,
+        breakTime: null,
+        cycles: null,
+        completedCycles: null,
+    };
+
       setEventFormInitialData({
         title: selectedEvent.title,
         startDate: DateTime.fromISO(selectedEvent.start, { zone: "UTC" })
@@ -97,6 +105,13 @@ const EventHandler = ({
           .split("T")[1]
           .slice(0, 5),
         allDay: selectedEvent.allDay,
+        isPomodoro: selectedEvent.extendedProps.isPomodoro,
+        pomodoroSettings: {
+          studyTime: pomodoroSettings.studyTime,
+          breakTime: pomodoroSettings.breakTime,
+          cycles: pomodoroSettings.cycles,
+          completedCycles: pomodoroSettings.completedCycles,
+        },
         isRecurring: rruleParsed ? true : false,
         location: selectedEvent.extendedProps.location,
         description: selectedEvent.extendedProps.description,
@@ -266,12 +281,14 @@ const EventHandler = ({
             data.recurrence.type !== "CUSTOM" ? data.recurrence.type : "CUSTOM",
         }),
         isPomodoro: data.isPomodoro,
+        ...(data.isPomodoro && {
         pomodoroSettings: {
           studyTime: data.pomodoroSettings.studyTime,
           breakTime: data.pomodoroSettings.breakTime,
           cycles: data.pomodoroSettings.cycles,
           completedCycles: data.pomodoroSettings.completedCycles,
         },
+      }),
         invitedUsers: data.invitedUsers,
         markAsUnavailable: data.markAsUnavailable
       },
@@ -286,12 +303,22 @@ const EventHandler = ({
       // Se stavo modificando un evento, chiamo l'API update event
       if (isEditMode) {
         const updatedEvent = await updateEvent(selectedEvent.id, newEvent);
-        setEvents([...events, updatedEvent]);
-        setSelectedEvent(updatedEvent);
+        // Converto l'evento da UTC al fuso orario del calendario
+        const convertedEvent = convertEventTimes(updatedEvent);
+        const updatedEvents = events.map((event) =>
+          event.id === selectedEvent.id
+            ? { ...event, ...convertedEvent }
+            : event
+        );
+
+        setEvents(updatedEvents);
+        setSelectedEvent(convertedEvent);
       } else {
         // Se stavo creando un evento, chiamo l'API create new event
         const createdEvent = await createNewEvent(newEvent, userID);
-        setEvents([...events, createdEvent]);
+        // Converto l'evento da UTC al fuso orario del calendario
+        const convertedEvent = convertEventTimes(createdEvent);
+        setEvents([...events, convertedEvent]);
       }
       setSelectedRange(null);
       setIsFormOpen(false);

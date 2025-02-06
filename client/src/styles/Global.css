@@ -46,6 +46,8 @@
     --text-inverted: #ffffff; 
     --text-disabled: var(--color-text-disabled);
 
+    --pomodoro-third-color: #008cff;
+
     /* Button Colors */
     --button-primary-bg: var(--color-primary);
     --button-primary-hover-bg: var(--color-primary-hover); 
@@ -157,8 +159,6 @@ button.danger:active {
 /* Link Preview */
 
 .link {
-    height: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;

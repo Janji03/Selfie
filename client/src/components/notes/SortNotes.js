@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import shuffleIcon from "../../assets/shuffleIcon.png";
+
 
 const SortNotes = ({ notes, setNotes }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,13 +34,13 @@ const SortNotes = ({ notes, setNotes }) => {
   return (
     <div className="sort-notes-container">
       <button
-        className="shuffle-button"
+        className="primary"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <img src={shuffleIcon} alt="Shuffle" className="shuffle-icon" />
+        
         Ordina
       </button>
-
+  
       {isOpen && (
         <div className="sort-menu">
           <label htmlFor="sort-select" className="sort-label">
@@ -61,6 +61,7 @@ const SortNotes = ({ notes, setNotes }) => {
       )}
     </div>
   );
+  
 };
 
 export default SortNotes;

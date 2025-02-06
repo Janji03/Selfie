@@ -4,13 +4,15 @@ import PomodoroPreview from "../preview/PomodoroPreview";
 import NotesPreview from "../preview/NotesPreview";
 import TimeMachinePreview from "../preview/TimeMachinePreview";
 import CalendarPreview from "../preview/CalendarPreview";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Homepage = () => {
   const [isCalendarPreviewOpen, setIsCalendarPreviewOpen] = useState(false);
   const [isPomodoroPreviewOpen, setIsPomodoroPreviewOpen] = useState(false);
   const [isNotePreviewOpen, setIsNotePreviewOpen] = useState(false);
+
+  const navigate = useNavigate();
 
 
   //scelta anteprima da mostrare
@@ -79,9 +81,11 @@ const Homepage = () => {
       <div className="home-grid">
         <div className="elem-grid full-width">
           <i className="bi bi-calendar-event"></i>
-          <div className="subsection-calendar">
+          <div className="subsection-calendar" >
+            <Link to="/calendar">
             <h2>Calendario</h2>
-            <p>Aggiungi eventi per non dimenticare</p>
+            <p>Organizza eventi, scadenze e attività in modo efficiente.</p>
+            </Link>
             <i
               className="bi bi-box-arrow-up-right"
               onClick={() => setIsCalendarPreviewOpen(true)}
@@ -90,10 +94,13 @@ const Homepage = () => {
           <span className="calendar-preview-tablet"><CalendarPreview/></span> {/* per versione tablet in cui sono direttamente visibili anteprime */}
         </div>
 
-        <div className="elem-grid half-width">
-          <div className="pomodoro-content">
+
+        <div className="elem-grid half-width" >
+          <div className="pomodoro-content" >
+            <Link to="/pomodoro">
             <i className="bi bi-clock-history"></i>
           <h2>Pomodoro</h2>
+            </Link>
           <i
             className="bi bi-box-arrow-up-right"
             onClick={() => setIsPomodoroPreviewOpen(true)}
@@ -106,8 +113,10 @@ const Homepage = () => {
 
         <div className="elem-grid half-width">
           <div className="notes-content">
+            <Link to='/notes' >
             <i className="bi bi-journal-plus"></i>
               <h2>Note</h2>
+              </Link>
               <i
                 className="bi bi-box-arrow-up-right"
                 onClick={() => setIsNotePreviewOpen(true)}

@@ -8,9 +8,9 @@ import pomodoroIcon from "../pomodoro/pomodoro.png";
 const PomodoroPreview = () => {
   const [lastPomodoro, setLastPomodoro] = useState(null);
   const [nextPomodoro, setNextPomodoro] = useState(null);
-  const [newStudyTime, setNewStudyTime] = useState(null);
-  const [newBreakTime, setNewBreakTime] = useState(null);
-  const [newCycles, setNewCycles] = useState(null);
+  const [newStudyTime, setNewStudyTime] = useState(0);
+  const [newBreakTime, setNewBreakTime] = useState(0);
+  const [newCycles, setNewCycles] = useState(0);
   const [windowPreview, setWindowPreview] = useState("last");
   const userID = localStorage.getItem("userID");
 
@@ -86,7 +86,7 @@ const PomodoroPreview = () => {
         className={`button-pomoprev-choice ${windowPreview === "last" ? "active" : ""} bi bi-arrow-repeat`}
         onClick={() => setWindowPreview("last")}
       ></i>
-    </div>
+     </div>
 
 
 
@@ -129,7 +129,10 @@ const PomodoroPreview = () => {
             </div>
           </div>
         ) : (
-          <p>Non trovato prossimo pomodoro</p>
+          <>
+          <img src={pomodoroIcon}></img>
+          <p className="pomo-not-found">Nessun pomodoro in programma</p>
+          </>
         )}
         </>
       ) : (
@@ -154,18 +157,20 @@ const PomodoroPreview = () => {
             </div>
           </div>
         ) : (
-          <p>Non trovato ultimo pomodoro</p>
+          <p className="pomo-not-found">Crea il tuo primo pomodoro</p>
         )}
       </>
       ))}
+      <div className="link-container">
+        <Link to={generatelink()} className="link">
+          {windowPreview === "add" ? (<>Crea Pomodoro</>) 
+          : (windowPreview === "next" ? (<>Programma Pomodoro</>) 
+            : (<>Ripeti Pomodoro</>))
+          }
 
-      <Link to={generatelink()} className="pomo-link">
-        {windowPreview === "add" ? (<>Crea Nuovo Pomodoro</>) 
-        : (windowPreview === "next" ? (<>Programma Pomodoro</>) 
-          : (<>Ripeti Pomodoro</>))
-        }
+        </Link>
 
-      </Link>
+      </div>
     </div>
   );
 };
