@@ -4,8 +4,8 @@ import config from "../config/config.js";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: config.EMAIL_USER,
-    pass: config.EMAIL_PASS,
+    user: config.emailUser,
+    pass: config.emailPass,
   },
 });
 
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 const sendEmailNotification = async (to, subject, message) => {
   try {
     await transporter.sendMail({
-      from: config.EMAIL_USER,
+      from: config.emailUser,
       to,
       subject,
       html: `
