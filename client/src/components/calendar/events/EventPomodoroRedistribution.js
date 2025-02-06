@@ -16,8 +16,6 @@ const redistributePomodoroTime = async (userID, currentDate) => {
       );
     });
 
-    console.log(uncompletedPomodoros,'pomodori non completati')
-
     let nextDate = new Date(currentDate);
 
     for (const event of uncompletedPomodoros) {                           //si usa questo perchè foreach non supporta funzioni asincrone

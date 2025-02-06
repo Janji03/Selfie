@@ -16,6 +16,7 @@
   display: flex;
   width: 100%;
   justify-content: space-evenly;
+  font-size: 3.4vw;
 }
 
 .pomodoro-elements p{
@@ -112,7 +113,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2%;
   
   font-family: var(--font-family-sans);
   font-weight: var(--font-weight-normal);
@@ -349,7 +349,7 @@
 }
 
 
-.pomo-link,
+/* .pomo-link,
 .note-link,
 .btn-email-sender {
   margin-top: 20px;
@@ -357,9 +357,6 @@
   font-family: "Poppins";
   font-size: 15px;
   font-weight: 700;
-  background-color: #fff;
-  border: solid 1px #002aff !important;
-  color: #002aff !important;
   text-decoration: none;
   border-radius: 10px;
   cursor: pointer;
@@ -371,7 +368,7 @@
 .btn-email-sender:hover {
   background-color: #001789;
   color: white !important;
-}
+} */
 
 
 .note-icon {
@@ -778,7 +775,7 @@
     margin: 0;
   }
 
-  .notes-preview-mobile{
+  .notes-preview-mobile, .calendar-preview-mobile{
     height: auto;
     margin-top: 5%;
     padding: 5% 0;
