@@ -58,7 +58,7 @@ const Signup = () => {
             />
           </div>
           <div className="auth-btn">
-            <button type="submit">Registrati</button>
+            <button type="submit" className="primary">Registrati</button>
           </div>
         </form>
         {error && <p className="auth-error">{error}</p>}
@@ -68,6 +68,7 @@ const Signup = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Signup;

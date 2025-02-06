@@ -1,6 +1,6 @@
 /* Container per l'intera inbox */
 .inbox-container {
-    width: 90%; /* Card più piccola di default per dispositivi mobili */
+    width: 90%;
     margin: 0 auto;
     padding: 20px;
     background-color: #f3f3f3;
@@ -13,7 +13,7 @@
 h1 {
     font-size: 2rem;
     text-align: center;
-    color: #001789; /* Colore blu richiesto */
+    color: #001789;
     margin-bottom: 20px;
 }
 
@@ -42,15 +42,14 @@ h1 {
     transform: translateY(-3px);
 }
 
-/* Card dei messaggi */
-/* Card dei messaggi */
+
 .message-card {
-    position: relative; /* Necessario per il posizionamento assoluto del bottone */
+    position: relative;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    overflow: hidden; /* Opzionale, per evitare che il bottone fuoriesca dalla card */
+    overflow: hidden;
 }
 
 
@@ -81,9 +80,8 @@ h1 {
 }
 
 
-/* Posizione dell'icona completed a sinistra */
 .message-item.completed .completed-icon {
-    order: -1; /* Sposta l'icona a sinistra */
+    order: -1;
     margin-right: 15px;
 }
 
@@ -119,7 +117,8 @@ h1 {
 }
 
 /* Bottone Completa */
-.complete-button, .delete-button {
+.complete-button,
+.delete-button {
     padding: 8px 18px;
     font-size: 0.9rem;
     border-radius: 5px;
@@ -183,7 +182,8 @@ label input {
 }
 
 /* Bottone invia messaggio */
-.send-button, .back-button {
+.send-button,
+.back-button {
     padding: 12px 25px;
     background-color: #001789;
     color: white;
@@ -194,13 +194,13 @@ label input {
     transition: background-color 0.3s ease, transform 0.2s;
 }
 
-.send-button:hover, .back-button:hover {
+.send-button:hover,
+.back-button:hover {
     background-color: #004bb5;
     transform: translateY(-3px);
 }
 
 /* Posizione del bottone di ritorno al profilo */
-
 .back-button {
     padding: 12px 25px;
     background-color: gray;
@@ -218,7 +218,7 @@ label input {
 }
 
 
-/* Responsività per schermi più grandi */
+
 @media (min-width: 768px) {
     .inbox-container {
         width: 70%;
@@ -241,7 +241,8 @@ label input {
         padding: 20px;
     }
 
-    .send-button, .back-button {
+    .send-button,
+    .back-button {
         font-size: 1.1rem;
     }
 }

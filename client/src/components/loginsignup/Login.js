@@ -22,43 +22,44 @@ const Login = () => {
     }
   };
 
-  return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h1>Login</h1>
-        <form className="auth-form" onSubmit={handleLogin}>
-          <div className="data">
-            <label>Email</label>
-            <input
-              type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-          <div className="data">
-            <label>Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-          <div className="auth-btn">
-            <button type="submit">Accedi</button>
-          </div>
-        </form>
-        {error && <p className="auth-error">{error}</p>}
-        <p className="auth-link">
-          Non hai un account? <a href="/signup">Registrati</a>
-        </p>
-        <p className="auth-link">
-          <a href="/forgot-password">Dimenticata Password ?</a>
-        </p>
-      </div>
+return (
+  <div className="auth-container">
+    <div className="auth-card">
+      <h1>Login</h1>
+      <form className="auth-form" onSubmit={handleLogin}>
+        <div className="data">
+          <label>Email</label>
+          <input
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="data">
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <div className="auth-btn">
+          <button type="submit" className="primary">Accedi</button>
+        </div>
+      </form>
+      {error && <p className="auth-error">{error}</p>}
+      <p className="auth-link">
+        Non hai un account? <a href="/signup">Registrati</a>
+      </p>
+      <p className="auth-link">
+        <a href="/forgot-password">Dimenticata Password ?</a>
+      </p>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Login;

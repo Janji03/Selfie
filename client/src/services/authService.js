@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-// Funzione per il signup
+
 export const signup = async (userData) => {
   try {
     const response = await axiosInstance.post("auth/signup", userData);
@@ -12,7 +12,7 @@ export const signup = async (userData) => {
   }
 };
 
-// Funzione per il login
+
 export const login = async (userData) => {
   try {
     const response = await axiosInstance.post("auth/login", userData);
@@ -22,7 +22,7 @@ export const login = async (userData) => {
   }
 };
 
-// Funzione forgot password
+
 export const forgotPassword = async (email) => {
   try {
     const response = await axiosInstance.post("auth/forgot-password", {
@@ -37,7 +37,7 @@ export const forgotPassword = async (email) => {
   }
 };
 
-// Funzione reset password
+
 export const resetPassword = async (token, newPassword) => {
   try {
     const response = await axiosInstance.post(`auth/reset-password/${token}`, {
