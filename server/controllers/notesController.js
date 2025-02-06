@@ -34,8 +34,8 @@ export const createNote = async (req, res) => {
 
     const savedNote = await newNote.save();
 
-    // Ottieni il nome dell'utente che ha creato la nota
-    const user = await User.findById(userID); // Recupera l'utente tramite userID
+  
+    const user = await User.findById(userID); 
     const userName = user ? user.name : "Utente sconosciuto"; // Fallback se l'utente non esiste
 
     // Invia email se la nota è ristretta
@@ -56,17 +56,17 @@ export const createNote = async (req, res) => {
   }
 };
 
-// Ottieni tutte le note
+// funzione per ottenere tutte le note pubbliche e anche le  ristrette e private di un utente
 export const getNotes = async (req, res) => {
   const { userID } = req.query;
 
   try {
-    // Trova tutte le note pubbliche, tutte le note private dell'utente e tutte le note "restricted" a cui l'utente ha accesso
+   
     const notes = await Note.find({
       $or: [
-        { visibility: 'open' }, // Note pubbliche
-        { userID }, // Le note dell'utente
-        { visibility: 'restricted', accessList: userID }, // Le note a cui l'utente ha accesso
+        { visibility: 'open' }, 
+        { userID }, 
+        { visibility: 'restricted', accessList: userID }, 
       ],
     });
 
@@ -77,7 +77,7 @@ export const getNotes = async (req, res) => {
 };
 
 
-// modifica una nota
+// funzione per modificare una nota
 export const updateNote = async (req, res) => {
   const { id } = req.params;
   const { title, content, categories, visibility, accessList } = req.body;
@@ -102,9 +102,9 @@ export const updateNote = async (req, res) => {
 
     const updatedNote = await note.save();
 
-    // Ottieni il nome dell'utente che ha modificato la nota
-    const user = await User.findById(note.userID); // Recupera l'utente tramite userID
-    const userName = user ? user.name : "Utente sconosciuto"; // Fallback se l'utente non esiste
+    
+    const user = await User.findById(note.userID); 
+    const userName = user ? user.name : "Utente sconosciuto"; 
 
     // Se la nota è ristretta e l'accessList è stata aggiornata, invia un'email
     if (visibility === 'restricted' && accessList) {
@@ -124,14 +124,13 @@ export const updateNote = async (req, res) => {
   }
 };
 
-
-// Cancella una nota
+// funzione per cancellare una nota
 export const deleteNote = async (req, res) => {
   const { id } = req.params;
-  const { userID } = req.query;  // Ottieni l'ID dell'utente che sta facendo la richiesta
+  const { userID } = req.query;  
 
   try {
-    // Trova la nota
+   
     const note = await Note.findById(id);
 
     if (!note) {
@@ -143,7 +142,7 @@ export const deleteNote = async (req, res) => {
       return res.status(403).json({ error: "Non hai i permessi per eliminare questa nota" });
     }
 
-    // Elimina la nota
+  
     await Note.findByIdAndDelete(id);
 
     res.status(200).json({ message: "Nota eliminata con successo" });
@@ -152,10 +151,10 @@ export const deleteNote = async (req, res) => {
   }
 };
 
-// Duplica una nota
+//  funzione per duplicare una nota
 export const duplicateNote = async (req, res) => {
-  const { id } = req.params; // ID della nota originale
-  const { userID } = req.body; // ID dell'utente che duplica
+  const { id } = req.params; 
+  const { userID } = req.body; 
 
   try {
     const originalNote = await Note.findById(id);
@@ -168,8 +167,8 @@ export const duplicateNote = async (req, res) => {
       content: originalNote.content,
       categories: originalNote.categories,
       userID, // Assegna l'utente che duplica come autore
-      visibility: 'private', // Imposta di default la visibilità come privata
-      accessList: [], // Nessuna lista di accesso per impostazione predefinita
+      visibility: 'private', 
+      accessList: [], 
     });
 
     const savedNote = await duplicatedNote.save();

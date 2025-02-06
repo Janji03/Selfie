@@ -98,9 +98,9 @@ const NotesPreview = () => {
                 <h2>{note.title}</h2>
                 <h4>{note.categories}</h4>
                 <p>{note.content.slice(0, 30)}...</p>
-
-
-                <p><strong>Visibilità:</strong> {note.visibility === "open" ? "Pubblica" : note.visibility === "restricted" ? "Ristretta" : "Privata"}</p>
+                
+                {/* Aggiungi la visibilità della nota */}
+                <p className="note-visibility"><strong>Visibilità:</strong> {note.visibility === "open" ? "Pubblica" : note.visibility === "restricted" ? "Ristretta" : "Privata"}</p>
               </li>
             </div>
           ))}

@@ -3,32 +3,32 @@ import { v4 as uuidv4 } from "uuid";
 
 const redistributePomodoroTime = async (userID, currentDate) => {
   try {
-    const events = await getEvents(userID); //ottiei eventi
-
-    const createdPomodoros = [];
+    //Elenco eventi
+    const events = await getEvents(userID); 
     
-    const uncompletedPomodoros = events.filter((event) => { //returna i pomodori non completati
+    //Lista pomodori non completati
+    const uncompletedPomodoros = events.filter((event) => { 
       const { completedCycles, cycles } = event.extendedProps.pomodoroSettings || {};
       return (
         event.extendedProps.isPomodoro &&
         completedCycles < cycles &&
-        new Date(event.end) < new Date(currentDate)  //new per averla in formato adatto a js
+        new Date(event.end) < new Date(currentDate)                       //new per averla in formato adatto a js
       );
     });
 
     let nextDate = new Date(currentDate);
 
-    for (const event of uncompletedPomodoros) { //si usa questo perchè foreach non supporta funzioni asincrone
+    for (const event of uncompletedPomodoros) {                           //si usa questo perchè foreach non supporta funzioni asincrone
       const { studyTime, breakTime, cycles, completedCycles } = event.extendedProps.pomodoroSettings;
       
-      // Convert minutes to time string "HH:mm"
+      // Converti minuti in "HH:mm"
       function minutesToTime(minutes) {
         const hours = Math.floor(minutes / 60);
         minutes = minutes % 60;
         return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
       }
 
-
+      //decrementa il numero di cicli se pomodoro parzialmente completato
       const remainingCycles = cycles - completedCycles;
       nextDate.setDate(nextDate.getDate() + 2);
 
@@ -40,20 +40,22 @@ const redistributePomodoroTime = async (userID, currentDate) => {
         );
       };
       
+      //Lista con i pomodori già esistenti nella data dove dovrebbero essere sostituiti
       const nextPomodorosOnDate = events.filter((event) =>
         event.extendedProps.isPomodoro && isSameDay(new Date(event.end), nextDate)
       );
 
-      const start = new Date(nextDate); // Start with the current date
-      start.setHours(new Date(event.start).getHours());   // Set hours
-      start.setMinutes(new Date(event.start).getMinutes()); // Set minutes
-      start.setSeconds(new Date(event.start).getSeconds()); // Set seconds
-      start.setMilliseconds(0); // Ensure milliseconds are 0
+      const start = new Date(nextDate); 
+      start.setHours(new Date(event.start).getHours());   
+      start.setMinutes(new Date(event.start).getMinutes()); 
+      start.setSeconds(new Date(event.start).getSeconds()); 
+      start.setMilliseconds(0);
 
-      // Set end time based on duration from the original event
-      const durationMs = new Date(event.end) - new Date(event.start); // Calculate duration
+      
+      const durationMs = new Date(event.end) - new Date(event.start);
       const end = new Date(start.getTime() + durationMs);
 
+      //Se non ci sono pomodori nella data stabilita creane uno nuovo
       if (nextPomodorosOnDate.length === 0) { 
         const { _id, ...rest } = event;
         const newEvent = {
@@ -72,10 +74,10 @@ const redistributePomodoroTime = async (userID, currentDate) => {
           },
         };
         await createNewEvent(newEvent, userID); 
-        createdPomodoros.push(newEvent);
 
       } else {
 
+        //Se esistono pomodori nella data stabilita suddividi il pomodoro da recuperare e aggiungilo a questi
         for (const event of nextPomodorosOnDate) {
         const { studyTime: eventStudyTime, breakTime: eventBreakTime, cycles: eventCycles } = event.extendedProps.pomodoroSettings;
 
@@ -114,7 +116,7 @@ const redistributePomodoroTime = async (userID, currentDate) => {
         }
       }
 
-      const updatedPastEvent = { //metti completedcycles = cycles per eventi passati
+      const updatedPastEvent = { 
         ...event,
         extendedProps: {
           ...event.extendedProps,
@@ -127,7 +129,6 @@ const redistributePomodoroTime = async (userID, currentDate) => {
 
       await updateEvent(updatedPastEvent.id, updatedPastEvent);
     }
-    return createdPomodoros;
   } catch (error) {
     console.error("Errore durante la ridistribuzione dei pomodori:", error);
   }

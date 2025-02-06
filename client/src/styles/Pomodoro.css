@@ -17,7 +17,7 @@
 
 .pomodoro-logo {
   font-family: "Poppins", sans-serif;
-  color: #001789;
+  color: var(--color-primary);
   font-size: 25px;
   margin-top: 0;
 }
@@ -83,29 +83,22 @@
   position: relative;
 }
 
-.but-start, .pomo-button {
+.but-start{
   margin-top: 20px;
-  padding: 3%;
-  font-family: "Poppins";
-  font-size: 18px;
-  font-weight: 700;
-  background-color: #fff;
-  border: solid 1px #001789;
-  color: #001789;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.4s ease;
 }
 
-.but-start:hover , .pomo-button:hover{
-  background-color: #001789;
-  color: white;
+.vertical-layout{
+  width: 50%;
+  align-self: center;
 }
 
 
 .pomodoro-applyers{
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 90%;
+  gap: 5px;
 }
 
 .pomo-info-form input {
@@ -155,7 +148,7 @@
   text-wrap: nowrap;
   max-height: 14vh;
   background-color: #fff; 
-  color: #001789; 
+  color: var(--color-primary); 
   font-family: 'Figtree';
   font-size: 2.3vw; 
   padding: 10px 20px; 
@@ -184,32 +177,24 @@
 }
 
 .pomo-button{
-  margin-top: 8px;
-  padding: 5px;
+  margin-top: 20px;
   font-size: 1.3vw;
-  font-weight: 400;
-  color: #008cff;
-  border: 1px solid #008cff;
-}
+} 
 
 .pomo-button:nth-child(4){
   border: 0;
-  background-color: red;
-  color: #fff;
+  background-color: var(--color-danger-hover);
   font-weight: 700;
 }
 
 .pomo-button:nth-child(4):hover{
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
-.pomodoro-applyers{
-  gap: 3px;
-}
 
 .share-button, .pause-start-button{
   margin-top: 10px;
-  color: #001789;
+  color: var(--color-primary);
   cursor: pointer;
   
 }
@@ -226,56 +211,16 @@
 
 .btn-email-sender{
   margin-top: 0;
-  padding: 1%;
+  padding: 2%;
+}
+
+.pomo-button:disabled, .pause-start-button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@media (min-width: 380px) and (max-width: 750px) {
-  .pomodoro-nav{
-    width: 40%;
-  }
-
-  .pomodoro-nav h4{
-    font-size: 16px;
-  }
-
-  .pomodoro-nav-page{
-    border: 0;
-    display: none;
-  } 
-
-}
-
-@media (max-width: 500px) {
-  .pomodoro-nav h4{
-    display: none;
-  }
-
-  .pomodoro-nav{
-    width: auto;
-    margin-right: 10px;
-  }
-}
-
-
-@media (max-width: 600px){
+@media (max-width: 649px){
 
   .pomodoro-body{
     flex-direction: column;
@@ -310,11 +255,10 @@
   }
 
   .pomo-info-form:nth-child(1) .short-label{
-    font-size: calc(4vmin);
-    color: #008cff;
+    font-size: 4vw;
+    color: var(--pomodoro-third-color);
     font-family: 'Figtree';
     font-weight: 400;
-    margin-bottom: 5px;
     width: 35%;
   }
 
@@ -344,29 +288,16 @@
     display: block;
   }
 
-  .but-start{
-    border: 0;
-    padding: 0.8vh;
-    background-color: #001789;
-    color: #fff;
-    width: 60%;
-    align-self: center;
-  }
-
-  .but-start:hover{
-    transform: scale(1.1);
-  }
-
   .left-pomodoro img{
     display: none;
   }
 
   .left-pomodoro h1{
-    font-size: 6.2vw;
+    font-size: 6.4vw;
     color: #fff;
     width: 100vw;
     background-color:  #001789;
-    min-height: 10vh;
+    min-height: 15vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -381,20 +312,22 @@
   .pomo-info-form input{
     height: auto;
     width: 45px;
-    font-size: 16px;
-    text-align: center; 
+    font-size: 18px;
+    text-align: center;
+    background-color: #93ceff77;
+    color: var(--color-primary); 
+    box-shadow: none;
   }
 
   .pomo-info-form label{
-    font-size: 16px;
+    font-size: 4vw;
     text-wrap: wrap;
-    font-weight: 600;
+    font-weight: 400;
   }
 
   .short-label{
     display: block;
-    color: #0017894b;
-    color: #008cff;
+    color: var(--pomodoro-third-color);
     font-weight: 700;
   }
 
@@ -426,5 +359,13 @@
   font-size: 3vw; 
   padding: 5px 10px; 
   margin: 5px 2px; 
+}
+
+.pause-start-button{
+  font-size: 9vw
+}
+
+.share-button{
+  font-size: 6vw;
 }
 }

@@ -12,7 +12,6 @@ import { useSearchParams } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 
 
-//bugghetti: se hai voglia aggiungi profilo e selfie, personalizzabile, abbellire
 const Pomodoro = () => {
   const [studyTime, setStudyTime] = useState(0);
   const [breakTime, setBreakTime] = useState(0);
@@ -36,10 +35,10 @@ const Pomodoro = () => {
 
   const location = useLocation();
   const { id, title, pomodoroSettings, selectedEvent } = location.state || {};
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("inizio ciclo di studio");
+    alert("Inizio ciclo di studio");
     setTimeLeft(studyTime * 60);
     setRemainingCycles(initialCycles);
     setIsRunning(true);
@@ -74,7 +73,6 @@ const Pomodoro = () => {
 
     try {
       await updateEvent(id, updatedEventPomodoroSettings);
-      console.log("Sessione evento Pomodoro aggiornato correttamente");
     } catch (error) {
       console.error("Errore aggiornamento sessione pomdooro:", error);
     }
@@ -82,7 +80,6 @@ const Pomodoro = () => {
 
     try {
       await createPomodoro(pomodoroData);
-      console.log("Pomodoro salvato correttamente");
     } catch (error) {
       console.error("Errore creazione pomodoro:", error);
     }
@@ -102,20 +99,19 @@ const Pomodoro = () => {
 
 
 
-  //converte numeri normali in tempo
   const convertTime = () => {
-    const seconds = timeLeft;
+    const seconds = Math.floor(timeLeft); // Tronca i decimali
     const minutes = Math.floor(seconds / 60);
-    const remainderSeconds = seconds % 60;
-    return `${minutes}:${remainderSeconds < 10 ? "0" : ""}${remainderSeconds}`;
+    const remainderSeconds = (seconds % 60).toString().padStart(2, "0"); // Assicura due cifre
+  
+    return `${minutes}:${remainderSeconds}`;
   };
-
+  
 
 
   const handleCycleCompletion = async (eventId, completedCycles) => {
     try {
       const updatedEvent = await updateCompletedCycles(eventId, completedCycles);
-      console.log("Evento aggiornato con successo:", updatedEvent);
     } catch (error) {
       console.error("Errore durante l'aggiornamento dei cicli completati:", error.message);
     }
@@ -144,33 +140,34 @@ const Pomodoro = () => {
   useEffect(() => {  
     if (isRunning) {
       if (timeLeft > 0) {
+        const startTime = Date.now();
         const interval = setInterval(() => {
-          //fa andare il timer
-          setTimeLeft((prevTime) => prevTime - 1);
-        }, 1000);
+        const elapsed = Date.now() - startTime; //per evitere desync con mettendo in pausa
+      setTimeLeft((prevTime) => Math.max(prevTime - elapsed / 1000, 0));
+    }, 100);
 
         return () => clearInterval(interval);
       } else if (timeLeft === 0) {
         if (remainingcycles > 0) {
-          //arriva da studio quindi onBreak falso allora setta pausa, arriva da pausa quindi onBreak vero allora setta studio
+          //onBreak falso allora setta pausa, onBreak vero allora setta studio
           if (!onBreak) {
-            alert("inizio pausa");
-            setRemainingCycles((prevCycles) => prevCycles - 1); //riduci cicli
-            setTimeLeft(initialBreakTime * 60); //pausa
+            setRemainingCycles((prevCycles) => prevCycles - 1); //riduci cicli rimanenti
+            alert("Inizio pausa");
+            setTimeLeft(initialBreakTime * 60);
             if(pomodoroSettings && sessionNumber > 0){
               handleCycleCompletion(id, ((initialCycles-remainingcycles)+1));
             }
           } else {
-            alert("inizio studio");
+            alert("Inizio studio");
             setTimeLeft(initialStudyTime * 60);
           }
           setOnBreak(!onBreak);
         } else {
           //se finiti cicli e tempo = 0
-          alert("Fine ciclo di studio");
           setIsRunning(false);
           setIsAnimationRunning(false)
           setRemainingCycles(initialCycles);
+          alert("Fine ciclo di studio");
         }
       }
     }
@@ -182,11 +179,11 @@ const Pomodoro = () => {
         <div className="pomodoro-body">
           <div className="left-pomodoro">
             <img src={pomodoroIcon}></img>
-            <h1>POMODORO TECHNIQUE</h1>
+            <h1>Pomodoro Technique</h1>
             <form className="study-form" onSubmit={handleSubmit}>
               <div className="pomo-info-form">
                 <label htmlFor="total-time" className="long-label">Tempo complessivo:</label>
-                <label htmlFor="total-time" className="short-label">Quanto tempo vuoi studiare?</label>
+                <label htmlFor="total-time" className="short-label">Quanto tempo vuoi studiare? (min)</label>
                 <input
                   type="number"
                   id="total-time"
@@ -235,8 +232,8 @@ const Pomodoro = () => {
                     <span className="or">OR</span>
 
                   <div className="pomo-info-form">
-                    <label htmlFor="study-time" className="long-label">Tempo di studio (minuti):</label>
-                    <label htmlFor="study-time" className="short-label">Studio</label>
+                    <label  className="long-label">Tempo di studio (minuti):</label>
+                    <label  className="short-label">Studio</label>
                     <input
                       type="number"
                       id="study-time"
@@ -250,8 +247,8 @@ const Pomodoro = () => {
                   </div>
 
                   <div className="pomo-info-form">
-                    <label htmlFor="break-time" className="long-label">Tempo di pausa (minuti):</label>
-                    <label htmlFor="break-time" className="short-label">Break</label>
+                    <label  className="long-label">Tempo di pausa (minuti):</label>
+                    <label  className="short-label">Break</label>
                     <input
                       type="number"
                       id="break-time"
@@ -264,8 +261,8 @@ const Pomodoro = () => {
                   </div>
 
                   <div className="pomo-info-form">
-                    <label htmlFor="cycles" className="long-label">Cicli:</label> 
-                    <label htmlFor="cycles" className="short-label">Cicli</label> 
+                    <label  className="long-label">Cicli:</label> 
+                    <label  className="short-label">Cicli</label> 
                     <input
                       type="number"
                       id="cycles"
@@ -278,7 +275,7 @@ const Pomodoro = () => {
                     />{" "}
                     <br />
                     <button
-                      className="but-start horizontal-layout"
+                      className="but-start horizontal-layout primary"
                       type="submit"
                     >
                       Inizia Sessione
@@ -299,131 +296,84 @@ const Pomodoro = () => {
             {(isAnimationRunning) ? (
               <PomodoroAnimation key={animationKey} studyTime={initialStudyTime} breakTime={initialBreakTime} cycles={remainingcycles} timeLeft={timeLeft} convertTime={convertTime} onBreak={onBreak} isRunning={isRunning}/>
             ): (
-              <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak} isRunning={isRunning}/>
+              <PomodoroAnimation key={animationKey} studyTime={0} breakTime={0} cycles={0} timeLeft={0} convertTime={convertTime} onBreak={onBreak} isRunning={isRunning} />
             )}
+
+
+              <div className="pomodoro-applyers">
+                <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
+                <i
+                className={`bi ${isRunning ? 'bi-pause-circle-fill' : 'bi-play-circle-fill'} pause-start-button`}
+                onClick={() => {
+                  if (timeLeft > 0) {
+                    setIsRunning(!isRunning);
+                  }
+                }}
+                style={{ cursor: timeLeft > 0 ? 'pointer' : 'not-allowed' , opacity: timeLeft > 0 ? '1' : '0.3' }}
+              ></i>
+              </div>
 
             <div className="pomodoro-applyers">
               <button onClick={() => {
-              setTimeLeft(0)}
+                if(timeLeft > 0){
+                  setTimeLeft(0)
+                }
               }
-              className="pomo-button"
+              }
+              className="pomo-button secondary"
+              disabled={timeLeft <= 0}
               >Prossima fase</button>
 
               
               <button onClick={() => {
-                if(onBreak){
+                if(timeLeft > 0){
+                  if(onBreak){
                   setTimeLeft(initialBreakTime * 60)
                 } else {setTimeLeft(initialStudyTime * 60)
                 }
                 setAnimationKey((prevKey) => prevKey + 1);
-                alert('ricomincia questo ciclo')
+                alert('Ricomincia questa fase')
+                }
+                
               }}
-              className="pomo-button">Ricomincia fase</button>
+              className="pomo-button secondary"
+              disabled={timeLeft <= 0}
+              >Ricomincia fase</button>
 
 
               <button onClick={handleSubmit}
-              className="pomo-button"
+              className="pomo-button secondary"
+              disabled={timeLeft <= 0}
               >
               Ricomincia sessione</button>
 
 
               <button onClick={() => {
+                if(timeLeft>0){
                   setIsRunning(false);
                   setIsAnimationRunning(false);
                   setTimeLeft(0)
                   setRemainingCycles(0)
-                  alert('ciclo terminato forzato')
+                  alert('Ciclo terminato forzato')
+                }
+                  
               }}
-              className="pomo-button"
+              className="pomo-button "
+              disabled={timeLeft <= 0}
               >Concludi Sessione</button> 
             </div>
-
-              <div className="pomodoro-applyers">
-                <PomodoroEmailSender studyTime={studyTime} breakTime={breakTime} cycles={initialCycles}/>
-              {isRunning ? (
-                <i className="bi bi-pause-circle-fill pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
-              ) : (
-                <i className="bi bi-play-circle-fill  pause-start-button" onClick={() => {setIsRunning(!isRunning)}}></i>
-              )}
-              </div>
               
               
           </div>
         </div>
 
         <button
-                  className="but-start vertical-layout"
+                  className="but-start vertical-layout primary"
                   onClick={handleSubmit}
                 >
                   Inizia Sessione
                 </button>
       </div>
-
-      {/* <h1>Pomodoro Timer</h1>
-
-    <form id="study-form">
-      <label htmlFor="total-time">Tempo complessivo di studio (minuti):</label>
-      <input type="number" id="total-time" required onChange={(e) => setTotalMinutes(e.target.value)} /> <br/>
-      {totalMinutes > 0 ? (
-        <>
-          {calculateProposals().map((proposal, index) => ( //setta i valori scelti dalle proposte
-            <button key={index} type='button' onClick={() => {setStudyTime(proposal.study); 
-                                                  setBreakTime(proposal.break); 
-                                                  setInitialCycles(proposal.cycles);
-                                                  setRemainingCycles(proposal.cycles)}}>
-
-            Studio: {proposal.study} minuti - Pausa: {proposal.break} minuti - Cicli: {proposal.cycles}</button> 
-          ))} 
-        </>
-      ):('')
-      }
-
-
-      <label htmlFor="study-time">Tempo singolo di studio (minuti):</label>
-      <input type="number" id="study-time" value={studyTime} required onChange={(e) => setStudyTime(Number(e.target.value))} /> <br/>
-
-      <label htmlFor="break-time">Tempo singolo di pausa (minuti):</label>
-      <input type="number" id="break-time" value={breakTime} required onChange={(e) => setBreakTime(Number(e.target.value))} /> <br/>
-
-      <label htmlFor="cycles">Cicli:</label>
-      <input type="number" id="cycles" value={initialCycles} required  onChange={(e) => {setRemainingCycles(Number(e.target.value)); 
-                                                                                         setInitialCycles(Number(e.target.value));}}/> <br/>
-
-      <button type="submit" onClick={handleSubmit}>Inizia Sessione</button>
-    </form>
-
-
-      <h1>Timer:{convertTime()}</h1>
-
-      <input type='number' onChange={(e) => setNPomodoro(e.target.value)}></input>
-      <button onClick={handleGet}>prova backend</button>
-
-      <h2>{nPomodoro}</h2> <h2>{remainingcycles}</h2>
-
-
-
-     <button onClick={() => {
-      setTimeLeft(1)}
-      }>Vai al prossimo</button>
-
-
-      <button onClick={() => {
-        if(onBreak){
-          setTimeLeft(breakTime * 60)
-        } else setTimeLeft(studyTime * 60)
-        alert('ricomincia questo ciclo')
-      }}>Ricomincia questo</button>
-
-
-    <button onClick={() => {
-            handleSubmit();
-          }}>Ricomincia tutto</button>
-
-
-      <button onClick={() => {
-          setIsRunning(false);
-          alert('ciclo terminato forzato')
-      }}>Fine tutto</button> */}
     </div>
   );
 };

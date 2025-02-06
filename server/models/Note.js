@@ -27,7 +27,7 @@ const noteSchema = new mongoose.Schema({
   visibility: {
     type: String,
     enum: ['open', 'restricted', 'private'],
-    default: 'open', // 'open' for all, 'restricted' for specific users, 'private' for only the author
+    default: 'open', 
   },
   createdAt: {
     type: Date,

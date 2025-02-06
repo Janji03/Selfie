@@ -17,13 +17,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
   const [formData, setFormData] = useState({
     ...initialData,
-    isPomodoro: false,
-    pomodoroSettings: {
-      studyTime: null,
-      breakTime: null,
-      cycles: null,
-      completedCycles: null,
-    },
   });
 
   const [errors, setErrors] = useState({});
@@ -102,6 +95,7 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
       if (adjustedFormData.isPomodoro) {
         adjustedFormData.pomodoroSettings.completedCycles = 0;
         adjustedFormData.allDay = false;
+        adjustedFormData.pomodoroSettings = { ...formData.pomodoroSettings };
       }
 
       if (
@@ -120,10 +114,6 @@ const EventForm = ({ initialData, onSubmit, isEditMode }) => {
 
       if (!adjustedFormData.isRecurring) {
         adjustedFormData.recurrence = null;
-      }
-
-      if (adjustedFormData.isPomodoro) {
-        adjustedFormData.pomodoroSettings = { ...formData.pomodoroSettings };
       }
 
       onSubmit({ ...adjustedFormData });
