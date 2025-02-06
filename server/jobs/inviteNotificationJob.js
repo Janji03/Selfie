@@ -27,10 +27,10 @@ export default (agenda) => {
         const timeZone = item.extendedProps.timeZone;
 
         emailBody += `
-          <p><strong>Inizio Evento:</strong>: ${item.allDay
+          <p><strong>Inizio Evento</strong>: ${item.allDay
             ? startDate.setZone(timeZone).toLocaleString(DateTime.DATE_SHORT)
             : startDate.setZone(timeZone).toLocaleString(DateTime.DATETIME_FULL)}</p>
-          <p><strong>Fine Evento:</strong>: ${item.allDay
+          <p><strong>Fine Evento</strong>: ${item.allDay
             ? endDate.setZone(timeZone).toLocaleString(DateTime.DATE_SHORT)
             : endDate.setZone(timeZone).toLocaleString(DateTime.DATETIME_FULL)}</p>`;
       } else if (type === "task") {
