@@ -4,7 +4,7 @@ import sendEmailNotification from "../utils/sendEmailNotification.js"
 // Funzione per creare un nuovo Pomodoro
 export const createPomodoro = async (req, res) => {
   const { studyTime, breakTime, cycles, userID } = req.body;
-  
+
   if (!studyTime || !breakTime || !cycles || !userID) {
     return res.status(400).json({ message: "Tutti i campi sono obbligatori." });
   }
@@ -18,6 +18,7 @@ export const createPomodoro = async (req, res) => {
   }
 };
 
+//Funzione per ottenere i pomodori eseguiti da un utente, si può scegliere il numero di pomodori da ottenere 
 export const getUserPomodoros = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit, 10);
@@ -42,7 +43,7 @@ export const getUserPomodoros = async (req, res) => {
   }
 };
 
-
+//Funzione per inviare la notifica via mail del pomodoro
 export const sendPomodoroEmail = async (req, res) => {
   const { email, settings } = req.body;
 

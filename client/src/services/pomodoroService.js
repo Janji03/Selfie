@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-// creare un nuovo Pomodoro
+//Creare un nuovo Pomodoro
 export const createPomodoro = async (pomodoroData) => {
   try {
     const res = await axiosInstance.post('pomodoro', pomodoroData);
@@ -11,7 +11,7 @@ export const createPomodoro = async (pomodoroData) => {
   }
 };
 
-//ottenere Pomodori precedenti
+//Ottenere Pomodori precedenti
 export const getUserPomodoros = async (nPomodoro, userID) => {
   try {
     const res = await axiosInstance.get('pomodoro', {
@@ -27,7 +27,7 @@ export const getUserPomodoros = async (nPomodoro, userID) => {
   }
 };
 
-
+//Invio notifica via mail
 export const sendPomodoroEmail = async (email, settings) => {
   try {
     const res = await axiosInstance.post('/pomodoro/send-email', { email, settings });
