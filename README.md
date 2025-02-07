@@ -8,20 +8,6 @@
 
 ### Link : https://site232447.tw.cs.unibo.it/
 
-## how to run : 
-- ### per runnare il server: 
-    - aprire un terminale 
-    - spostarsi nella cartella server
-    - eseguire **npm i**
-    - eseguire **npm start** oppure **npm run dev**
-
-- ### per runnare il client: 
-    - aprire un terminale 
-    - spostarsi nella cartella client
-    - eseguire **npm i**
-    - eseguire **npm start** 
-
-
 ## Documentazione e archiettura 
 
 ### ***tecnologie utilizzate***:
@@ -32,3 +18,26 @@
 
 
 #### **la documentazione del codice si trova nella cartella doc**
+
+
+## Divisione Compiti
+
+#### Gianluca Casaburi
+- Login/SignUp (+ model, routes, controllers)
+- Note (+ model, routes, controllers)
+- Profilo  (+ model, routes, controllers)
+- Messaggi
+
+#### Lorenzo Casalini
+- Calendario
+- Eventi (+ model, routes, controllers)
+- Task (+ model, routes, controllers)
+- TimeMachine (+ model, routes, controllers)
+- Schedulers
+- Jobs
+- Server utils
+
+#### Vittorio Zedda
+- Pomodoro (+ model, routes, controllers)
+- Homepage
+- Preview
