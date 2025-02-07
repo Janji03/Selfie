@@ -279,8 +279,8 @@ export const sendEventAsICalendar = async (req, res) => {
       const transporter = nodemailer.createTransport({
         service: "gmail",
         auth: {
-          user: config.EMAIL_USER,
-          pass: config.EMAIL_PASS,
+          user: config.emailUser,
+          pass: config.emailPass,
         },
       });
 
