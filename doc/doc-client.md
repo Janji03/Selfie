@@ -15,6 +15,10 @@ Il client dell'applicazione è sviluppato con React.
 
 - **context**: Contiene i file relativi alla gestione degli state React globali.
   1. **AuthContext**
+  - **isAuthenticated**: Booleano che indica se l'utente è autenticato.  
+  - **loading**: Booleano che indica se l'autenticazione è in fase di verifica.  
+  - **login(token, userID)**: Salva il token e l'ID utente in `localStorage` e autentica l'utente.  
+  - **logout()**: Rimuove il token e l'ID utente da `localStorage` e disconnette l'utente.  
 
   2. **TimeMachineContext**
   - *time* : valore della TimeMachine. Di default è allineato all'orario corrente e salvato in UTC. Viene sovrascritto dal valore che inserisce l'utente attraverso il componente TimeMachine
@@ -456,6 +460,21 @@ Il client dell'applicazione è sviluppato con React.
    - Creazione di un nuovo Pomodoro con impostazioni personalizzate.
 
 ## ProfilePreview.js
+
+- **Descrizione**:  
+  - Questo componente visualizza un'anteprima del profilo dell'utente, mostrando la sua immagine profilo e fornendo un link alla pagina completa del profilo.
+
+- **Funzionalità**:  
+  - Recupera l'immagine del profilo dell'utente dal backend.  
+  - Visualizza l'immagine del profilo se disponibile.  
+  - Fornisce un link per accedere alla pagina completa del profilo.  
+  - Gestisce eventuali errori nel recupero dell'immagine del profilo.  
+
+- **Componenti Utilizzati**:  
+  - `useState` per gestire lo stato dell'immagine del profilo e degli errori.  
+  - `useEffect` per effettuare la richiesta di recupero dell'immagine all'avvio del componente.  
+  - `Link` da `react-router-dom` per permettere la navigazione alla pagina del profilo.  
+  - `getUser` da `userService` per ottenere le informazioni dell'utente.  
 
 ## TimeMachinePreview.js
 - **Descrizione**: Questo file contiene il componente per la visualizzazione della anteprima della TimeMachine. 
