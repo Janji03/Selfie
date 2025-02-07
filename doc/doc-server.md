@@ -11,77 +11,17 @@ Contiene le variabili d'ambiente e il setup di agenda.js.
 #### Controllers
 Contiene la logica di gestione delle richieste per le varie rotte dell'applicazione.
 
-- **authController.js**
-
-- **eventController.js**
-
-- **messageController.js**
-
-- **notesController.js**
-
-- **pomodoroController.js**
-
-- **taskController.js**
-
-- **timeMachineController.js**
-
-- **userController.js**
-
 #### Jobs
 Contiene i job che vengono schedulati da agenda.js.
-
-- **eventNotificationJob.js**
-
-- **inviteNotificationJob.js**
-
-- **overdueNotificationJob.js**
-
-- **taskNotificationJob.js**
 
 #### Models
 Contiene lo schema dei modelli MongoDB.
 
-- **Event.js**
-
-- **Message.js**
-
-- **Note.js**
-
-- **Pomodoro.js**
-
-- **Task.js**
-
-- **TimeMachine.js**
-
-- **User.js**
-
 #### Routes
 Definisce le API endpoint dell'applicazione.
 
-- **authRoutes.js**
-
-- **eventRoutes.js**
-
-- **messageRoutes.js**
-
-- **notesRoutes.js**
-
-- **pomodoroRoutes.js**
-
-- **taskRoutes.js**
-
-- **timeMachineRoutes.js**
-
-- **userRoutes.js**
-
 #### Scheduler
 Contiene gli scheduler che si occupano di lanciare i job.
-
-- **eventNotificationScheduler.js**
-
-- **overdueTaskScheduler.js**
-
-- **taskNotificationScheduler.js**
 
 #### Uploads
 Cartella dedicata al salvataggio delle foto profilo degli utenti.
@@ -89,19 +29,152 @@ Cartella dedicata al salvataggio delle foto profilo degli utenti.
 #### Utils
 Contiene funzioni riutilizzabili.
 
-- **generateEmail.js**
 
-- **getRecurrenceSummary.js**
+# EVENTI
 
-- **removeTemporaryTasks.js**
+## File: `Event.js`
 
-- **sendEmailNotification.js**
+- **id**: Unico identificatore dell'evento.
+- **userID**: ID dell'utente associato all'evento.
+- **title**: Titolo dell'evento.
+- **start**: Data di inizio dell'evento.
+- **end**: Data di fine dell'evento.
+- **allDay**: Booleano che indica se l'evento dura tutto il giorno.
+- **rrule**: Regola di ricorrenza (per eventi ricorrenti).
+- **duration**: Durata dell'evento in formato "hh:mm".
+- **extendedProps**: Proprietà estese che includono informazioni aggiuntive come la descrizione, la location, gli utenti invitati e le impostazioni Pomodoro.
 
-- **timeMachineNotification.js**
+- **ExtendedPropsSchema**: Contiene le proprietà aggiuntive dell'evento come la location, la descrizione, il tipo di ricorrenza, e altre configurazioni come le notifiche e gli utenti invitati.
+- **NotificationSchema**: Definisce le notifiche relative agli eventi (tempo prima dell'invio e stato di invio).
 
-- **uploadUtils**
+---
 
-## File: `userModel.js`
+## File: `eventController.js`
+
+- **getEvents**: Recupera tutti gli eventi per un determinato utente.
+- **getInvitedEvents**: Recupera gli eventi a cui un utente è stato invitato e che non sono stati rifiutati.
+- **getUnavailableEvents**: Recupera gli eventi per cui l'utente ha contrassegnato come non disponibile per eventi di gruppo.
+- **getEventById**: Recupera un evento tramite il suo ID.
+- **createNewEvent**: Crea un nuovo evento, salva l'evento nel database e pianifica le notifiche per l'evento.
+- **updateEvent**: Aggiorna un evento esistente. Se l'evento è ricorrente, aggiorna anche la pianificazione delle notifiche.
+- **deleteEvent**: Elimina un evento dal database e cancella eventuali notifiche pianificate.
+- **acceptEventInvitation**: Accetta un invito ad un evento.
+- **rejectEventInvitation**: Rifiuta un invito ad un evento.
+- **resendEventInvitation**: Positicipa l'invito ad un evento di 30 minuti.
+- **sendEventAsICalendar**: Esporta l'evento come file iCalendar e lo invia tramite email.
+- **updateCompletedCycles**: Aggiorna il numero di cicli completati in un evento Pomodoro.
+
+---
+
+## File: `eventRoutes.js`
+
+Questo file contiene le rotte per gestire gli eventi. Ogni rotta è associata a una funzione di controllo definita in `eventController.js`.
+
+### Rotte
+
+- **GET `/events/`**
+- **GET `/events/invited`**
+- **GET `/events/unavailable`**
+- **GET `/events/:id`**
+- **POST `/events/`**
+- **PUT `/events/:id`**
+- **DELETE `/events/:id`**
+- **PUT `/events/:id/accept`**
+- **PUT `/events/:id/reject`**
+- **PUT `/events/:id/resend`**
+- **POST `/events/:id/ics`**
+- **PUT `/events/:id/completed-cycles`**
+
+---
+
+Ecco la documentazione per le **task** in formato Markdown, seguendo lo stesso schema che hai fornito per gli eventi.
+
+---
+
+# TASK
+
+## File: `Task.js`
+
+- **id**: Unico identificatore della task.
+- **userID**: ID dell'utente associato alla task.
+- **title**: Titolo della task.
+- **start**: Data di inizio della task.
+- **end**: Data di fine della task.
+- **allDay**: Booleano che indica se la task dura tutto il giorno.
+- **duration**: Durata della task in formato "hh:mm".
+- **extendedProps**: Proprietà estese che includono informazioni aggiuntive come la data di scadenza, stato, notifiche, utenti invitati e altro.
+
+- **ExtendedPropsSchema**: Contiene le proprietà aggiuntive della task, come la scadenza, lo stato (completato o pendente), se la task è scaduta, le notifiche, e gli utenti invitati con lo stato dell'invito.
+
+---
+
+## File: `taskController.js`
+
+- **getTasks**: Recupera tutte le task per un determinato utente.
+- **getInvitedTasks**: Recupera le task a cui un utente è stato invitato e che non sono state rifiutate.
+- **getTaskById**: Recupera una task tramite il suo ID.
+- **createTask**: Crea una nuova task, la salva nel database e pianifica eventuali notifiche.
+- **updateTask**: Aggiorna una task esistente, ripianificando le notifiche.
+- **deleteTask**: Elimina una task dal database e cancella le notifiche pianificate.
+- **acceptTaskInvitation**: Accetta un invito ad una task.
+- **rejectTaskInvitation**: Rifiuta un invito ad una task.
+- **resendTaskInvitation**: Positicipa l'invito ad una task di 30 minuti.
+
+---
+
+## File: `taskRoutes.js`
+
+Questo file contiene le rotte per gestire le task. Ogni rotta è associata a una funzione di controllo definita in `taskController.js`.
+
+### Rotte
+
+- **GET `/tasks/`**
+- **GET `/tasks/invited`**
+- **GET `/tasks/:id`**
+- **POST `/tasks/`**
+- **PUT `/tasks/:id`**
+- **DELETE `/tasks/:id`**
+- **PUT `/tasks/:id/accept`**
+- **PUT `/tasks/:id/reject`**
+- **PUT `/tasks/:id/resend`**
+
+--- 
+
+Ecco la documentazione per la **Time Machine** in formato Markdown, seguendo lo stesso schema:
+
+---
+
+# TIME MACHINE
+
+## File: `TimeMachine.js`
+
+- **userID**: ID dell'utente associato alla Time Machine.
+- **time**: Data e ora salvate nella Time Machine.
+- **isActive**: Stato della Time Machine (attiva o non attiva).
+
+---
+
+## File: `timeMachineController.js`
+
+- **updateTimeMachine**: Aggiorna il tempo della Time Machine per un utente specifico e la segna come attiva.
+- **resetTimeMachine**: Ripristina la Time Machine per un utente, resettando il tempo e disattivandola.
+
+---
+
+## File: `timeMachineRoutes.js`
+
+Questo file contiene le rotte per gestire la Time Machine. Ogni rotta è associata a una funzione di controllo definita in `timeMachineController.js`.
+
+### Rotte
+
+- **PUT `/time-machine/update`**
+- **PUT `/time-machine/reset`**
+
+---
+
+# UTENTE E AUTENTICAZIONE
+
+## File: `User.js`
 
 Questo file definisce il modello di `User` che viene utilizzato per interagire con il database. Contiene la logica di crittografia della password e la validazione delle credenziali.
 
@@ -346,7 +419,9 @@ Questo file contiene le rotte per la gestione delle operazioni di autenticazione
 
 ---
 
-## File: `messageModel.js`
+# MESSAGGI
+
+## File: `Message.js`
 
 Questo file definisce il modello di `Message` che rappresenta un messaggio nel sistema. Utilizza Mongoose per interagire con il database MongoDB.
 
@@ -450,7 +525,9 @@ Questo file contiene le rotte per gestire i messaggi. Ogni rotta è associata a 
 
 ---
 
-## File: `noteModel.js`
+# NOTE
+
+## File: `Note.js`
 
 Questo file definisce il modello di `Note` che rappresenta una nota nel sistema. Utilizza Mongoose per interagire con il database MongoDB.
 
@@ -585,3 +662,195 @@ Questo file contiene le rotte per gestire le note. Ogni rotta è associata a una
 - **Controllore**: `duplicateNote`.
 
 ---
+
+Ecco la documentazione completa per il modulo **Pomodoro**, inclusi i file aggiuntivi che mi hai fornito:
+
+---
+
+# POMODORO
+
+## File: `Pomodoro.js`
+
+- **studyTime**: Durata dello studio in minuti.
+- **breakTime**: Durata della pausa in minuti.
+- **cycles**: Numero di cicli Pomodoro completati (studio + pausa).
+- **userID**: ID dell'utente associato al Pomodoro.
+- **date**: Data in cui è stato registrato il Pomodoro.
+
+---
+
+## File: `pomodoroRoutes.js`
+
+Questo file contiene le rotte per gestire i Pomodori. Ogni rotta è associata a una funzione di controllo definita in `pomodoroController.js`.
+
+### Rotte
+
+- **POST `/pomodoro/`**: Crea un nuovo Pomodoro.
+- **GET `/pomodoro/`**: Recupera i Pomodori eseguiti da un utente, con la possibilità di limitare il numero di risultati.
+- **POST `/pomodoro/send-email`**: Invia un'email con le impostazioni di un Pomodoro.
+
+---
+
+## File: `pomodoroController.js`
+
+### Funzioni
+
+- **createPomodoro**: Crea un nuovo Pomodoro, salvandolo nel database. 
+- **getUserPomodoros**: Recupera i Pomodori eseguiti da un utente, con la possibilità di limitare il numero di Pomodori recuperati.
+- **sendPomodoroEmail**: Invia un'email con le impostazioni Pomodoro a un'email specificata, includendo un link dinamico per iniziare il Pomodoro.
+
+---
+
+# JOBS
+
+### eventNotificationJob.js
+- **Descrizione**:  
+Funzione per definire il job `event-notification`, responsabile dell'invio di notifiche via email per eventi programmati.  
+
+- **Funzionalità**:  
+  - Estrae le informazioni sull'evento e sull'utente destinatario.  
+  - Genera il contenuto dell'email usando `generateEventEmail()`.  
+  - Invia la notifica email utilizzando `sendEmailNotification()`.  
+  - Segna la notifica come inviata nel database.  
+  - Rimuove il job dopo l'invio della notifica.  
+
+---
+
+### inviteNotificationJob.js
+- **Descrizione**:  
+Funzione per definire il job `send-invite-email`, utilizzato per inviare inviti a eventi o task via email.  
+
+- **Funzionalità**:  
+  - Costruisce il corpo dell'email con dettagli sull'evento o la task.  
+  - Include link per accettare, rifiutare o reinviare l'invito.   
+  - Invia la notifica email utilizzando `sendEmailNotification()`.  
+  - Rimuove il job dopo l'invio dell'invito.  
+
+
+### overdueTaskJob.js
+- **Descrizione**:  
+Funzione per definire il job `check-overdue-tasks`, responsabile della gestione delle task in ritardo.  
+
+- **Funzionalità**:  
+  - Estra tutte le task con non ancora completate e in ritardo.  
+  - Aggiorna il campo `isOverdue` per indicare che la task è in ritardo.  
+  - Imposta nuovi valori per `start` e `end` all'ora corrente.  
+  - Salva le modifiche nel database.  
+
+
+### taskNotificationJob.js
+- **Descrizione**:  
+Funzione per definire il job `task-notification`, responsabile dell'invio di notifiche per task in ritardo.  
+
+- **Funzionalità**:  
+  - Genera un'email di notifica in base al livello di urgenza della task.  
+  - Invia la notifica email utilizzando `sendEmailNotification()`.  
+  - Se il livello di urgenza non è il massimo (`4`), rimuove il job dopo l'invio.  
+
+
+# SCHEDULER
+
+### overdueTaskScheduler.js
+- **Descrizione**:  
+Funzione per schedulare un job che controlla le task in ritardo.  
+
+- **Funzionalità**:  
+  - Verifica se il job `check-overdue-tasks` esiste già nell'istanza di `agenda`.  
+  - Se il job non è presente, lo pianifica per essere eseguito ogni minuto.  
+
+### taskNotificationScheduler.js
+- **Descrizione**:  
+Funzione per schedulare notifiche email per attività in ritardo, in base al livello di urgenza.  
+
+- **Funzionalità**:  
+  - Recupera l'utente dal database escludendo la password.  
+  - Controlla se l'attività ha notifiche abilitate e non è completata.  
+  - Pianifica notifiche in base ai seguenti livelli di urgenza:  
+    - **Livello 0**: Notifica immediata.  
+    - **Livello 1**: Notifica dopo 1 settimana.  
+    - **Livello 2**: Notifica dopo 3 giorni.  
+    - **Livello 3**: Notifica dopo 1 giorno.  
+    - **Livello 4**: Notifiche ricorrenti ogni 12 ore.   
+
+
+### eventNotificationScheduler.js
+- **Descrizione**:  
+Funzione per schedulare notifiche email per eventi programmati o modificati.  
+
+- **Funzionalità**:  
+  - Recupera l'utente dal database escludendo la password.  
+  - Controlla se l'evento ha notifiche abilitate.  
+  - Pianifica notifiche basate sugli intervalli di tempo specificati nelle proprietà dell'evento.  
+
+# UTILS
+
+### generateEmail.js
+- **Descrizione**: Questo file fornisce funzioni per generare email di notifica relative a eventi e task nel calendario, includendo dettagli come titolo, orario, luogo e urgenza.
+
+- **Funzionalità**:  
+  - `generateEventEmail(event, timeBefore)`: Crea un'email di promemoria per un evento, includendo dettagli come orario, luogo e regole di ricorrenza.  
+  - `generateTaskEmail(task, urgencyLevel)`: Genera un'email di notifica per una task scaduta, con livelli di urgenza variabili e promemoria periodici.
+
+
+### getRecurrenceSummary.js
+- **Descrizione**:  
+Funzione per generare un riepilogo leggibile di una regola di ricorrenza (RRule), traducendo le opzioni in un formato comprensibile in italiano.
+
+- **Funzionalità**:  
+  - `getRecurrenceSummary(rruleString)`:  
+    - Converte una stringa RRule in un formato testuale leggibile. 
+
+
+### removeTemporaryTasks.js
+- **Descrizione**:  
+Funzione per eliminare le task temporanee associate a un utente, generate dalla time machine.
+
+- **Funzionalità**:  
+  - `removeTemporaryTasks(userID)`:  
+    - Filtra le task in base all'ID utente fornito.  
+    - Cancella tutte le task con proprietà `temporary: true` dal database.  
+
+### sendEmailNotification.js
+- **Descrizione**:  
+Funzione per l'invio di email di notifica utilizzando Nodemailer e un account Gmail.
+
+- **Funzionalità**:  
+  - `sendEmailNotification(to, subject, message)`:  
+    - Invia un'email al destinatario specificato con un oggetto e un messaggio in formato HTML.  
+    - Utilizza un trasporto SMTP configurato con credenziali Gmail.  
+
+
+### timeMachineNotification.js
+- **Descrizione**:  
+Funzione che gestisce l'invio automatico di notifiche email per eventi e attività in scadenza o in ritardo, utilizzando un sistema di "Time Machine".
+
+- **Funzionalità**:  
+  - **Recupero dati utente**:  
+    - Estrae le informazioni dell'utente senza includere la password.  
+  - **Selezione degli eventi e attività**:  
+    - Recupera eventi programmati per il giorno specificato.  
+    - Recupera attività pendenti e temporanee con notifiche abilitate e scadute.  
+  - **Invio notifiche per eventi**:  
+    - Calcola l'orario di notifica in base al tempo prima dell'evento.  
+    - Invia email se la notifica è programmata entro un intervallo di 30 secondi.  
+    - Gestisce eventi giornalieri senza considerare un orario specifico.  
+  - **Invio notifiche per attività scadute**:  
+    - Calcola il livello di urgenza in base al tempo di ritardo rispetto alla scadenza.  
+    - Invia email con un messaggio adeguato al livello di urgenza.  
+
+
+### uploadUtils.js
+- **Descrizione**:  
+Funzione per la gestione dell'upload di immagini profilo utilizzando Multer, con filtri per tipo di file e dimensione massima.
+
+- **Funzionalità**:  
+  - **Gestione della directory di upload**:  
+    - I file vengono salvati nella cartella `uploads/profilePictures`.  
+  - **Configurazione dello storage**:  
+    - Definisce il percorso di salvataggio delle immagini.  
+    - Genera nomi unici per i file caricati.  
+  - **Filtraggio dei file**:  
+    - Accetta solo immagini nei formati `.jpeg`, `.jpg`, `.png`.  
+    - Rifiuta file con estensioni o MIME type non validi.  
+  - **Limitazione della dimensione**:  
+    - Imposta un limite massimo di 5MB per i file caricati.  
